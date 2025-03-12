@@ -13,11 +13,11 @@ CREATE TABLE user_profiles (
     gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'other')),
     weight FLOAT CHECK (weight > 0),
     height FLOAT CHECK (height > 0),
-    birth_year INT CHECK (birth_year BETWEEN 1900 AND EXTRACT(YEAR FROM CURRENT_DATE)),
+    age INT CHECK (age BETWEEN 1 AND 100),
     daily_calories FLOAT GENERATED ALWAYS AS (
         CASE
-            WHEN gender = 'male' THEN 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * (EXTRACT(YEAR FROM CURRENT_DATE) - birth_year))
-            WHEN gender = 'female' THEN 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * (EXTRACT(YEAR FROM CURRENT_DATE) - birth_year))
+            WHEN gender = 'male' THEN 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)
+            WHEN gender = 'female' THEN 447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)
             ELSE NULL
         END
     ) STORED,
