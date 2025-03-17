@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     role: Optional[str] = Field(default="user", pattern="^(user|admin)$")
 
 class UserCreate(UserBase):
+    id: Optional[uuid.UUID] = None
     password_hash: str  # Hash password trước khi lưu
 
 class UserResponse(UserBase):
