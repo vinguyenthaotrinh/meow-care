@@ -5,13 +5,13 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     email: EmailStr
-    username: str = Field(..., min_length=3, max_length=50)
+    username: Optional[str] = Field(default=None, min_length=3, max_length=50)
     role: Optional[str] = Field(default="user", pattern="^(user|admin)$")
 
 class UserCreate(UserBase):
     id: Optional[uuid.UUID] = None
-    password_hash: str  # Hash password trước khi lưu
-
+    password: str  # Hash password trước khi lưu
+    salt: Optional[str] = None  # Salt để hash password
 class UserResponse(UserBase):
     id: uuid.UUID
     reset_token: Optional[str] = None

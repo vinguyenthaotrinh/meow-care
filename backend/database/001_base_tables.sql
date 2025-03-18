@@ -2,7 +2,8 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    password TEXT NOT NULL,
+    salt TEXT NOT NULL,
     role VARCHAR(10) CHECK (role IN ('user', 'admin')) DEFAULT 'user',
     reset_token TEXT,
     reset_token_expiration TIMESTAMP
