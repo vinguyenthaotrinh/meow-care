@@ -8,8 +8,8 @@ class AuthService:
 
     def register_user(self, user_data: UserCreate):
         user_data.id = str(uuid.uuid4())
-        user_data.salt = generate_salt()
-        user_data.password = hash_password(user_data.password, user_data.salt)
+        salt = generate_salt()
+        user_data.password = hash_password(user_data.password, salt)
         try:
             response = self.client.table("users").insert(user_data.model_dump()).execute()
         except Exception as e:
@@ -27,8 +27,7 @@ class AuthService:
             return None, "Invalid email or password"
 
         user_data = response.data       
-        salt = user_data.get("salt")  # Lấy salt từ DB
-        if not verify_password(hash_password(password, salt), user_data.get("password")):
+        if not verify_password(password, user_data.get("password")):
             return None, "Invalid email or password"
 
         return generate_jwt(UserResponse(**user_data)), None

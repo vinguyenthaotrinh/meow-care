@@ -11,7 +11,6 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     id: Optional[uuid.UUID] = None
     password: str  # Hash password trước khi lưu
-    salt: Optional[str] = None  # Salt để hash password
 class UserResponse(UserBase):
     id: uuid.UUID
     reset_token: Optional[str] = None

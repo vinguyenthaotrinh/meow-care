@@ -3,7 +3,6 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    salt TEXT NOT NULL,
     role VARCHAR(10) CHECK (role IN ('user', 'admin')) DEFAULT 'user',
     reset_token TEXT,
     reset_token_expiration TIMESTAMP
