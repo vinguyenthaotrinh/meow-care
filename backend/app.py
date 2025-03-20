@@ -1,5 +1,5 @@
 from flask import Flask
-from routes.auth_routes import auth_bp
+from src.routes import auth_bp
 
 app = Flask(__name__)
 

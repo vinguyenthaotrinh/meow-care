@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from services import auth_service
-from models import UserCreate
-from utils import AuthError, DEBUG
+from ..services import auth_service
+from ..models import UserCreate
+from ..utils import ServiceError, DEBUG
 from pydantic import ValidationError
 
 auth_bp = Blueprint("auth", __name__)
@@ -14,7 +14,7 @@ def register():
         user_data = UserCreate(**data)
         user = auth_service.register_user(user_data)
         return jsonify(user.model_dump()), 201
-    except AuthError as e:
+    except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
     except ValidationError as e:
         return jsonify({"error": "Invalid input data"}), 400
@@ -34,7 +34,7 @@ def login():
     try:
         token = auth_service.login_user(email, password)
         return jsonify({"token": token}), 200
-    except AuthError as e:
+    except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
     except Exception as e:
         error_message = str(e) if DEBUG else "Internal server error"

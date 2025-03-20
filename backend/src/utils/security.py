@@ -1,8 +1,8 @@
 import bcrypt
 import jwt
 from datetime import datetime, timedelta, timezone
-from models import UserResponse
-from utils import JWT_SECRET
+from ..models import UserResponse
+from .config import JWT_SECRET
 
 def generate_salt() -> str:
     return bcrypt.gensalt().decode("utf-8")
