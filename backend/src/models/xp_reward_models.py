@@ -11,7 +11,7 @@ class XPRewardsCreate(XPRewardsBase):
     pass
 
 class XPRewardsResponse(XPRewardsBase):
-    user_id: uuid.UUID
+    user_id: str # uuid.UUID
     level: Optional[int] = 0  # Generated field
     last_streak_date: Optional[date] = None
 

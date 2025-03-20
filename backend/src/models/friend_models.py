@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field, ConfigDict
 import uuid
 
 class FriendBase(BaseModel):
-    user_id: uuid.UUID
-    friend_id: uuid.UUID
+    user_id: str # uuid.UUID
+    friend_id: str # uuid.UUID
     status: str = Field(..., pattern="^(pending|accepted|blocked)$")
 
 class FriendCreate(FriendBase):

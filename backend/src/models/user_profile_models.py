@@ -14,7 +14,7 @@ class UserProfileCreate(UserProfileBase):
     pass
 
 class UserProfileResponse(UserProfileBase):
-    user_id: uuid.UUID
+    user_id: str # uuid.UUID
     daily_calories: Optional[float] = None
     daily_water: Optional[float] = None
     created_at: datetime

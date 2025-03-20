@@ -10,13 +10,13 @@ class StoreItemCreate(StoreItemBase):
     pass
 
 class StoreItemResponse(StoreItemBase):
-    id: uuid.UUID
+    id: str # uuid.UUID
 
     model_config = ConfigDict(from_attributes=True)
 
 class UserItemBase(BaseModel):
-    user_id: uuid.UUID
-    item_id: uuid.UUID
+    user_id: str # uuid.UUID
+    item_id: str # uuid.UUID
     quantity: int = Field(..., ge=0)  # Số lượng không thể âm
 
 class UserItemCreate(UserItemBase):

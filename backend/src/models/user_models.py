@@ -1,6 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, ConfigDict # pydantic: data validation, transformation, serialization
 from typing import Optional
-import uuid
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -9,10 +8,10 @@ class UserBase(BaseModel):
     role: Optional[str] = Field(default="user", pattern="^(user|admin)$")
 
 class UserCreate(UserBase):
-    id: Optional[uuid.UUID] = None
+    id: Optional[str] = None
     password: str  # Hash password trước khi lưu
 class UserResponse(UserBase):
-    id: uuid.UUID
+    id: str # uuid.UUID
     reset_token: Optional[str] = None
     reset_token_expiration: Optional[datetime] = None
 
