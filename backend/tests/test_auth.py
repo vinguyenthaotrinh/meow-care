@@ -1,15 +1,15 @@
 import pytest
 
 # Dữ liệu test
-VALID_USER = {"email": "test@example.com", "username": "test", "password": "password123"}
-INVALID_USER = {"email": "invalid", "username": "invalid_user", "password": "password123"}
+VALID_USER = {"email": "test@example.com", "password": "password123"}
+INVALID_USER = {"email": "invalid", "password": "password123"}
 
 @pytest.mark.auth
 @pytest.mark.order(1)
 def test_register_success(client): 
     response = client.post("/auth/register", json=VALID_USER)
     assert response.status_code == 201
-    assert "email" in response.json
+    assert response.json["message"] == "User created successfully"
 
 @pytest.mark.auth
 @pytest.mark.order(2)

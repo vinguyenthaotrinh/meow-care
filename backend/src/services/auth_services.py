@@ -1,5 +1,5 @@
 import uuid
-from ..models import UserCreate, UserResponse
+from ..models import UserCreate, UserResponse, UserProfileCreate
 from ..utils import supabase, hash_password, verify_password, generate_jwt, generate_salt, ServiceError, DEBUG
 
 class AuthService:
@@ -14,12 +14,19 @@ class AuthService:
         try:
             response = self.client.table("users").insert(user_data.model_dump()).execute()
             if not response.data:
-                raise ServiceError("Database server error", 500)
+                raise ServiceError("User registration failed", 500)
+
+            # Chèn user_profile với user_id mới tạo
+            profile_data = UserProfileCreate(user_id=user_data.id)
+            self.client.table("user_profiles").insert(profile_data.model_dump()).execute()
+
             return UserResponse(**response.data[0])
         except ServiceError:
             raise
         except Exception as e:
             error_message = str(e).lower()
+            if "created successfully" in error_message:
+                raise ServiceError("User created successfully", 201)
             if "already exists" in error_message:
                 raise ServiceError("Email or username already registered", 409)
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)

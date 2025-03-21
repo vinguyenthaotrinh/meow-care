@@ -4,7 +4,6 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     email: EmailStr
-    username: Optional[str] = Field(default=None, min_length=3, max_length=50)
     role: Optional[str] = Field(default="user", pattern="^(user|admin)$")
 
 class UserCreate(UserBase):

@@ -1,7 +1,6 @@
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
     password TEXT NOT NULL,
     role VARCHAR(10) CHECK (role IN ('user', 'admin')) DEFAULT 'user',
     reset_token TEXT,
@@ -10,10 +9,11 @@ CREATE TABLE users (
 
 CREATE TABLE user_profiles (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-    gender VARCHAR(10) CHECK (gender IN ('male', 'female', 'other')),
-    weight FLOAT CHECK (weight > 0),
-    height FLOAT CHECK (height > 0),
-    age INT CHECK (age BETWEEN 1 AND 100),
+    username VARCHAR(50) NOT NULL DEFAULT 'Human',
+    gender VARCHAR(10) CHECK (gender IN ('male', 'female')) DEFAULT 'female',
+    weight FLOAT CHECK (weight > 0) DEFAULT 50,
+    height FLOAT CHECK (height > 0) DEFAULT 160,
+    age INT CHECK (age BETWEEN 1 AND 100) DEFAULT 20,
     daily_calories FLOAT GENERATED ALWAYS AS (
         CASE
             WHEN gender = 'male' THEN 88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)

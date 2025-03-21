@@ -12,8 +12,8 @@ def register():
     
     try:
         user_data = UserCreate(**data)
-        user = auth_service.register_user(user_data)
-        return jsonify(user.model_dump()), 201
+        user_created = auth_service.register_user(user_data)
+        return jsonify({"message": "User created successfully"}), 201
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
     except ValidationError as e:
