@@ -2,7 +2,7 @@ import bcrypt
 import jwt
 from datetime import datetime, timedelta, timezone
 from ..models import UserResponse
-from .config import JWT_SECRET
+from .config import JWT_SECRET_KEY
 
 def generate_salt() -> str:
     return bcrypt.gensalt().decode("utf-8")
@@ -15,15 +15,15 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 def generate_jwt(user: UserResponse) -> str:
     payload = {
-        "sub": str(user.id),
+        "sub": user.id,
         "exp": datetime.now(timezone.utc) + timedelta(days=1), # Token hết hạn sau 1 ngày
         "role": user.role
     }
-    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
 
 def verify_token(token):
     try:
-        decoded = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        decoded = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
         return decoded
     except jwt.ExpiredSignatureError:
         return None  # Token hết hạn

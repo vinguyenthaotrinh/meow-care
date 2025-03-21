@@ -7,7 +7,7 @@ CREATE TABLE users (
     reset_token_expiration TIMESTAMP
 );
 
-CREATE TABLE user_profiles (
+CREATE TABLE profiles (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     username VARCHAR(50) NOT NULL DEFAULT 'Human',
     gender VARCHAR(10) CHECK (gender IN ('male', 'female')) DEFAULT 'female',

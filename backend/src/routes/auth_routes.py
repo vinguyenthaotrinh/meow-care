@@ -8,6 +8,7 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
+    """Đăng ký user mới"""
     data = request.get_json() 
     
     try:
@@ -24,6 +25,7 @@ def register():
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
+    """Đăng nhập user"""
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")

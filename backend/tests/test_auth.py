@@ -7,6 +7,7 @@ INVALID_USER = {"email": "invalid", "password": "password123"}
 @pytest.mark.auth
 @pytest.mark.order(1)
 def test_register_success(client): 
+    """Đăng ký user mới thành công"""
     response = client.post("/auth/register", json=VALID_USER)
     assert response.status_code == 201
     assert response.json["message"] == "User created successfully"
@@ -14,13 +15,15 @@ def test_register_success(client):
 @pytest.mark.auth
 @pytest.mark.order(2)
 def test_register_already_exist(client): 
+    """Đăng ký user đã tồn tại"""
     response = client.post("/auth/register", json=VALID_USER)
     assert response.status_code == 409
-    assert response.json["error"] == "Email or username already registered"
+    assert response.json["error"] == "Email already registered"
 
 @pytest.mark.auth
 @pytest.mark.order(3)
 def test_register_invalid_data(client):
+    """Đăng ký với dữ liệu không hợp lệ"""
     response = client.post("/auth/register", json=INVALID_USER)
     assert response.status_code == 400
     assert response.json["error"] == "Invalid input data"
@@ -28,6 +31,7 @@ def test_register_invalid_data(client):
 @pytest.mark.auth
 @pytest.mark.order(4)
 def test_login_success(client):
+    """Đăng nhập thành công"""
     response = client.post("/auth/login", json=VALID_USER)
     assert response.status_code == 200
     assert "token" in response.json
@@ -35,6 +39,7 @@ def test_login_success(client):
 @pytest.mark.auth
 @pytest.mark.order(5)
 def test_login_missing_data(client):
+    """Đăng nhập thiếu mât khẩu"""
     response = client.post("/auth/login", json={"email": "test@example.com"})
     assert response.status_code == 400
     assert response.json["error"] == "Email and password are required"
@@ -42,6 +47,7 @@ def test_login_missing_data(client):
 @pytest.mark.auth
 @pytest.mark.order(6)
 def test_login_wrong_password(client):
+    """Đăng nhập với mật khẩu sai"""
     response = client.post("/auth/login", json={"email": "test@example.com", "username": "test", "password": "wrongpassword"})
     assert response.status_code == 401
     assert response.json["error"] == "Invalid email or password"

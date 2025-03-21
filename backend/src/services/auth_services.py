@@ -1,5 +1,5 @@
 import uuid
-from ..models import UserCreate, UserResponse, UserProfileCreate
+from ..models import UserCreate, UserResponse, ProfileCreate
 from ..utils import supabase, hash_password, verify_password, generate_jwt, generate_salt, ServiceError, DEBUG
 
 class AuthService:
@@ -14,13 +14,14 @@ class AuthService:
         try:
             response = self.client.table("users").insert(user_data.model_dump()).execute()
             if not response.data:
-                raise ServiceError("User registration failed", 500)
+                raise ServiceError("Database server error", 500)
 
             # Chèn user_profile với user_id mới tạo
-            profile_data = UserProfileCreate(user_id=user_data.id)
-            self.client.table("user_profiles").insert(profile_data.model_dump()).execute()
-
-            return UserResponse(**response.data[0])
+            profile_data = ProfileCreate(user_id=user_data.id)
+            response_profile = self.client.table("profiles").insert(profile_data.model_dump()).execute()
+            if not response_profile.data:
+                raise ServiceError("Database server error", 500)
+            return UserResponse(**response.data[0]).model_dump()
         except ServiceError:
             raise
         except Exception as e:
@@ -28,14 +29,14 @@ class AuthService:
             if "created successfully" in error_message:
                 raise ServiceError("User created successfully", 201)
             if "already exists" in error_message:
-                raise ServiceError("Email or username already registered", 409)
+                raise ServiceError("Email already registered", 409)
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
     def login_user(self, email: str, password: str):        
         try:
             response = self.client.table("users").select("*").eq("email", email).single().execute() # single trả về 1 dict thay vì list
             if not response.data:
-                raise ServiceError("Database server error", 500)
+                raise ServiceError("bla bla Database server error", 500)
             user_data = response.data       
             if not verify_password(password, user_data.get("password")):
                 raise ServiceError("Invalid email or password", 401)
