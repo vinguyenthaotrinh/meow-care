@@ -1,5 +1,5 @@
-from ..models import ProfileResponse, ProfileCreate
-from ..utils import supabase, hash_password, verify_password, ServiceError, generate_salt
+from ..models import ProfileResponse, ProfileBase
+from ..utils import supabase, hash_password, verify_password, ServiceError, generate_salt, DEBUG
 
 class ProfileService:
     def __init__(self):
@@ -13,19 +13,19 @@ class ProfileService:
             return ProfileResponse(**response.data).model_dump()
         except ServiceError:
             raise
-        except Exception:
-            raise ServiceError("Database server error", 500)
+        except Exception as e:
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
-    def update_user_profile(self, user_id: str, user_data: ProfileCreate):
+    def update_user_profile(self, user_id: str, user_data: ProfileBase):
         try:
-            response = self.client.table("profiles").update(user_data.model_dump()).eq("user_id", user_id).single().execute()
+            response = self.client.table("profiles").update(user_data.model_dump()).eq("user_id", user_id).execute()
             if not response.data:
                 raise ServiceError("Database server error", 500)
-            return ProfileResponse(**response.data).model_dump()
+            return ProfileResponse(**response.data[0]).model_dump()
         except ServiceError:
             raise
-        except Exception:
-            raise ServiceError("Database server error", 500)
+        except Exception as e:
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
     def change_password(self, user_id: str, old_password: str, new_password: str):
         try:
@@ -43,7 +43,7 @@ class ProfileService:
                 raise ServiceError("Database server error", 500)
         except ServiceError:
             raise
-        except Exception:
-            raise ServiceError("Database server error", 500)
+        except Exception as e:
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
 profile_service = ProfileService()

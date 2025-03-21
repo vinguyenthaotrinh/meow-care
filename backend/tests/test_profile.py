@@ -2,9 +2,9 @@ import pytest
 
 # Dữ liệu test
 VALID_USER = {"email": "test@example.com", "password": "password123"}
-NEW_PROFILE = {"username": "NewName"} #, "weight": 60, "height": 170, "age": 25}
+NEW_PROFILE = {"username": "new username", "gender": "female", "weight": 60, "height": 170, "age": 25}
 INVALID_PROFILE = {"weight": -5}  # Dữ liệu không hợp lệ
-NEW_PASSWORD = {"old_password": "password123", "new_password": "newpass456"}
+NEW_PASSWORD = {"old_password": "password123", "new_password": "password123"}
 WRONG_OLD_PASSWORD = {"old_password": "wrongpassword", "new_password": "newpass456"}
 
 @pytest.fixture
@@ -36,6 +36,8 @@ def test_get_profile_unauthorized(client):
 def test_update_profile_success(client, auth_token):
     """Cập nhật thông tin profile hợp lệ"""
     response = client.put("/profile", json=NEW_PROFILE, headers={"Authorization": f"Bearer {auth_token}"})
+    print(response.json)
+
     assert response.status_code == 200
     assert response.json["username"] == NEW_PROFILE["username"]
     assert response.json["weight"] == NEW_PROFILE["weight"]
@@ -62,7 +64,7 @@ def test_change_password_wrong_old_password(client, auth_token):
     """Đổi mật khẩu thất bại do nhập sai mật khẩu cũ"""
     response = client.put("/profile/change-password", json=WRONG_OLD_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
     assert response.status_code == 401
-    assert response.json["error"] == "Invalid old password"
+    assert response.json["error"] == "Incorrect old password"
 
 @pytest.mark.profile
 @pytest.mark.order(14)

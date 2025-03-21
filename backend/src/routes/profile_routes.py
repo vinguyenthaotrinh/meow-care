@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import ProfileCreate
+from ..models import ProfileBase
 from ..services import profile_service
-from ..utils import ServiceError
+from ..utils import ServiceError, DEBUG
 from pydantic import ValidationError
 
 profile_bp = Blueprint("profile", __name__)
@@ -18,8 +18,9 @@ def get_profile():
         return jsonify(profile), 200
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
-    except Exception:
-        return jsonify({"error": "Internal server error"}), 500
+    except Exception as e:
+        error_message = str(e) if DEBUG else "Internal server error"
+        return jsonify({"error": error_message}), 500
 
 @profile_bp.route("", methods=["PUT"])
 @jwt_required()
@@ -29,15 +30,16 @@ def update_profile():
     data = request.get_json()
     
     try:
-        user_data = ProfileCreate(**data, user_id=user_id)
+        user_data = ProfileBase(**data)
         updated_profile = profile_service.update_user_profile(user_id, user_data)
         return jsonify(updated_profile), 200
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
     except ValidationError as e:
         return jsonify({"error": "Invalid input data"}), 400
-    except Exception:
-        return jsonify({"error": "Internal server error"}), 500
+    except Exception as e:
+        error_message = str(e) if DEBUG else "Internal server error"
+        return jsonify({"error": error_message}), 500
 
 @profile_bp.route("/change-password", methods=["PUT"])
 @jwt_required()
@@ -56,5 +58,6 @@ def change_password():
         return jsonify({"message": "Password changed successfully"}), 200
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
-    except Exception:
-        return jsonify({"error": "Internal server error"}), 500
+    except Exception as e:
+        error_message = str(e) if DEBUG else "Internal server error"
+        return jsonify({"error": error_message}), 500
