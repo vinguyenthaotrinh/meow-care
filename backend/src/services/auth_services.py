@@ -21,6 +21,7 @@ class AuthService:
             response_profile = self.client.table("profiles").insert(profile_data.model_dump()).execute()
             if not response_profile.data:
                 raise ServiceError("Database server error", 500)
+            
             return UserResponse(**response.data[0]).model_dump()
         except ServiceError:
             raise
@@ -37,10 +38,11 @@ class AuthService:
             response = self.client.table("users").select("*").eq("email", email).single().execute() # single trả về 1 dict thay vì list
             if not response.data:
                 raise ServiceError("bla bla Database server error", 500)
+            
             user_data = response.data       
             if not verify_password(password, user_data.get("password")):
                 raise ServiceError("Invalid email or password", 401)
-            print(user_data) 
+            
             return generate_jwt(UserResponse(**user_data))
         except ServiceError:
             raise

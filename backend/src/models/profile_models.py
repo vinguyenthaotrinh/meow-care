@@ -1,8 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-import uuid
-from datetime import datetime
-
 class ProfileBase(BaseModel):
     username: Optional[str] = Field(default="Human", min_length=3, max_length=50)
     gender: Optional[str] = Field(default="female", pattern="^(male|female)$")

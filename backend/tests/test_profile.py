@@ -36,7 +36,7 @@ def test_get_profile_unauthorized(client):
 def test_update_profile_success(client, auth_token):
     """Cập nhật thông tin profile hợp lệ"""
     response = client.put("/profile", json=NEW_PROFILE, headers={"Authorization": f"Bearer {auth_token}"})
-    print(response.json)
+    # print(response.json)
 
     assert response.status_code == 200
     assert response.json["username"] == NEW_PROFILE["username"]

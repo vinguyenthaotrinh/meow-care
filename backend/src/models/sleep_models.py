@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-import uuid
-from datetime import datetime, date, time
+from datetime import datetime, time
 
 class SleepHabitBase(BaseModel):
     sleep_time: time
