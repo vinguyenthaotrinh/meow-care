@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from ..utils import supabase, ServiceError, DEBUG
 
 class SleepService:
@@ -47,11 +47,46 @@ class SleepService:
         except Exception as e:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
-    def get_sleep_logs(self, user_id):
-        """Lấy Sleep Logs của user"""
-        response = self.client.table("sleep_logs").select("*").eq("user_id", user_id).execute()
-        if not response.data:
-            raise ServiceError("No sleep logs found", 404)
-        return response.data
+    def get_sleep_logs_today(self, user_id):
+        today = datetime.now(timezone.utc).date()
+        try:
+            response = self.client.table("sleep_logs").select("*") \
+                .eq("user_id", user_id) \
+                .gte("scheduled_time", f"{today} 00:00:00") \
+                .lt("scheduled_time", f"{today} 23:59:59") \
+                .execute()
+
+            if not response.data:
+                raise ServiceError("Database server error", 500)
+            return response.data
+        except ServiceError:
+            raise
+        except Exception as e:
+            error_message = str(e).lower()
+            if "0 rows" in error_message:
+                raise ServiceError("No sleep logs found for today", 404)
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
+
+    def get_sleep_logs_week(self, user_id):
+        today = datetime.now(timezone.utc).date()
+        monday = today - timedelta(days=today.weekday())  # Lấy thứ 2 của tuần này
+        
+        try:
+            response = self.client.table("sleep_logs").select("*") \
+                .eq("user_id", user_id) \
+                .gte("scheduled_time", f"{monday} 00:00:00") \
+                .lt("scheduled_time", f"{today} 23:59:59") \
+                .execute()
+
+            if not response.data:
+                raise ServiceError("Database server error", 500)
+            return response.data
+        except ServiceError:
+            raise
+        except Exception as e:
+            error_message = str(e).lower()
+            if "0 rows" in error_message:
+                raise ServiceError("No sleep logs found for this week", 404)
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
 sleep_service = SleepService()
