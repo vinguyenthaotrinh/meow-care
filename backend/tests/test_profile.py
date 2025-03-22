@@ -4,7 +4,7 @@ import pytest
 VALID_USER = {"email": "test@example.com", "password": "password123"}
 NEW_PROFILE = {"username": "new username", "gender": "female", "weight": 60, "height": 170, "age": 25}
 INVALID_PROFILE = {"weight": -5}  # Dữ liệu không hợp lệ
-NEW_PASSWORD = {"old_password": "password123", "new_password": "password123"}
+NEW_PASSWORD = {"old_password": "password123", "new_password": "newpass456"}
 WRONG_OLD_PASSWORD = {"old_password": "wrongpassword", "new_password": "newpass456"}
 
 @pytest.fixture
@@ -52,14 +52,6 @@ def test_update_profile_invalid_data(client, auth_token):
 
 @pytest.mark.profile
 @pytest.mark.order(12)
-def test_change_password_success(client, auth_token):
-    """Đổi mật khẩu thành công"""
-    response = client.put("/profile/change-password", json=NEW_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
-    assert response.status_code == 200
-    assert response.json["message"] == "Password changed successfully"
-
-@pytest.mark.profile
-@pytest.mark.order(13)
 def test_change_password_wrong_old_password(client, auth_token):
     """Đổi mật khẩu thất bại do nhập sai mật khẩu cũ"""
     response = client.put("/profile/change-password", json=WRONG_OLD_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
@@ -67,9 +59,18 @@ def test_change_password_wrong_old_password(client, auth_token):
     assert response.json["error"] == "Incorrect old password"
 
 @pytest.mark.profile
-@pytest.mark.order(14)
+@pytest.mark.order(13)
 def test_change_password_unauthorized(client):
     """Đổi mật khẩu khi chưa đăng nhập"""
     response = client.put("/profile/change-password", json=NEW_PASSWORD)
     assert response.status_code == 401  # Unauthorized
     assert "Missing Authorization Header" in response.json["msg"]
+    
+
+@pytest.mark.profile
+@pytest.mark.order(14)
+def test_change_password_success(client, auth_token):
+    """Đổi mật khẩu thành công"""
+    response = client.put("/profile/change-password", json=NEW_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
+    assert response.status_code == 200
+    assert response.json["message"] == "Password changed successfully"

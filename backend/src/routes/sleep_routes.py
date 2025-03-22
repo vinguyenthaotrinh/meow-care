@@ -15,7 +15,7 @@ def set_sleep_habit():
 
     try:
         sleep_habit = sleep_service.set_sleep_habit(user_id, data)
-        return jsonify(sleep_habit), 201
+        return jsonify(sleep_habit), 200
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
     except ValidationError:

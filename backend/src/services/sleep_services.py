@@ -11,8 +11,6 @@ class SleepService:
 
         if not sleep_time or not wakeup_time:
             raise ServiceError("Missing required fields", 400)
-        if sleep_time >= wakeup_time:
-            raise ServiceError("Sleep time must be before wakeup time", 400)
         
         try:
             # Lưu habit (Upsert: Nếu có thì cập nhật, chưa có thì tạo mới)

@@ -37,7 +37,7 @@ SELECT cron.schedule(
 -- SELECT * FROM cron.job;
 
 -- Xem lịch sử chạy của job:
--- SELECT * FROM cron.job_run_log;
+-- SELECT * FROM cron.job_run_details;
 
 -- Xóa job
 -- SELECT cron.unschedule('daily_sleep_log_job');

@@ -1,0 +1,62 @@
+import pytest
+
+# Dữ liệu test
+VALID_USER = {"email": "test@example.com", "password": "password123"}
+VALID_PERMANENT_USER = {"email": "test_permanent@example.com", "password": "password123"}
+VALID_SLEEP_HABIT = {"sleep_time": "22:00:00", "wakeup_time": "06:30:00"}
+INVALID_SLEEP_HABIT = {"sleep_time": "07:00:00"}  
+
+@pytest.fixture
+def auth_token(client):
+    """Đăng nhập và lấy token"""
+    response = client.post("/auth/login", json=VALID_PERMANENT_USER)
+    assert response.status_code == 200
+    return response.json["token"]
+
+@pytest.mark.sleep
+@pytest.mark.order(15)
+def test_set_sleep_habit_success(client, auth_token):
+    """Cập nhật Sleep Habit hợp lệ"""
+    response = client.put("/sleep/habit", json=VALID_SLEEP_HABIT, headers={"Authorization": f"Bearer {auth_token}"})
+    assert response.status_code == 200
+    assert "sleep_time" in response.json
+
+@pytest.mark.sleep
+@pytest.mark.order(16)
+def test_set_sleep_habit_invalid_data(client, auth_token):
+    """Cập nhật Sleep Habit với dữ liệu không hợp lệ"""
+    response = client.put("/sleep/habit", json=INVALID_SLEEP_HABIT, headers={"Authorization": f"Bearer {auth_token}"})
+    assert response.status_code == 400  # Bad Request
+    assert "error" in response.json
+
+@pytest.mark.sleep
+@pytest.mark.order(17)
+def test_get_sleep_logs_today_success(client, auth_token):
+    """Lấy Sleep Logs hôm nay"""
+    response = client.get("/sleep/logs/today", headers={"Authorization": f"Bearer {auth_token}"})
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+@pytest.mark.sleep
+@pytest.mark.order(18)
+def test_get_sleep_logs_today_unauthorized(client):
+    """Lấy Sleep Logs hôm nay khi chưa đăng nhập"""
+    response = client.get("/sleep/logs/today")
+    assert response.status_code == 401  # Unauthorized
+    assert "Missing Authorization Header" in response.json["msg"]
+
+@pytest.mark.sleep
+@pytest.mark.order(19)
+def test_get_sleep_logs_week_success(client, auth_token):
+    """Lấy Sleep Logs từ thứ 2 đến hôm nay"""
+    response = client.get("/sleep/logs/week", headers={"Authorization": f"Bearer {auth_token}"})
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+@pytest.mark.sleep
+@pytest.mark.order(20)
+def test_get_sleep_logs_week_unauthorized(client):
+    """Lấy Sleep Logs tuần này khi chưa đăng nhập"""
+    response = client.get("/sleep/logs/week")
+    assert response.status_code == 401
+    assert "Missing Authorization Header" in response.json["msg"]

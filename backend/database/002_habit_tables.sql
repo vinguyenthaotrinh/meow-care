@@ -2,7 +2,6 @@ CREATE TABLE sleep_habits (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     sleep_time TIME NOT NULL,
     wakeup_time TIME NOT NULL
-    CHECK (sleep_time < wakeup_time) 
 );
 
 CREATE TABLE sleep_logs (
