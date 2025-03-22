@@ -4,24 +4,19 @@ import uuid
 from datetime import datetime, date, time
 
 class SleepHabitBase(BaseModel):
-    user_id: str # uuid.UUID
-    bedtime: time
+    sleep_time: time
     wakeup_time: time
 
 class SleepHabitCreate(SleepHabitBase):
-    pass
+    user_id: Optional[str] = None # uuid.UUID
 
 class SleepHabitResponse(SleepHabitBase):
-    id: str # uuid.UUID
-    created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)
 
 class SleepLogBase(BaseModel):
     user_id: str # uuid.UUID
-    habit_id: str # uuid.UUID
-    date: date
-    sleep_duration: float = Field(..., gt=0)  # Thời gian ngủ phải > 0
+    task_type: str = Field(..., pattern="^(sleep|wakeup)$")
+    scheduled_time: datetime  # Thời gian cụ thể
     completed: Optional[bool] = Field(default=False)
 
 class SleepLogCreate(SleepLogBase):

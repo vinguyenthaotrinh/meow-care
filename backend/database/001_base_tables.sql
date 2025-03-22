@@ -22,8 +22,6 @@ CREATE TABLE profiles (
         END
     ) STORED,
     daily_water FLOAT GENERATED ALWAYS AS (weight * 0.033) STORED,
-    focus_goal INT DEFAULT 60, -- 60 min/day by default
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE xp_rewards (
