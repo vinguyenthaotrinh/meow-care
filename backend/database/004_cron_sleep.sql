@@ -29,7 +29,7 @@ CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA public;
 -- (tương đương với 07:00 AM giờ Việt Nam)
 SELECT cron.schedule(
     'daily_sleep_log_job',  -- ID của job
-    '0 0 * * *',  -- Chạy vào 00:00 mỗi ngày
+    '0 17 * * *',  -- Chạy lúc 17:00 UTC mỗi ngày (tương đương 00:00 UTC+7)
     $$ SELECT generate_daily_sleep_logs(); $$
 );
 

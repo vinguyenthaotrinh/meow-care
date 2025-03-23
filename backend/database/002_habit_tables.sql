@@ -12,20 +12,19 @@ CREATE TABLE sleep_logs (
     completed BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE water_habits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE hydrate_habits (
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    water_goal FLOAT NOT NULL,
     cup_size FLOAT NOT NULL,
-    reminder_time TIME[],
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    reminder_time TIME[]
 );
 
-CREATE TABLE water_logs (
+CREATE TABLE hydrate_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    habit_id UUID REFERENCES water_habits(id) ON DELETE CASCADE,
+    consumed_water FLOAT NOT NULL,
+    cup_size FLOAT NOT NULL,
     date DATE NOT NULL,
-    consumed_cups INT NOT NULL,
     completed BOOLEAN DEFAULT FALSE
 );
 
