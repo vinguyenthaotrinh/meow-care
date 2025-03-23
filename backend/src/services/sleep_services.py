@@ -89,13 +89,17 @@ class SleepService:
     
     def update_sleep_log_completion(self, user_id, log_id):
         try:
-            log_response = self.client.table("sleep_logs").select("id, user_id, completed") \
+            # Kiểm tra log đúng định dạng uuid chưa
+            if not log_id or len(log_id) != 36:
+                raise ServiceError("Sleep log not found", 404)
+            
+            log_response = self.client.table("sleep_logs").select("id, user_id") \
                 .eq("id", log_id) \
                 .eq("user_id", user_id) \
                 .execute()
 
             if not log_response.data:
-                raise ServiceError("Sleep log not found or unauthorized", 404)
+                raise ServiceError("Sleep log not found", 404)
 
             # Cập nhật trạng thái completed
             updated_response = self.client.table("sleep_logs").update({"completed": True}) \
@@ -109,6 +113,9 @@ class SleepService:
         except ServiceError:
             raise
         except Exception as e:
+            error_message = str(e).lower()
+            if "0 rows" in error_message:
+                raise ServiceError("Sleep log not found", 404)
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
 

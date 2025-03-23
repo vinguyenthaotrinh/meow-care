@@ -83,15 +83,17 @@ def test_update_sleep_log_completion_success(client, auth_token):
 @pytest.mark.order(22)
 def test_update_sleep_log_not_found(client, auth_token):
     """Cập nhật trạng thái của log không tồn tại"""
-    log_id = "nonexistent-log-id"  # ID không hợp lệ
-
+    # UUID không tồn tại
+    log_id = "00000000-0000-0000-0000-000000000000"
+    
     response = client.put(f"/sleep/logs/{log_id}/complete", headers={"Authorization": f"Bearer {auth_token}"})
+    print(response.json)
     assert response.status_code == 404
     assert "error" in response.json
 
 @pytest.mark.sleep
 @pytest.mark.order(23)
-def test_update_sleep_log_completion_unauthorized(client):
+def test_update_sleep_log_completion_unauthorized(client, auth_token):
     """Cập nhật trạng thái khi chưa đăng nhập"""
     response = client.get("/sleep/logs/today", headers={"Authorization": f"Bearer {auth_token}"})
     assert response.status_code == 200
@@ -101,7 +103,7 @@ def test_update_sleep_log_completion_unauthorized(client):
     log_id = logs[0]["id"]
 
     # Cập nhật mà không có token
-    unauthorized_response = client.put(f"/sleep/logs/{log_id}/complete", json={"completed": True})
+    unauthorized_response = client.put(f"/sleep/logs/{log_id}/complete")
     assert unauthorized_response.status_code == 401
     assert "Missing Authorization Header" in unauthorized_response.json["msg"]
 

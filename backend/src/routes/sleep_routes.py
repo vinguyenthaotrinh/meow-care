@@ -60,8 +60,6 @@ def update_sleep_log_completion(log_id):
         return jsonify(updated_log), 200
     except ServiceError as e:
         return jsonify({"error": e.message}), e.status_code
-    except ValidationError:
-        return jsonify({"error": "Invalid input data"}), 400
     except Exception as e:
         return jsonify({"error": str(e) if DEBUG else "Internal server error"}), 500
 
