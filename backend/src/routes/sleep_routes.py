@@ -23,6 +23,20 @@ def set_sleep_habit():
     except Exception as e:
         return jsonify({"error": str(e) if DEBUG else "Internal server error"}), 500
 
+@sleep_bp.route("/habit", methods=["GET"])
+@jwt_required()
+def get_sleep_habit():
+    """Lấy thông tin Sleep Habit"""
+    user_id = get_jwt_identity()
+    
+    try:
+        sleep_habit = sleep_service.get_sleep_habit(user_id)
+        return jsonify(sleep_habit), 200
+    except ServiceError as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e) if DEBUG else "Internal server error"}), 500    
+
 @sleep_bp.route("/logs/today", methods=["GET"])
 @jwt_required()
 def get_today_sleep_logs():

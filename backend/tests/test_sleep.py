@@ -3,7 +3,8 @@ import pytest
 # Dữ liệu test
 VALID_USER = {"email": "test@example.com", "password": "password123"}
 VALID_PERMANENT_USER = {"email": "test_permanent@example.com", "password": "password123"}
-VALID_SLEEP_HABIT = {"sleep_time": "22:00:00", "wakeup_time": "06:30:00"}
+NO_HABIT_USER = {"email": "test_no_habit@example.com", "password": "password123"}
+VALID_SLEEP_HABIT = {"sleep_time": "23:00:00", "wakeup_time": "06:30:00"}
 INVALID_SLEEP_HABIT = {"sleep_time": "07:00:00"}  
 
 @pytest.fixture
@@ -31,6 +32,16 @@ def test_set_sleep_habit_invalid_data(client, auth_token):
 
 @pytest.mark.sleep
 @pytest.mark.order(17)
+def test_get_sleep_habit_success(client, auth_token):
+    """Lấy thông tin Sleep Habit thành công"""
+    response = client.get("/sleep/habit", headers={"Authorization": f"Bearer {auth_token}"})
+    
+    assert response.status_code == 200
+    assert "user_id" in response.json
+    assert "sleep_time" in response.json  # Kiểm tra key tồn tại
+
+@pytest.mark.sleep
+@pytest.mark.order(18)
 def test_get_sleep_logs_today_success(client, auth_token):
     """Lấy Sleep Logs hôm nay"""
     response = client.get("/sleep/logs/today", headers={"Authorization": f"Bearer {auth_token}"})
@@ -38,7 +49,7 @@ def test_get_sleep_logs_today_success(client, auth_token):
     assert isinstance(response.json, list)
 
 @pytest.mark.sleep
-@pytest.mark.order(18)
+@pytest.mark.order(19)
 def test_get_sleep_logs_today_unauthorized(client):
     """Lấy Sleep Logs hôm nay khi chưa đăng nhập"""
     response = client.get("/sleep/logs/today")
@@ -46,7 +57,7 @@ def test_get_sleep_logs_today_unauthorized(client):
     assert "Missing Authorization Header" in response.json["msg"]
 
 @pytest.mark.sleep
-@pytest.mark.order(19)
+@pytest.mark.order(20)
 def test_get_sleep_logs_week_success(client, auth_token):
     """Lấy Sleep Logs từ thứ 2 đến hôm nay"""
     response = client.get("/sleep/logs/week", headers={"Authorization": f"Bearer {auth_token}"})
@@ -54,7 +65,7 @@ def test_get_sleep_logs_week_success(client, auth_token):
     assert isinstance(response.json, list)
 
 @pytest.mark.sleep
-@pytest.mark.order(20)
+@pytest.mark.order(21)
 def test_get_sleep_logs_week_unauthorized(client):
     """Lấy Sleep Logs tuần này khi chưa đăng nhập"""
     response = client.get("/sleep/logs/week")
@@ -62,7 +73,7 @@ def test_get_sleep_logs_week_unauthorized(client):
     assert "Missing Authorization Header" in response.json["msg"]
     
 @pytest.mark.sleep
-@pytest.mark.order(21)
+@pytest.mark.order(22)
 def test_update_sleep_log_completion_success(client, auth_token):
     """Cập nhật trạng thái hoàn thành của một Sleep hoặc Wakeup log thành công"""
     # Lấy danh sách sleep logs hôm nay
@@ -80,7 +91,7 @@ def test_update_sleep_log_completion_success(client, auth_token):
     assert update_response.json["completed"] is True
 
 @pytest.mark.sleep
-@pytest.mark.order(22)
+@pytest.mark.order(23)
 def test_update_sleep_log_not_found(client, auth_token):
     """Cập nhật trạng thái của log không tồn tại"""
     # UUID không tồn tại
@@ -92,7 +103,7 @@ def test_update_sleep_log_not_found(client, auth_token):
     assert "error" in response.json
 
 @pytest.mark.sleep
-@pytest.mark.order(23)
+@pytest.mark.order(24)
 def test_update_sleep_log_completion_unauthorized(client, auth_token):
     """Cập nhật trạng thái khi chưa đăng nhập"""
     response = client.get("/sleep/logs/today", headers={"Authorization": f"Bearer {auth_token}"})
@@ -107,3 +118,14 @@ def test_update_sleep_log_completion_unauthorized(client, auth_token):
     assert unauthorized_response.status_code == 401
     assert "Missing Authorization Header" in unauthorized_response.json["msg"]
 
+@pytest.mark.sleep
+@pytest.mark.order(25)
+def test_get_sleep_habit_not_found(client):
+    """Lấy thông tin Sleep Habit của người dùng có thói quen"""
+    response  = client.post("/auth/login", json=NO_HABIT_USER)
+    assert response.status_code == 200
+    nohabit_token = response.json["token"]
+    response = client.get("/sleep/habit", headers={"Authorization": f"Bearer {nohabit_token}"})
+    
+    assert response.status_code == 404
+    assert response.json["error"] == "Sleep habit not found"

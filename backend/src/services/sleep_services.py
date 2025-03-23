@@ -45,6 +45,23 @@ class SleepService:
         except Exception as e:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
+    def get_sleep_habit(self, user_id):
+        try:
+            response = self.client.table("sleep_habits").select("*") \
+                .eq("user_id", user_id) \
+                .execute()
+            if not response.data:
+                raise ServiceError("Sleep habit not found", 404)
+            return response.data[0]
+        except ServiceError:
+            raise
+        except Exception as e:
+            error_message = str(e).lower()
+            if "0 rows" in error_message:
+                raise ServiceError("Sleep habit not found", 404)
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
+
+
     def get_sleep_logs_today(self, user_id):
         today = datetime.now(timezone.utc).date()
         try:
@@ -55,7 +72,7 @@ class SleepService:
                 .execute()
 
             if not response.data:
-                raise ServiceError("Database server error", 500)
+                raise ServiceError("No sleep logs found for today", 404)
             return response.data
         except ServiceError:
             raise
@@ -77,7 +94,7 @@ class SleepService:
                 .execute()
 
             if not response.data:
-                raise ServiceError("Database server error", 500)
+                raise ServiceError("No sleep logs found for this week", 404)
             return response.data
         except ServiceError:
             raise
