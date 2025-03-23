@@ -86,5 +86,30 @@ class SleepService:
             if "0 rows" in error_message:
                 raise ServiceError("No sleep logs found for this week", 404)
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
+    
+    def update_sleep_log_completion(self, user_id, log_id):
+        try:
+            log_response = self.client.table("sleep_logs").select("id, user_id, completed") \
+                .eq("id", log_id) \
+                .eq("user_id", user_id) \
+                .execute()
+
+            if not log_response.data:
+                raise ServiceError("Sleep log not found or unauthorized", 404)
+
+            # Cập nhật trạng thái completed
+            updated_response = self.client.table("sleep_logs").update({"completed": True}) \
+                .eq("id", log_id) \
+                .execute()
+
+            if not updated_response.data:
+                raise ServiceError("Database server error", 500)
+
+            return updated_response.data[0]
+        except ServiceError:
+            raise
+        except Exception as e:
+            raise ServiceError(str(e) if DEBUG else "Database server error", 500)
+
 
 sleep_service = SleepService()

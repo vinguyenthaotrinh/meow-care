@@ -48,3 +48,20 @@ def get_week_sleep_logs():
         return jsonify({"error": e.message}), e.status_code
     except Exception as e:
         return jsonify({"error": str(e) if DEBUG else "Internal server error"}), 500
+
+@sleep_bp.route("/logs/<log_id>/complete", methods=["PUT"])
+@jwt_required()
+def update_sleep_log_completion(log_id):
+    """Cập nhật trạng thái hoàn thành của một Sleep hoặc Wakeup log"""
+    user_id = get_jwt_identity()
+
+    try:
+        updated_log = sleep_service.update_sleep_log_completion(user_id, log_id)
+        return jsonify(updated_log), 200
+    except ServiceError as e:
+        return jsonify({"error": e.message}), e.status_code
+    except ValidationError:
+        return jsonify({"error": "Invalid input data"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e) if DEBUG else "Internal server error"}), 500
+
