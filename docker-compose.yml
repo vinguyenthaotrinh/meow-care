@@ -5,7 +5,7 @@ services:
     image: vinguyenthaotrinh/meow-care:latest
     container_name: backend
     ports:
-      - "5000:5000"
+      - "${PUBLIC_PORT}:${PORT}"
     volumes:
       - ./backend:/app
     env_file:
