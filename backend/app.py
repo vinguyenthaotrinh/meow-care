@@ -15,4 +15,4 @@ app.register_blueprint(sleep_bp, url_prefix="/sleep")
 app.register_blueprint(hydrate_bp, url_prefix="/hydrate")
 
 if __name__ == "__main__":
-    app.run(debug=os.environ.get("DEBUG", False), port=os.environ.get("PORT", 5000))
+    app.run(debug=os.environ.get("DEBUG", False), host="0.0.0.0", port=os.environ.get("PORT", 5000))
