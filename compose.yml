@@ -1,0 +1,11 @@
+services:
+  backend:
+    # build: ./backend
+    image: vinguyenthaotrinh/meow-care:latest
+    container_name: backend
+    ports:
+      - "${PUBLIC_PORT}:${PORT}"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env

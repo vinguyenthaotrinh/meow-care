@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION generate_daily_sleep_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := CURRENT_DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
 BEGIN
     -- Xóa sleep logs cũ của hôm nay để tránh trùng lặp
     DELETE FROM sleep_logs WHERE DATE(scheduled_time) = today;
@@ -11,13 +11,13 @@ BEGIN
     SELECT
         user_id,
         'sleep',
-        today || ' ' || sleep_time
+        (today || ' ' || sleep_time)::timestamp
     FROM sleep_habits
     UNION ALL
     SELECT
         user_id,
         'wakeup',
-        today || ' ' || wakeup_time
+        (today || ' ' || wakeup_time)::timestamp
     FROM sleep_habits;
 END;
 $$ LANGUAGE plpgsql;
@@ -29,8 +29,8 @@ CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA public;
 -- (tương đương với 07:00 AM giờ Việt Nam)
 SELECT cron.schedule(
     'daily_sleep_log_job',  -- ID của job
-    '0 0 * * *',  -- Chạy vào 00:00 mỗi ngày
-    $$ CALL generate_daily_sleep_logs(); $$
+    '0 17 * * *',  -- Chạy lúc 17:00 UTC mỗi ngày (tương đương 00:00 UTC+7)
+    $$ SELECT generate_daily_sleep_logs(); $$
 );
 
 -- Xem danh sách các job đang chạy:

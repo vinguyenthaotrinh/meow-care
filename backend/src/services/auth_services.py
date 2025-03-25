@@ -37,7 +37,7 @@ class AuthService:
         try:
             response = self.client.table("users").select("*").eq("email", email).single().execute() # single trả về 1 dict thay vì list
             if not response.data:
-                raise ServiceError("bla bla Database server error", 500)
+                raise ServiceError("Database server error", 500)
             
             user_data = response.data       
             if not verify_password(password, user_data.get("password")):

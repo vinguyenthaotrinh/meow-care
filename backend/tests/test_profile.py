@@ -15,7 +15,7 @@ def auth_token(client):
     return response.json["token"]
 
 @pytest.mark.profile
-@pytest.mark.order(8)
+@pytest.mark.order(10)
 def test_get_profile_success(client, auth_token):
     """Lấy thông tin profile khi đăng nhập"""
     response = client.get("/profile", headers={"Authorization": f"Bearer {auth_token}"})
@@ -24,7 +24,7 @@ def test_get_profile_success(client, auth_token):
     assert "daily_calories" in response.json
 
 @pytest.mark.profile
-@pytest.mark.order(9)
+@pytest.mark.order(11)
 def test_get_profile_unauthorized(client):
     """Lấy profile khi chưa đăng nhập (thiếu token)"""
     response = client.get("/profile")
@@ -32,7 +32,7 @@ def test_get_profile_unauthorized(client):
     assert "Missing Authorization Header" in response.json["msg"]
 
 @pytest.mark.profile
-@pytest.mark.order(10)
+@pytest.mark.order(12)
 def test_update_profile_success(client, auth_token):
     """Cập nhật thông tin profile hợp lệ"""
     response = client.put("/profile", json=NEW_PROFILE, headers={"Authorization": f"Bearer {auth_token}"})
@@ -43,7 +43,7 @@ def test_update_profile_success(client, auth_token):
     assert response.json["weight"] == NEW_PROFILE["weight"]
 
 @pytest.mark.profile
-@pytest.mark.order(11)
+@pytest.mark.order(13)
 def test_update_profile_invalid_data(client, auth_token):
     """Cập nhật profile với dữ liệu không hợp lệ"""
     response = client.put("/profile", json=INVALID_PROFILE, headers={"Authorization": f"Bearer {auth_token}"})
@@ -51,7 +51,7 @@ def test_update_profile_invalid_data(client, auth_token):
     assert "error" in response.json
 
 @pytest.mark.profile
-@pytest.mark.order(12)
+@pytest.mark.order(14)
 def test_change_password_wrong_old_password(client, auth_token):
     """Đổi mật khẩu thất bại do nhập sai mật khẩu cũ"""
     response = client.put("/profile/change-password", json=WRONG_OLD_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
@@ -59,7 +59,7 @@ def test_change_password_wrong_old_password(client, auth_token):
     assert response.json["error"] == "Incorrect old password"
 
 @pytest.mark.profile
-@pytest.mark.order(13)
+@pytest.mark.order(15)
 def test_change_password_unauthorized(client):
     """Đổi mật khẩu khi chưa đăng nhập"""
     response = client.put("/profile/change-password", json=NEW_PASSWORD)
@@ -68,7 +68,7 @@ def test_change_password_unauthorized(client):
     
 
 @pytest.mark.profile
-@pytest.mark.order(14)
+@pytest.mark.order(16)
 def test_change_password_success(client, auth_token):
     """Đổi mật khẩu thành công"""
     response = client.put("/profile/change-password", json=NEW_PASSWORD, headers={"Authorization": f"Bearer {auth_token}"})
