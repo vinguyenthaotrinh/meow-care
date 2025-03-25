@@ -52,5 +52,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          cd backend
           docker build -t vinguyenthaotrinh/meow-care:latest .
           docker push vinguyenthaotrinh/meow-care:latest
