@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION generate_daily_hydrate_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := CURRENT_DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'UTC+7')::DATE;
 BEGIN
     -- Xóa hydrate logs cũ của hôm nay để tránh trùng lặp
     DELETE FROM hydrate_logs WHERE date = today;

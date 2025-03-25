@@ -27,7 +27,8 @@ class HydrateService:
                 raise ServiceError("Database server error", 500)
 
             # Xóa Hydrate Logs hôm nay (tránh trùng lặp)
-            today = datetime.now(timezone.utc).date()
+            # today của múi giờ utc+7
+            today = datetime.now(timezone(timedelta(hours=7))).date()
             self.client.table("hydrate_logs").delete().eq("user_id", user_id).eq("date", today).execute()
 
             # Tạo Hydrate Log hôm nay
@@ -64,7 +65,8 @@ class HydrateService:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
     def get_hydrate_logs_today(self, user_id):
-        today = datetime.now(timezone.utc).date()
+        # today của múi giờ utc+7
+        today = datetime.now(timezone(timedelta(hours=7))).date()
         try:
             response = self.client.table("hydrate_logs").select("*") \
                 .eq("user_id", user_id) \
@@ -83,7 +85,8 @@ class HydrateService:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
     def get_hydrate_logs_week(self, user_id):
-        today = datetime.now(timezone.utc).date()
+        # today của múi giờ utc+7
+        today = datetime.now(timezone(timedelta(hours=7))).date()
         monday = today - timedelta(days=today.weekday())  # Lấy thứ 2 của tuần này
         
         try:

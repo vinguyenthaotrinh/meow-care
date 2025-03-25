@@ -21,7 +21,8 @@ class SleepService:
                 raise ServiceError("Database server error", 500)
 
             # Xóa Sleep Logs hôm nay (tránh trùng lặp)
-            today = datetime.now(timezone.utc).date()
+            # today của múi giờ utc+7
+            today = datetime.now(timezone(timedelta(hours=7))).date()
             self.client.table("sleep_logs").delete().eq("user_id", user_id).gte("scheduled_time", today).execute()
 
             # Tạo Sleep Logs hôm nay
@@ -63,7 +64,8 @@ class SleepService:
 
 
     def get_sleep_logs_today(self, user_id):
-        today = datetime.now(timezone.utc).date()
+        # today của múi giờ utc+7
+        today = datetime.now(timezone(timedelta(hours=7))).date()
         try:
             response = self.client.table("sleep_logs").select("*") \
                 .eq("user_id", user_id) \
@@ -83,7 +85,8 @@ class SleepService:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
     def get_sleep_logs_week(self, user_id):
-        today = datetime.now(timezone.utc).date()
+        # today của múi giờ utc+7
+        today = datetime.now(timezone(timedelta(hours=7))).date()
         monday = today - timedelta(days=today.weekday())  # Lấy thứ 2 của tuần này
         
         try:
