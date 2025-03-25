@@ -2,17 +2,18 @@
 CREATE OR REPLACE FUNCTION generate_daily_hydrate_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'UTC+7')::DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
 BEGIN
     -- Xóa hydrate logs cũ của hôm nay để tránh trùng lặp
     DELETE FROM hydrate_logs WHERE date = today;
 
     -- Chèn hydrate logs mới từ hydrate_habits
-    INSERT INTO hydrate_logs (user_id, consumed_water, cup_size, date, completed)
+    INSERT INTO hydrate_logs (user_id, water_goal, cup_size, consumed_water, date, completed)
     SELECT
         user_id,
-        0,  -- Chưa uống nước nên consumed_water = 0
+        water_goal,
         cup_size,
+        0,  -- Chưa uống nước nên consumed_water = 0
         today,
         FALSE  -- Chưa hoàn thành
     FROM hydrate_habits;

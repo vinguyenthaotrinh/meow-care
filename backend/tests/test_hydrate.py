@@ -61,9 +61,7 @@ def test_update_hydrate_log_success(client, auth_token):
     response = client.get("/hydrate/logs/today", headers={"Authorization": f"Bearer {auth_token}"})
     assert response.status_code == 200
     logs = response.json
-    assert isinstance(logs, list) and len(logs) > 0  # Phải có ít nhất 1 log
-
-    # Chọn log_id hợp lệ
+    assert isinstance(logs, list) and len(logs) > 0  
     log_id = logs[0]["id"]
 
     # Cập nhật log

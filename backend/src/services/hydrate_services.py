@@ -34,9 +34,10 @@ class HydrateService:
             # Tạo Hydrate Log hôm nay
             hydrate_log = {
                 "user_id": user_id,
-                "consumed_water": 0,
+                "water_goal": water_goal,
                 "cup_size": cup_size,
-                "date": today,
+                "consumed_water": 0,
+                "date": today.isoformat(),
                 "completed": False
             }
             logs_response = self.client.table("hydrate_logs").insert([hydrate_log]).execute()

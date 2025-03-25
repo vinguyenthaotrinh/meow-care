@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION generate_daily_sleep_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'UTC+7')::DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
 BEGIN
     -- Xóa sleep logs cũ của hôm nay để tránh trùng lặp
     DELETE FROM sleep_logs WHERE DATE(scheduled_time) = today;
