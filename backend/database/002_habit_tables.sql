@@ -30,18 +30,18 @@ CREATE TABLE hydrate_logs (
 );
 
 CREATE TABLE diet_habits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    reminder_time TIME[],
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    calories_goal FLOAT NOT NULL,
+    reminder_time TIME[]
 );
 
 CREATE TABLE diet_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    habit_id UUID REFERENCES diet_habits(id) ON DELETE CASCADE,
-    date DATE NOT NULL,
+    calories_goal FLOAT NOT NULL,
+    dishes JSONB NOT NULL,
     consumed_calories FLOAT NOT NULL,
+    date DATE NOT NULL,
     completed BOOLEAN DEFAULT FALSE
 );
 
