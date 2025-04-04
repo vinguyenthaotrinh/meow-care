@@ -5,8 +5,9 @@
     --hydrate-progress-color: #89CFF0; /* Màu xanh dương nhạt cho nước */
     --diet-progress-color: #FDBA74; /* Màu cam nhạt cho diet */
     --sleep-completed-color: #C3B1E1; /* Màu tím pastel khi hoàn thành sleep */
-    --icon-background-default: #f0f0f0; /* Màu nền mặc định nhẹ nhàng hơn */
-    --icon-border-color: var(--color-border); /* Viền icon */
+    --wakeup-completed-color: #fafa8a; /* Vàng pastel (Mới) */
+    --icon-background-default: #ffffff; /* Màu nền mặc định nhẹ nhàng hơn */
+    --icon-border-color: var(--color-border) /* Viền icon */
 }
 
 
@@ -132,9 +133,14 @@
     transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu nền */
 }
 
-.iconCircle.sleepWake.completed {
-    background-color: var(--sleep-completed-color); /* Màu nền khi sleep/wake hoàn thành */
-    border-color: transparent; /* Bỏ viền khi hoàn thành */
+.iconCircle.wakeup.completed {
+    background-color: var(--wakeup-completed-color); /* Màu vàng khi Wake Up hoàn thành */
+    /* border-color: transparent; */
+}
+
+.iconCircle.sleep.completed {
+    background-color: var(--sleep-completed-color); /* Màu tím khi Sleep hoàn thành */
+    /* border-color: transparent; */
 }
 
 .iconSymbol {

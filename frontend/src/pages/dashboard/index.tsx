@@ -226,17 +226,20 @@ const DashboardHomePage = () => {
           const goal = type === 'hydrate' ? item.water_goal : item.calories_goal;
           const percentage = calculatePercentage(consumed, goal);
           const progressColor = type === 'hydrate' ? 'var(--hydrate-progress-color)' : 'var(--diet-progress-color)';
-          return {
-              background: `conic-gradient(${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)`
-          };
+        //   return {
+        //       background: `conic-gradient(${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)`
+        //   };
+        return {
+            background: `linear-gradient(to top, ${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)`
+        };
       };
 
       return (
           <div className={styles.habitIconsList}>
               {/* Wake Up */}
               <div className={`${styles.habitIconWrapper} ${wakeUpLog?.completed ? styles.completed : ''}`}>
-                   <div className={`${styles.iconCircle} ${styles.sleepWake} ${wakeUpLog?.completed ? styles.completed : ''}`}>
-                      <span className={styles.iconSymbol}>☀️</span>
+                   <div className={`${styles.iconCircle} ${styles.wakeup} ${wakeUpLog?.completed ? styles.completed : ''}`}>
+                      <span className={styles.iconSymbol}>🔆</span>
                    </div>
                   <span className={styles.habitText}>
                        Wake Up<br/>
@@ -249,7 +252,7 @@ const DashboardHomePage = () => {
 
                {/* Sleep */}
               <div className={`${styles.habitIconWrapper} ${sleepLog?.completed ? styles.completed : ''}`}>
-                   <div className={`${styles.iconCircle} ${styles.sleepWake} ${sleepLog?.completed ? styles.completed : ''}`}>
+                   <div className={`${styles.iconCircle} ${styles.sleep} ${sleepLog?.completed ? styles.completed : ''}`}>
                       <span className={styles.iconSymbol}>🌙</span>
                    </div>
                    <span className={styles.habitText}>
@@ -264,7 +267,7 @@ const DashboardHomePage = () => {
               {/* Hydrate */}
               <div className={`${styles.habitIconWrapper} ${todayHydrateLog?.completed ? styles.completed : ''}`}>
                   <div className={styles.iconCircle} style={getIconBackgroundStyle(todayHydrateLog, 'hydrate')}>
-                       <span className={styles.iconSymbol}>💧</span>
+                       <span className={styles.iconSymbol}>🥛</span>
                   </div>
                    <span className={styles.habitText}>
                        Hydrate<br/>
@@ -388,14 +391,13 @@ const DashboardHomePage = () => {
 
           {/* Habit Icons/Progress */}
            <div className={styles.habitIconsContainer}>
-                <h2 className={styles.sectionTitle} style={{ width: '100%', marginBottom: '0' }}>Today's Habits</h2>
                 {isLoading ? <LoadingSpinner /> : renderHabitIcons()}
            </div>
 
 
           {/* Cat Image */}
           <div className={styles.catContainer}>
-             <h2 className={styles.sectionTitle} style={{ marginBottom: '0.5rem' }}>Your Companion</h2>
+             {/* <h2 className={styles.sectionTitle} style={{ marginBottom: '0.5rem' }}>Your Companion</h2> */}
             <Image
               src={catImageSrc}
               alt="User's companion cat"
