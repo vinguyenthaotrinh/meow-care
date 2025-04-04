@@ -1,10 +1,11 @@
 from flask import Flask
 from src.routes import auth_bp, profile_bp, sleep_bp, hydrate_bp, health_bp, diet_bp
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-
+CORS(app) # Enable CORS for all routes
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 jwt = JWTManager(app)
 
