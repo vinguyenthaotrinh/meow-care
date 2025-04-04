@@ -27,10 +27,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ formType, onSubmit, isLoading, erro
 
   const isLogin = formType === 'login';
   // --- Thay đổi tiếng Việt sang tiếng Anh ---
-  const pageTitle = isLogin ? 'Login' : 'Register';
-  const submitButtonText = isLogin ? 'Login' : 'Create Account';
+  const pageTitle = isLogin ? 'Log in to your account' : 'Register a new account';
+  const submitButtonText = isLogin ? 'Log in' : 'Create account';
   const switchLinkHref = isLogin ? '/register' : '/login';
-  const switchLinkText = isLogin ? "Don't have an account? Sign up" : 'Already have an account? Login';
+  const switchLinkText = isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in';
   // -----------------------------------------
 
   return (

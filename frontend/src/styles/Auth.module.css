@@ -1,7 +1,7 @@
 /* src/styles/Auth.module.css */
 .authContainer {
     width: 100%;
-    max-width: 400px; /* Giới hạn chiều rộng form */
+    max-width: 500px; /* Giới hạn chiều rộng form */
     padding: 2.5rem;
     background-color: var(--background-alt); /* Nền hơi xám */
     border-radius: var(--border-radius);
