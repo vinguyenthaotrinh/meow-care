@@ -1,0 +1,75 @@
+/* src/styles/Navbar.module.css */
+.navbar {
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    position: sticky; /* Giữ navbar ở trên cùng khi cuộn */
+    top: 0;
+    z-index: 10; /* Đảm bảo navbar nổi lên trên */
+  }
+  
+  .navContainer {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem; /* Khoảng cách giữa các mục nav */
+  }
+  
+  .navItem {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  .navItem::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; /* Đặt gạch chân ngay dưới text */
+    left: 0;
+    width: 100%;
+    height: 2px; /* Độ dày gạch chân */
+    background-color: var(--color-pastel-purple); /* Màu gạch chân */
+    transform: scaleX(0); /* Ban đầu ẩn đi */
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .navItem:hover {
+    color: var(--text-primary);
+  }
+  
+  .navItem.active {
+    color: var(--color-pastel-purple); /* Màu chữ khi active */
+    font-weight: 600;
+  }
+  
+  .navItem.active::after {
+    transform: scaleX(1); /* Hiện gạch chân khi active */
+  }
+  
+  .userActions {
+    /* Để trống hoặc thêm style nếu bạn có nút logout/avatar ở đây */
+    /* Nếu có userActions, bạn cần quay lại dùng justify-content: space-between trên .navbar
+       và bật flex-grow: 1; trên .navContainer */
+    min-width: 50px; /* Đặt chiều rộng tối thiểu để giữ cân bằng nếu dùng space-between */
+  }
+  
+  /* Responsive design (ví dụ) */
+  @media (max-width: 768px) {
+    .navbar {
+      padding: 1rem;
+    }
+    .navContainer {
+        gap: 1.5rem;
+    }
+    .navItem {
+        font-size: 0.9rem;
+    }
+  }

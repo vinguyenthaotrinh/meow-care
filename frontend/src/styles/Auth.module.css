@@ -1,0 +1,90 @@
+/* src/styles/Auth.module.css */
+.authContainer {
+    width: 100%;
+    max-width: 500px; /* Giới hạn chiều rộng form */
+    padding: 2.5rem;
+    background-color: var(--background-alt); /* Nền hơi xám */
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border);
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-pastel-purple); /* Màu tiêu đề */
+    font-weight: 700;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Khoảng cách giữa các input group */
+  }
+  
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Khoảng cách giữa label và input */
+  }
+  
+  .label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  
+  .input {
+    /* Styles cơ bản đã có trong globals.css */
+    /* Thêm style riêng nếu cần */
+    background-color: var(--color-white);
+  }
+  
+  .input:focus {
+     outline: none;
+     border-color: var(--color-pastel-purple);
+     box-shadow: 0 0 0 2px rgba(195, 177, 225, 0.3); /* Hiệu ứng focus nhẹ */
+  }
+  
+  
+  .submitButton {
+     /* Styles cơ bản đã có trong globals.css */
+     margin-top: 0.5rem; /* Thêm khoảng cách phía trên nút */
+     padding: 0.8rem 1rem;
+     background-color: var(--color-pastel-purple); /* Màu nút chính */
+     color: var(--text-on-primary-button);
+     font-size: 1.05rem;
+  }
+  
+  .submitButton:hover {
+     background-color: #ae9acb; /* Màu tím đậm hơn chút khi hover */
+  }
+  
+  
+  .errorMessage {
+    color: var(--color-error);
+    background-color: rgba(229, 62, 62, 0.1);
+    border: 1px solid rgba(229, 62, 62, 0.2);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: -0.5rem; /* Dịch lên chút cho gần form hơn */
+    margin-bottom: 0.5rem;
+  }
+  
+  .switchLink {
+     margin-top: 1.5rem;
+     text-align: center;
+     font-size: 0.9rem;
+  }
+  
+  .switchLink a {
+      color: var(--color-pastel-purple);
+      font-weight: 500;
+      text-decoration: none;
+  }
+  
+   .switchLink a:hover {
+      text-decoration: underline;
+   }

@@ -15,6 +15,7 @@ class HydrateHabitResponse(HydrateHabitBase):
 
 class HydrateLogBase(BaseModel):
     user_id: str  # uuid.UUID
+    water_goal: float  # Lượng nước mục tiêu (ml)
     consumed_water: float  # Lượng nước đã uống (ml)
     cup_size: float  # Dung tích cốc nước (ml)
     date: date  # Ngày uống nước
