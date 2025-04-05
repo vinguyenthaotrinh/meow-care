@@ -10,6 +10,7 @@
     position: sticky; /* Giữ navbar ở trên cùng khi cuộn */
     top: 0;
     z-index: 10; /* Đảm bảo navbar nổi lên trên */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   }
   
   .navContainer {

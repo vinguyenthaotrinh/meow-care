@@ -37,6 +37,20 @@
     color: var(--text-secondary);
 }
 
+/* Thêm class mới cho spinner full page */
+.fullPageSpinnerContainer {
+    position: fixed; /* Để spinner luôn ở giữa viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7); /* Nền trắng mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Đảm bảo spinner ở trên cùng */
+}
+
 .spinner {
   border: 4px solid rgba(195, 177, 225, 0.2);
   border-left-color: var(--color-pastel-purple);
@@ -202,7 +216,6 @@
     opacity: 0.6;
     pointer-events: none; /* Không cho click khi đang load */
 }
-
 
 .todoContent {
     flex-grow: 1;
