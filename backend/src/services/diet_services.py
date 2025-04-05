@@ -107,8 +107,13 @@ class DietService:
                 raise ServiceError("Diet log not found", 404)
 
             log = log_response.data[0]
-            new_dishes = log["dishes"] + [data]
-            new_consumed = log["consumed_calories"] + data.get("calories", 0)
+            # new_dishes = log["dishes"] + [data]
+            new_dishes_to_add = data.get("dishes", []) # Lấy danh sách món ăn từ data, mặc định là list rỗng nếu không có
+            current_dishes = log["dishes"] if log["dishes"] else [] # Đảm bảo log["dishes"] là list, xử lý trường hợp có thể là None/rỗng
+            new_dishes = current_dishes + new_dishes_to_add # Mở rộng danh sách món ăn hiện tại với món ăn mới
+            
+            # new_consumed = log["consumed_calories"] + data.get("calories", 0)
+            new_consumed = sum(dish.get("calories", 0) for dish in new_dishes) # Tính tổng calories từ tất cả dishes trong new_dishes
             completed = new_consumed >= log["calories_goal"]
 
             updated_response = self.client.table("diet_logs").update({
