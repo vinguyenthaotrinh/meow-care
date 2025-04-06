@@ -1,9 +1,9 @@
 // src/components/dashboard/TodoList.tsx
-import React, { useState } from 'react'; // Import useState
+import React, { useState } from 'react';
 import { TodoItem, SleepLog, HydrateLog, DietLog } from '../../types/habit.types';
 import LoadingSpinner from '../common/LoadingSpinner';
 import styles from '../../styles/Dashboard.module.css';
-import DietUpdateModal from './DietUpdateModal'; // Import DietUpdateModal
+import DietUpdateModal from './DietUpdateModal';
 
 interface TodoListProps {
     todos: TodoItem[];
@@ -12,26 +12,26 @@ interface TodoListProps {
     setError: React.Dispatch<React.SetStateAction<string | null>>;
     handleCompleteSleep: (logId: string) => Promise<void>;
     handleUpdateHydrate: (logId: string) => Promise<void>;
-    handleUpdateDiet: (logId: string) => Promise<void>;
+    handleUpdateDiet: (logId: string) => Promise<void>; // Prop name updated in parent
     formatTime: (timeString: string | null | undefined) => string;
     formatAmount: (amount: number | null | undefined, unit: string) => string;
-    updateTodoInState: (updatedItem: TodoItem) => void; // Thêm prop để update todo state
+    updateTodoInState: (updatedItem: TodoItem) => void;
 }
 
 
 const TodoList: React.FC<TodoListProps> = ({
     todos,
     isUpdating,
-    setItemLoading,
-    setError,
+    setItemLoading, // Keep setItemLoading if needed for other loading states
+    setError, // Keep setError if needed elsewhere
     handleCompleteSleep,
     handleUpdateHydrate,
-    handleUpdateDiet: handleUpdateDietProp, // Đổi tên prop để tránh trùng với hàm local
+    handleUpdateDiet: handleUpdateDietProp, // Keep renamed prop
     formatTime,
     formatAmount,
-    updateTodoInState, // Nhận hàm updateTodoInState
+    updateTodoInState,
 }) => {
-    const [dietModalOpen, setDietModalOpen] = useState<string | null>(null); // State để quản lý modal
+    const [dietModalOpen, setDietModalOpen] = useState<string | null>(null);
 
     const handleOpenDietModal = (logId: string) => {
         setDietModalOpen(logId);
@@ -42,8 +42,8 @@ const TodoList: React.FC<TodoListProps> = ({
     };
 
     const handleFoodAdded = (updatedLog: DietLog) => {
-        updateTodoInState({ ...updatedLog, type: 'diet' }); // Cập nhật state todos ở component cha
-        handleCloseDietModal(); // Đóng modal sau khi thêm thành công
+        updateTodoInState({ ...updatedLog, type: 'diet' });
+        handleCloseDietModal();
     };
 
 
@@ -83,9 +83,17 @@ const TodoList: React.FC<TodoListProps> = ({
                         </div>
                         <div className={styles.todoActions}>
                             {itemIsLoading ? <LoadingSpinner /> : item.completed ? (
-                                <span className={styles.checkIcon}>✓</span>
+                                // *** MODIFICATION START ***
+                                // Replace the check icon span with a disabled button
+                                <button
+                                    className={styles.completedButton} // Use a specific class for styling
+                                    disabled // Always disabled
+                                >
+                                    Completed
+                                </button>
+                                // *** MODIFICATION END ***
                             ) : (
-                                // Show button based on type
+                                // Show active button based on type
                                 item.type === 'sleep' ? (
                                     <button onClick={() => handleCompleteSleep(item.id)} disabled={itemIsLoading}>Complete</button>
                                 ) : item.type === 'hydrate' ? (
@@ -99,6 +107,7 @@ const TodoList: React.FC<TodoListProps> = ({
                                 ) : null
                             )}
                         </div>
+                        {/* Diet Modal Rendering (keep as is) */}
                         {item.type === 'diet' && dietModalOpen === item.id && (
                             <DietUpdateModal
                                 logId={item.id}
@@ -110,7 +119,6 @@ const TodoList: React.FC<TodoListProps> = ({
                     </div>
                 )
             })}
-            {/* Error handling is moved to parent component for better control and placement */}
         </div>
     );
 };

@@ -2,14 +2,14 @@
 import React, { useState, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
 import { DietLog } from '../../types/habit.types';
-import styles from '../../styles/Dashboard.module.css';
+import styles from '../../styles/Dashboard.module.css'; // Sử dụng cùng file CSS
 import LoadingSpinner from '../common/LoadingSpinner';
 
 interface DietUpdateModalProps {
     logId: string;
     isOpen: boolean;
     onClose: () => void;
-    onFoodAdded: (updatedLog: DietLog) => void; // Callback khi thêm món ăn thành công
+    onFoodAdded: (updatedLog: DietLog) => void;
 }
 
 const DietUpdateModal: React.FC<DietUpdateModalProps> = ({ logId, isOpen, onClose, onFoodAdded }) => {
@@ -18,55 +18,85 @@ const DietUpdateModal: React.FC<DietUpdateModalProps> = ({ logId, isOpen, onClos
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    // Reset state when modal opens/closes or logId changes
+    React.useEffect(() => {
+        if (isOpen) {
+            setFoodName('');
+            setCalories('');
+            setError(null);
+            setIsLoading(false);
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         setError(null);
-        setIsLoading(true);
 
-        // Correct foodData structure to match backend expectation
-        const foodData = {
-            name: foodName, // Use "name" instead of "dish_name"
-            calories: parseFloat(calories),
-        };
-
-        if (!foodName.trim() || isNaN(foodData.calories) || foodData.calories <= 0) {
-            setError("Please enter a valid food name and calorie amount.");
-            setIsLoading(false);
-            return;
+        const parsedCalories = parseFloat(calories);
+        if (!foodName.trim() || isNaN(parsedCalories) || parsedCalories <= 0) {
+            setError("Please enter a valid food name and positive calorie amount.");
+            return; // Don't set loading if validation fails client-side
         }
+
+        setIsLoading(true); // Set loading only after validation passes
+
+        // Backend expects a list of dishes within a 'dishes' key
+        const foodData = {
+            dishes: [
+                {
+                    name: foodName,
+                    calories: parsedCalories,
+                }
+            ]
+        };
 
         try {
             const response = await fetchApi<DietLog>(`/diet/logs/${logId}/update`, {
                 method: 'PUT',
                 isProtected: true,
-                body: { dishes: [foodData] } // Correct body structure - send a list of dishes under "dishes" key
+                body: foodData
             });
 
-            setIsLoading(false);
-
             if (response.data) {
-                onFoodAdded(response.data); // Gọi callback để cập nhật UI ở component cha
-                onClose(); // Đóng modal
-            } else if (response.error) {
-                setError(response.error);
+                onFoodAdded(response.data);
+                onClose();
             } else {
-                setError("Failed to add food. Unexpected error.");
+                // Keep modal open and show error
+                setError(response.error || "Failed to add food. Unexpected error.");
             }
         } catch (e) {
             console.error("Error updating diet log:", e);
-            setError("Failed to add food. Network error.");
-            setIsLoading(false);
+            setError("Failed to add food. Network error or server issue.");
+        } finally {
+             // Always set loading false after API call finishes (success or error)
+             setIsLoading(false);
         }
     };
 
     return (
+        // Use the existing overlay style
         <div className={styles.dietModalOverlay}>
+            {/* Modal container */}
             <div className={styles.dietModal}>
+                 {/* --- Loading Spinner Overlay (NEW) --- */}
+                 {/* This overlay will appear on top of the form when loading */}
+                 {isLoading && (
+                    <div className={styles.modalLoadingOverlay}>
+                        <LoadingSpinner />
+                    </div>
+                 )}
+
+                 {/* Modal Header */}
                 <h3 className={styles.modalTitle}>What did you just eat?</h3>
+
+                 {/* Form starts here */}
                 <form onSubmit={handleSubmit} className={styles.dietForm}>
+                    {/* Error Message */}
                     {error && <p className={styles.modalError}>{error}</p>}
+
+                    {/* Input Fields */}
                     <div className={styles.formGroup}>
                         <label htmlFor="foodName" className={styles.formLabel}>Food name:</label>
                         <input
@@ -76,7 +106,7 @@ const DietUpdateModal: React.FC<DietUpdateModalProps> = ({ logId, isOpen, onClos
                             value={foodName}
                             onChange={(e) => setFoodName(e.target.value)}
                             placeholder="e.g., Apple, Salad"
-                            disabled={isLoading}
+                            disabled={isLoading} // Disable input while loading
                             required
                         />
                     </div>
@@ -89,15 +119,31 @@ const DietUpdateModal: React.FC<DietUpdateModalProps> = ({ logId, isOpen, onClos
                             value={calories}
                             onChange={(e) => setCalories(e.target.value)}
                             placeholder="e.g., 95, 350"
-                            disabled={isLoading}
+                            min="1" // Prevent negative/zero calories via HTML5 validation
+                            step="any" // Allow decimals if needed
+                            disabled={isLoading} // Disable input while loading
                             required
                         />
                     </div>
+
+                    {/* Action Buttons */}
                     <div className={styles.modalActions}>
-                        <button type="submit" className={styles.modalButton} disabled={isLoading}>
-                            {isLoading ? <><LoadingSpinner inline={true} /> Adding...</> : 'Add'}
+                         {/* Add Button - No spinner inside, new class added */}
+                        <button
+                            type="submit"
+                            // Apply base button style AND the new yellow style
+                            className={`${styles.modalButton} ${styles.modalButtonPrimaryYellow}`}
+                            disabled={isLoading} // Disable button while loading
+                        >
+                            Add
                         </button>
-                        <button type="button" className={styles.modalButtonSecondary} onClick={onClose} disabled={isLoading}>
+                        {/* Cancel Button */}
+                        <button
+                            type="button"
+                            className={styles.modalButtonSecondary}
+                            onClick={onClose}
+                            disabled={isLoading} // Disable button while loading
+                        >
                             Cancel
                         </button>
                     </div>
