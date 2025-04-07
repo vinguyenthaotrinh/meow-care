@@ -1,0 +1,248 @@
+/* src/styles/Settings.module.css */
+
+.settingsContainer {
+  display: flex;
+  gap: 2rem; /* Khoảng cách giữa sidebar và content */
+  padding: 1rem 0; /* Padding trên dưới cho toàn bộ container */
+}
+
+/* --- Sidebar --- */
+.settingsSidebar {
+  flex-shrink: 0; /* Không co lại */
+  width: 220px; /* Chiều rộng cố định cho sidebar */
+  background-color: var(--background-alt);
+  padding: 1.5rem 0; /* Padding trên dưới, không padding trái phải */
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  height: fit-content; /* Chiều cao vừa đủ nội dung */
+  position: sticky; /* --- Make sidebar sticky --- */
+  top: calc(
+    1rem + 65px
+  ); /* Khoảng cách từ top = padding + chiều cao navbar (ước lượng) */
+}
+
+.settingsSidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.settingsSidebar li {
+  padding: 0.8rem 1.5rem; /* Padding cho các mục */
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-left: 4px solid transparent; /* Viền trái để highlight active */
+}
+
+.settingsSidebar li:hover {
+  background-color: #eee; /* Màu nền nhạt khi hover */
+  color: var(--text-primary);
+}
+
+.settingsSidebar li.active {
+  background-color: rgba(195, 177, 225, 0.1); /* Nền tím rất nhạt */
+  color: var(--color-pastel-purple);
+  font-weight: 600;
+  border-left-color: var(--color-pastel-purple); /* Viền tím */
+}
+
+/* --- Content Area --- */
+.settingsContent {
+  flex-grow: 1; /* Chiếm hết không gian còn lại */
+  background-color: var(--color-white); /* Nền trắng cho content */
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  min-height: 500px; /* Chiều cao tối thiểu để sidebar sticky hợp lý */
+}
+
+.settingsSection {
+  /* Style chung cho mỗi khu vực (Personal, Habits) */
+}
+
+.sectionTitle {
+  font-size: 1.6rem; /* Tiêu đề lớn hơn */
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--color-pastel-purple);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border); /* Gạch chân dưới tiêu đề */
+}
+
+.sectionDescription {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  margin-top: -1rem; /* Kéo lên gần title hơn */
+  max-width: 600px; /* Giới hạn chiều rộng mô tả */
+}
+
+/* --- Forms within Settings --- */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(250px, 1fr)
+  ); /* Grid linh hoạt */
+  gap: 1.5rem; /* Khoảng cách giữa các ô */
+  margin-bottom: 1.5rem;
+}
+
+.subForm {
+  margin-bottom: 2.5rem; /* Khoảng cách giữa các form (Sleep, Hydrate, Diet) */
+}
+
+.subFormTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.formInput,
+select.formInput {
+  /* Style cả select giống input */
+  /* Kế thừa style từ globals.css hoặc Dashboard.module.css */
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  width: 100%; /* Đảm bảo input chiếm đủ chiều rộng grid cell */
+  background-color: var(--color-white);
+}
+.formInput:focus,
+select.formInput:focus {
+  outline: none;
+  border-color: var(--color-pastel-purple);
+  box-shadow: 0 0 0 2px rgba(195, 177, 225, 0.3);
+}
+.formInput:disabled,
+select.formInput:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+.formInputReadOnly {
+  /* Style riêng cho input chỉ đọc */
+  composes: formInput; /* Kế thừa style từ formInput */
+  background-color: #f8f9fa; /* Nền hơi khác */
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.formActions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-start; /* Căn nút Save về bên trái */
+}
+
+.formButton {
+  /* Kế thừa style button chung */
+  padding: 0.7rem 1.8rem; /* Padding lớn hơn chút */
+  font-size: 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+.formButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formButtonPrimary {
+  background-color: var(--color-pastel-purple);
+  color: var(--text-on-primary-button);
+  transition: background-color 0.2s ease;
+}
+.formButtonPrimary:hover:not(:disabled) {
+  background-color: #ae9acb; /* Tím đậm hơn khi hover */
+  opacity: 1;
+}
+
+/* --- Error/Success Messages --- */
+.formError,
+.formSuccess {
+  padding: 0.8rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  margin-bottom: 1rem; /* Khoảng cách dưới thông báo */
+  text-align: left;
+}
+.formError {
+  color: var(--color-error);
+  background-color: rgba(229, 62, 62, 0.1);
+  border: 1px solid rgba(229, 62, 62, 0.2);
+}
+.formSuccess {
+  color: #155724; /* Dark green */
+  background-color: #d4edda; /* Light green */
+  border: 1px solid #c3e6cb; /* Green border */
+}
+
+/* --- Divider --- */
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2.5rem 0; /* Khoảng cách trên dưới */
+}
+
+/* --- Loading --- */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; /* Chiều cao tối thiểu khi đang load */
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .settingsContainer {
+    flex-direction: column; /* Stack sidebar và content trên mobile */
+    gap: 1rem;
+  }
+  .settingsSidebar {
+    width: 100%; /* Sidebar chiếm toàn bộ chiều rộng */
+    position: static; /* Bỏ sticky trên mobile */
+    display: flex; /* Hiển thị các mục ngang */
+    justify-content: space-around; /* Căn đều các mục */
+    padding: 0.5rem 0;
+    overflow-x: auto; /* Cho phép cuộn ngang nếu không đủ chỗ */
+  }
+  .settingsSidebar ul {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .settingsSidebar li {
+    border-left: none; /* Bỏ viền trái */
+    border-bottom: 4px solid transparent; /* Chuyển viền highlight xuống dưới */
+    padding: 0.8rem 1rem; /* Điều chỉnh padding */
+    text-align: center;
+    flex-grow: 1; /* Chia đều không gian */
+  }
+  .settingsSidebar li.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--color-pastel-purple); /* Viền highlight dưới */
+  }
+
+  .settingsContent {
+    padding: 1.5rem;
+  }
+  .formGrid {
+    grid-template-columns: 1fr; /* 1 cột trên mobile */
+  }
+}

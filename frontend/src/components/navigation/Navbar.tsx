@@ -5,20 +5,32 @@ import styles from '../../styles/Navbar.module.css';
 
 const navItems = [
   { name: 'Home', path: '/dashboard' },
-  { name: 'Habits', path: '/dashboard/habits' },
-  { name: 'Focus', path: '/dashboard/focus' },
-  { name: 'Profile', path: '/dashboard/profile' },
+  { name: 'Habits', path: '/dashboard/habits' }, // Sẽ làm sau
+  { name: 'Focus', path: '/dashboard/focus' },   // Sẽ làm sau
+  { name: 'Profile', path: '/dashboard/profile' }, // Có thể gộp vào Settings hoặc để riêng
+  { name: 'Settings', path: '/dashboard/settings' }, // <-- Thêm mới
 ];
 
 const Navbar = () => {
   const router = useRouter();
 
+  // --- Logout Handler ---
+  const handleLogout = () => {
+    // Xóa token khỏi localStorage
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('authToken');
+    }
+    // Điều hướng về trang login
+    router.push('/login');
+    // Có thể hiển thị thông báo logout thành công nếu muốn
+    console.log("User logged out");
+  };
+
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
         {navItems.map((item) => {
-          // Kiểm tra active dựa trên path bắt đầu bằng path của item
-          // Ví dụ: /dashboard/habits cũng sẽ làm active item 'Habits'
           const isActive = router.pathname === item.path || (item.path !== '/dashboard' && router.pathname.startsWith(item.path));
 
           return (
@@ -30,9 +42,10 @@ const Navbar = () => {
           );
         })}
       </div>
-       {/* Có thể thêm phần User Avatar/Logout ở đây */}
+       {/* --- User Actions (Add Logout Button) --- */}
        <div className={styles.userActions}>
-           {/* <button onClick={handleLogout}>Logout</button> */}
+           {/* Bạn có thể đặt nút Logout ở đây hoặc trong SettingsSidebar */}
+           <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
        </div>
     </nav>
   );
