@@ -3,7 +3,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
 import { SleepHabit, HydrateHabit, DietHabit } from '../../types/habit.types';
 import styles from '../../styles/Settings.module.css';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const HabitSettings = () => {
     // State for each habit type
@@ -127,104 +127,109 @@ const HabitSettings = () => {
     };
 
 
+    // if (isLoading) {
+    //     return <div className={styles.loadingContainer}><LoadingSpinner /></div>;
+    // }
+    //  if (errors.general) {
+    //      return <p className={styles.formError}>{errors.general}</p>;
+    //  }
+
     if (isLoading) {
-        return <div className={styles.loadingContainer}><LoadingSpinner /></div>;
+        // Render cấu trúc cơ bản để giữ layout
+        return (
+            <div className={styles.settingsSection}>
+                {/* Có thể thêm title placeholder nếu muốn */}
+                {/* <h3 className={styles.sectionTitle}>Habit Settings</h3> */}
+                <div className={styles.loadingContainer}>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
     }
-     if (errors.general) {
-         return <p className={styles.formError}>{errors.general}</p>;
-     }
+
+
+    if (errors.general) {
+        // Render cấu trúc cơ bản và hiển thị lỗi
+        return (
+           <div className={styles.settingsSection}>
+                 <h3 className={styles.sectionTitle}>Habit Settings</h3>
+                 <p className={styles.formError}>{errors.general}</p>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.settingsSection}>
-            <h3 className={styles.sectionTitle}>Habit Settings</h3>
-            <p className={styles.sectionDescription}>Set your daily goals. Saving will reset today's progress for that habit.</p>
+            {/* Overlay được hiển thị bởi component cha nếu isLoading */}
+            {/* Nội dung chỉ render khi không loading */}
+            {!isLoading && !errors.general && (
+                <>
+                    <h3 className={styles.sectionTitle}>Habit Settings</h3>
+                    <p className={styles.sectionDescription}>Set your daily goals. Saving will reset today's progress for that habit.</p>
 
-            {/* --- Sleep Form --- */}
-            <form onSubmit={(e) => handleSaveHabit(e, 'sleep')} className={styles.subForm}>
-                <h4 className={styles.subFormTitle}>Sleep</h4>
-                {errors.sleep && <p className={styles.formError}>{errors.sleep}</p>}
-                {successMessages.sleep && <p className={styles.formSuccess}>{successMessages.sleep}</p>}
-                <div className={styles.formGroup}>
-                    <label htmlFor="sleep_time">Target Sleep Time:</label>
-                    <input
-                        type="time" id="sleep_time" name="sleep_time"
-                        value={sleepData.sleep_time || ''}
-                        onChange={(e) => handleInputChange(e, 'sleep')}
-                        disabled={isSaving.sleep} required className={styles.formInput}
-                    />
-                </div>
-                 <div className={styles.formGroup}>
-                    <label htmlFor="wakeup_time">Target Wake Up Time:</label>
-                    <input
-                        type="time" id="wakeup_time" name="wakeup_time"
-                        value={sleepData.wakeup_time || ''}
-                        onChange={(e) => handleInputChange(e, 'sleep')}
-                        disabled={isSaving.sleep} required className={styles.formInput}
-                    />
-                </div>
-                <div className={styles.formActions}>
-                    <button type="submit" disabled={isSaving.sleep} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                        {isSaving.sleep ? <LoadingSpinner inline={true}/> : 'Save Sleep Habit'}
-                    </button>
-                </div>
-            </form>
+                    {/* --- Sleep Form --- */}
+                    <form onSubmit={(e) => handleSaveHabit(e, 'sleep')} className={styles.subForm}>
+                         <h4 className={styles.subFormTitle}>Sleep</h4>
+                         {errors.sleep && <p className={styles.formError}>{errors.sleep}</p>}
+                         {successMessages.sleep && <p className={styles.formSuccess}>{successMessages.sleep}</p>}
+                        <div className={styles.formGroup}>
+                             <label htmlFor="sleep_time">Target Sleep Time:</label>
+                             <input type="time" id="sleep_time" name="sleep_time" value={sleepData.sleep_time || ''} onChange={(e) => handleInputChange(e, 'sleep')} disabled={isSaving.sleep} required className={styles.formInput} />
+                        </div>
+                        <div className={styles.formGroup}>
+                             <label htmlFor="wakeup_time">Target Wake Up Time:</label>
+                             <input type="time" id="wakeup_time" name="wakeup_time" value={sleepData.wakeup_time || ''} onChange={(e) => handleInputChange(e, 'sleep')} disabled={isSaving.sleep} required className={styles.formInput} />
+                        </div>
+                        <div className={styles.formActions}>
+                            <button type="submit" disabled={isSaving.sleep} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
+                                {isSaving.sleep ? <LoadingSpinner inline={true}/> : 'Save Sleep Habit'}
+                            </button>
+                        </div>
+                    </form>
+                     <hr className={styles.divider} />
 
-            <hr className={styles.divider} />
+                    {/* --- Hydrate Form --- */}
+                    <form onSubmit={(e) => handleSaveHabit(e, 'hydrate')} className={styles.subForm}>
+                         <h4 className={styles.subFormTitle}>Hydration</h4>
+                         {errors.hydrate && <p className={styles.formError}>{errors.hydrate}</p>}
+                         {successMessages.hydrate && <p className={styles.formSuccess}>{successMessages.hydrate}</p>}
+                        <div className={styles.formGroup}>
+                             <label htmlFor="water_goal">Daily Water Goal (ml):</label>
+                             <input type="number" id="water_goal" name="water_goal" min="1" step="50" value={hydrateData.water_goal || ''} onChange={(e) => handleInputChange(e, 'hydrate')} disabled={isSaving.hydrate} required className={styles.formInput} />
+                         </div>
+                         <div className={styles.formGroup}>
+                             <label htmlFor="cup_size">Default Cup Size (ml):</label>
+                             <input type="number" id="cup_size" name="cup_size" min="1" step="10" value={hydrateData.cup_size || ''} onChange={(e) => handleInputChange(e, 'hydrate')} disabled={isSaving.hydrate} required className={styles.formInput} />
+                         </div>
+                        <div className={styles.formActions}>
+                            <button type="submit" disabled={isSaving.hydrate} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
+                                {isSaving.hydrate ? <LoadingSpinner inline={true}/> : 'Save Hydrate Habit'}
+                            </button>
+                        </div>
+                    </form>
+                     <hr className={styles.divider} />
 
-            {/* --- Hydrate Form --- */}
-            <form onSubmit={(e) => handleSaveHabit(e, 'hydrate')} className={styles.subForm}>
-                 <h4 className={styles.subFormTitle}>Hydration</h4>
-                 {errors.hydrate && <p className={styles.formError}>{errors.hydrate}</p>}
-                 {successMessages.hydrate && <p className={styles.formSuccess}>{successMessages.hydrate}</p>}
-                 <div className={styles.formGroup}>
-                    <label htmlFor="water_goal">Daily Water Goal (ml):</label>
-                    <input
-                        type="number" id="water_goal" name="water_goal" min="1" step="50"
-                        value={hydrateData.water_goal || ''}
-                        onChange={(e) => handleInputChange(e, 'hydrate')}
-                        disabled={isSaving.hydrate} required className={styles.formInput}
-                    />
-                 </div>
-                 <div className={styles.formGroup}>
-                     <label htmlFor="cup_size">Default Cup Size (ml):</label>
-                    <input
-                        type="number" id="cup_size" name="cup_size" min="1" step="10"
-                        value={hydrateData.cup_size || ''}
-                        onChange={(e) => handleInputChange(e, 'hydrate')}
-                        disabled={isSaving.hydrate} required className={styles.formInput}
-                    />
-                 </div>
-                 <div className={styles.formActions}>
-                     <button type="submit" disabled={isSaving.hydrate} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                         {isSaving.hydrate ? <LoadingSpinner inline={true}/> : 'Save Hydrate Habit'}
-                     </button>
-                 </div>
-            </form>
-
-             <hr className={styles.divider} />
-
-            {/* --- Diet Form --- */}
-            <form onSubmit={(e) => handleSaveHabit(e, 'diet')} className={styles.subForm}>
-                 <h4 className={styles.subFormTitle}>Diet</h4>
-                  {errors.diet && <p className={styles.formError}>{errors.diet}</p>}
-                  {successMessages.diet && <p className={styles.formSuccess}>{successMessages.diet}</p>}
-                 <div className={styles.formGroup}>
-                     <label htmlFor="calories_goal">Daily Calorie Goal (kcal):</label>
-                    <input
-                        type="number" id="calories_goal" name="calories_goal" min="1" step="50"
-                        value={dietData.calories_goal || ''}
-                        onChange={(e) => handleInputChange(e, 'diet')}
-                        disabled={isSaving.diet} required className={styles.formInput}
-                    />
-                 </div>
-                 {/* Reminder times could be added here later if needed */}
-                  <div className={styles.formActions}>
-                     <button type="submit" disabled={isSaving.diet} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                         {/* {isSaving.diet ? <LoadingSpinner inline={true}/> : 'Save Diet Habit'} */}
-                         {isSaving.diet ? <LoadingSpinner/> : 'Save Diet Habit'}
-                     </button>
-                 </div>
-            </form>
+                     {/* --- Diet Form --- */}
+                    <form onSubmit={(e) => handleSaveHabit(e, 'diet')} className={styles.subForm}>
+                         <h4 className={styles.subFormTitle}>Diet</h4>
+                         {errors.diet && <p className={styles.formError}>{errors.diet}</p>}
+                         {successMessages.diet && <p className={styles.formSuccess}>{successMessages.diet}</p>}
+                        <div className={styles.formGroup}>
+                             <label htmlFor="calories_goal">Daily Calorie Goal (kcal):</label>
+                             <input type="number" id="calories_goal" name="calories_goal" min="1" step="50" value={dietData.calories_goal || ''} onChange={(e) => handleInputChange(e, 'diet')} disabled={isSaving.diet} required className={styles.formInput} />
+                         </div>
+                        <div className={styles.formActions}>
+                            <button type="submit" disabled={isSaving.diet} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
+                                {isSaving.diet ? <LoadingSpinner inline={true}/> : 'Save Diet Habit'}
+                            </button>
+                         </div>
+                    </form>
+                </>
+            )}
+            {/* Hiển thị lỗi fetch ban đầu nếu có và không đang loading */}
+            {!isLoading && errors.general && (
+                 <p className={styles.formError}>{errors.general}</p>
+            )}
         </div>
     );
 };

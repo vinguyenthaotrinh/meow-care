@@ -1,127 +1,156 @@
 /* src/styles/Settings.module.css */
 
 .settingsContainer {
-  display: flex;
-  gap: 2rem; /* Khoảng cách giữa sidebar và content */
-  padding: 1rem 0; /* Padding trên dưới cho toàn bộ container */
+  display: flex; /* Sidebar và Content cạnh nhau */
+  gap: 2rem; /* Khoảng cách giữa chúng */
+  padding: 1rem 0; /* Chỉ padding trên/dưới container */
+  align-items: flex-start; /* Căn lề trên cùng */
 }
 
 /* --- Sidebar --- */
 .settingsSidebar {
-  flex-shrink: 0; /* Không co lại */
-  width: 220px; /* Chiều rộng cố định cho sidebar */
+  width: 220px; /* Chiều rộng cố định */
+  flex-shrink: 0; /* Không bị co lại */
   background-color: var(--background-alt);
-  padding: 1.5rem 0; /* Padding trên dưới, không padding trái phải */
+  padding: 1.5rem 0;
   border-radius: var(--border-radius);
   border: 1px solid var(--color-border);
   height: fit-content; /* Chiều cao vừa đủ nội dung */
-  position: sticky; /* --- Make sidebar sticky --- */
-  top: calc(
-    1rem + 65px
-  ); /* Khoảng cách từ top = padding + chiều cao navbar (ước lượng) */
+
+  /* --- Sticky Positioning --- */
+  position: sticky;
+  /* !! QUAN TRỌNG: Đảm bảo giá trị này đúng với chiều cao Navbar + padding !! */
+  /* Ví dụ: Navbar 65px + 1rem (16px) -> top: 81px */
+  top: 81px; /* <<<--- KIỂM TRA LẠI GIÁ TRỊ NÀY CẨN THẬN */
 }
 
+/* Sidebar list styles */
 .settingsSidebar ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 .settingsSidebar li {
-  padding: 0.8rem 1.5rem; /* Padding cho các mục */
+  padding: 0.8rem 1.5rem;
   cursor: pointer;
   font-weight: 500;
   color: var(--text-secondary);
   transition: background-color 0.2s ease, color 0.2s ease;
-  border-left: 4px solid transparent; /* Viền trái để highlight active */
+  border-left: 4px solid transparent;
 }
-
 .settingsSidebar li:hover {
-  background-color: #eee; /* Màu nền nhạt khi hover */
+  background-color: #eee;
   color: var(--text-primary);
 }
-
 .settingsSidebar li.active {
-  background-color: rgba(195, 177, 225, 0.1); /* Nền tím rất nhạt */
+  background-color: rgba(195, 177, 225, 0.1);
   color: var(--color-pastel-purple);
   font-weight: 600;
-  border-left-color: var(--color-pastel-purple); /* Viền tím */
+  border-left-color: var(--color-pastel-purple);
 }
 
 /* --- Content Area --- */
 .settingsContent {
-  flex-grow: 1; /* Chiếm hết không gian còn lại */
-  background-color: var(--color-white); /* Nền trắng cho content */
+  flex-grow: 1; /* Chiếm hết không gian ngang còn lại */
+  background-color: var(--color-white);
   padding: 2rem;
   border-radius: var(--border-radius);
   border: 1px solid var(--color-border);
-  min-height: 500px; /* Chiều cao tối thiểu để sidebar sticky hợp lý */
+
+  /* --- CỐ ĐỊNH KÍCH THƯỚC TỐI THIỂU Ở ĐÂY --- */
+  min-height: 700px; /* Hoặc pixel cố định: min-height: 650px; */
+  min-width: 550px; /* Chiều rộng tối thiểu cho màn hình lớn */
+
+  /* --- Dùng Flexbox để chứa section con VÀ căn giữa spinner --- */
+  display: flex;
+  flex-direction: column;
 }
 
+/* --- Settings Section (Wrapper trong Content Area) --- */
+/* Render bởi component con (PersonalInformationSettings / HabitSettings) */
 .settingsSection {
-  /* Style chung cho mỗi khu vực (Personal, Habits) */
+  width: 100%; /* Luôn chiếm đủ chiều rộng */
+  /* --- Quan trọng: Cho phép co giãn để lấp đầy settingsContent --- */
+  flex-grow: 1;
+  /* --- Dùng Flexbox để chứa nội dung HOẶC loading container --- */
+  display: flex;
+  flex-direction: column;
+  /* Không cần min-height hay min-width ở đây nữa */
 }
 
+/* --- Loading Container (Render bên trong settingsSection khi loading) --- */
+.loadingContainer {
+  /* Chỉ cần flex để căn giữa spinner */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* --- Quan trọng: Chiếm hết không gian của settingsSection --- */
+  flex-grow: 1;
+  width: 100%;
+  /* Không cần min-height hay min-width ở đây */
+}
+
+/* --- Styles cho nội dung thực tế (forms, titles, etc.) --- */
+/* Đặt flex-shrink: 0 để chúng không bị co lại khi không cần thiết */
+.sectionTitle,
+.sectionDescription,
+.formGrid,
+.subForm,
+.formActions,
+.formError,
+.formSuccess,
+.divider {
+  flex-shrink: 0;
+}
+
+/* ... (Các style chi tiết khác cho form, title, etc. giữ nguyên) ... */
 .sectionTitle {
-  font-size: 1.6rem; /* Tiêu đề lớn hơn */
+  font-size: 1.6rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: var(--color-pastel-purple);
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border); /* Gạch chân dưới tiêu đề */
+  border-bottom: 1px solid var(--color-border);
 }
-
 .sectionDescription {
   font-size: 0.95rem;
   color: var(--text-secondary);
   margin-bottom: 2rem;
-  margin-top: -1rem; /* Kéo lên gần title hơn */
-  max-width: 600px; /* Giới hạn chiều rộng mô tả */
+  margin-top: -1rem;
+  max-width: 600px;
 }
-
-/* --- Forms within Settings --- */
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(250px, 1fr)
-  ); /* Grid linh hoạt */
-  gap: 1.5rem; /* Khoảng cách giữa các ô */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
-
 .subForm {
-  margin-bottom: 2.5rem; /* Khoảng cách giữa các form (Sleep, Hydrate, Diet) */
+  margin-bottom: 2.5rem;
 }
-
 .subFormTitle {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 1rem;
   color: var(--text-primary);
 }
-
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .formGroup label {
   font-weight: 500;
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
-
 .formInput,
 select.formInput {
-  /* Style cả select giống input */
-  /* Kế thừa style từ globals.css hoặc Dashboard.module.css */
   padding: 0.75rem 1rem;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
   font-size: 1rem;
-  width: 100%; /* Đảm bảo input chiếm đủ chiều rộng grid cell */
+  width: 100%;
   background-color: var(--color-white);
 }
 .formInput:focus,
@@ -136,22 +165,23 @@ select.formInput:disabled {
   cursor: not-allowed;
 }
 .formInputReadOnly {
-  /* Style riêng cho input chỉ đọc */
-  composes: formInput; /* Kế thừa style từ formInput */
-  background-color: #f8f9fa; /* Nền hơi khác */
+  /* Inherit formInput styles explicitly */
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  width: 100%;
+  background-color: #f8f9fa;
   color: var(--text-secondary);
   cursor: default;
 }
-
 .formActions {
   margin-top: 1rem;
   display: flex;
-  justify-content: flex-start; /* Căn nút Save về bên trái */
+  justify-content: flex-start;
 }
-
 .formButton {
-  /* Kế thừa style button chung */
-  padding: 0.7rem 1.8rem; /* Padding lớn hơn chút */
+  padding: 0.7rem 1.8rem;
   font-size: 1rem;
   border: none;
   border-radius: var(--border-radius);
@@ -161,24 +191,21 @@ select.formInput:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 .formButtonPrimary {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
   transition: background-color 0.2s ease;
 }
 .formButtonPrimary:hover:not(:disabled) {
-  background-color: #ae9acb; /* Tím đậm hơn khi hover */
+  background-color: #ae9acb;
   opacity: 1;
 }
-
-/* --- Error/Success Messages --- */
 .formError,
 .formSuccess {
   padding: 0.8rem 1rem;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
-  margin-bottom: 1rem; /* Khoảng cách dưới thông báo */
+  margin-bottom: 1rem;
   text-align: left;
 }
 .formError {
@@ -187,62 +214,65 @@ select.formInput:disabled {
   border: 1px solid rgba(229, 62, 62, 0.2);
 }
 .formSuccess {
-  color: #155724; /* Dark green */
-  background-color: #d4edda; /* Light green */
-  border: 1px solid #c3e6cb; /* Green border */
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
 }
-
-/* --- Divider --- */
 .divider {
   border: none;
   border-top: 1px solid var(--color-border);
-  margin: 2.5rem 0; /* Khoảng cách trên dưới */
-}
-
-/* --- Loading --- */
-.loadingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px; /* Chiều cao tối thiểu khi đang load */
+  margin: 2.5rem 0;
 }
 
 /* --- Responsive --- */
+
+/* --- Quy tắc cho màn hình RẤT NHỎ (Dưới 600px) --- */
+@media (max-width: 600px) {
+  .settingsContent {
+    min-width: auto; /* <<<--- Ghi đè min-width cho màn hình nhỏ */
+    padding: 1rem;
+  }
+}
+
+/* --- Quy tắc cho màn hình TABLET/MOBILE (Dưới 900px) --- */
 @media (max-width: 900px) {
   .settingsContainer {
-    flex-direction: column; /* Stack sidebar và content trên mobile */
+    flex-direction: column;
     gap: 1rem;
   }
   .settingsSidebar {
-    width: 100%; /* Sidebar chiếm toàn bộ chiều rộng */
-    position: static; /* Bỏ sticky trên mobile */
-    display: flex; /* Hiển thị các mục ngang */
-    justify-content: space-around; /* Căn đều các mục */
+    width: 100%;
+    position: static; /* Tắt sticky */
+    display: flex;
+    justify-content: space-around;
     padding: 0.5rem 0;
-    overflow-x: auto; /* Cho phép cuộn ngang nếu không đủ chỗ */
+    overflow-x: auto;
+    height: auto;
+    top: auto;
   }
   .settingsSidebar ul {
     display: flex;
     width: 100%;
     justify-content: space-around;
   }
-
   .settingsSidebar li {
-    border-left: none; /* Bỏ viền trái */
-    border-bottom: 4px solid transparent; /* Chuyển viền highlight xuống dưới */
-    padding: 0.8rem 1rem; /* Điều chỉnh padding */
+    border-left: none;
+    border-bottom: 4px solid transparent;
+    padding: 0.8rem 1rem;
     text-align: center;
-    flex-grow: 1; /* Chia đều không gian */
+    flex-grow: 1;
   }
   .settingsSidebar li.active {
     border-left-color: transparent;
-    border-bottom-color: var(--color-pastel-purple); /* Viền highlight dưới */
+    border-bottom-color: var(--color-pastel-purple);
   }
-
   .settingsContent {
-    padding: 1.5rem;
+    /* min-width đã được xử lý ở media query 600px */
+    min-height: auto; /* Reset min-height trên mobile nếu cần */
+    width: 100%;
+    /* Giữ flex để loading container hoạt động */
   }
   .formGrid {
-    grid-template-columns: 1fr; /* 1 cột trên mobile */
+    grid-template-columns: 1fr;
   }
 }

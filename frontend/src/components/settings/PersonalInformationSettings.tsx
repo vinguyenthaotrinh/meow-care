@@ -87,95 +87,124 @@ const PersonalInformationSettings = () => {
         }
     };
 
+    // if (isLoading) {
+    //     return <div className={styles.loadingContainer}><LoadingSpinner /></div>;
+    // }
+
+    // if (error && !profile) {
+    //     return <p className={styles.formError}>Error loading profile: {error}</p>;
+    // }
+
+    // if (!profile) {
+    //     return <p>No profile data found.</p>; // Should not happen if fetch works
+    // }
+
     if (isLoading) {
-        return <div className={styles.loadingContainer}><LoadingSpinner /></div>;
+        // Chỉ render container loading bên trong section
+        // CSS sẽ đảm bảo container này được căn giữa và chiếm không gian
+        return (
+            <div className={styles.settingsSection}>
+                <div className={styles.loadingContainer}>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
+    }
+
+    if (error /* Hoặc điều kiện lỗi khác */) {
+        return (
+           <div className={styles.settingsSection}>
+                {/* Hiển thị lỗi bên trong section */}
+                <p className={styles.formError}>{error}</p>
+            </div>
+         );
     }
 
     if (error && !profile) {
-        return <p className={styles.formError}>Error loading profile: {error}</p>;
+        // Vẫn render trong settingsSection để giữ layout
+         return (
+            <div className={styles.settingsSection}>
+                 {/* Có thể thêm title hoặc để trống */}
+                 {/* <h3 className={styles.sectionTitle}>Personal Information</h3> */}
+                 <div style={{paddingTop: '2rem'}}> {/* Thêm padding nếu muốn đẩy lỗi xuống */}
+                     <p className={styles.formError}>Error loading profile: {error}</p>
+                 </div>
+            </div>
+         );
     }
 
     if (!profile) {
-        return <p>No profile data found.</p>; // Should not happen if fetch works
+         return (
+            <div className={styles.settingsSection}>
+                 {/* <h3 className={styles.sectionTitle}>Personal Information</h3> */}
+                 <p style={{paddingTop: '2rem'}}>No profile data found.</p>
+            </div>
+         );
     }
 
     return (
         <div className={styles.settingsSection}>
-            <h3 className={styles.sectionTitle}>Personal Information</h3>
+            {/* Overlay được hiển thị bởi component cha nếu isLoading */}
+            {/* Nội dung chỉ render khi không loading */}
+            {!isLoading && profile && (
+                <>
+                    <h3 className={styles.sectionTitle}>Personal Information</h3>
+                    {error && <p className={styles.formError} style={{marginBottom: '1rem'}}>{error}</p>}
+                    {successMessage && <p className={styles.formSuccess} style={{marginBottom: '1rem'}}>{successMessage}</p>}
 
-             {/* General save error/success */}
-             {error && <p className={styles.formError} style={{marginBottom: '1rem'}}>{error}</p>}
-             {successMessage && <p className={styles.formSuccess} style={{marginBottom: '1rem'}}>{successMessage}</p>}
-
-
-            <form onSubmit={handleSubmit}>
-                 {/* --- Profile Update Form --- */}
-                <div className={styles.formGrid}> {/* Use grid for better alignment */}
-                    <div className={styles.formGroup}>
-                        <label htmlFor="username">Username:</label>
-                        <input
-                            type="text" id="username" name="username"
-                            value={formData.username || ''} onChange={handleInputChange}
-                            disabled={isSaving} className={styles.formInput}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="gender">Gender:</label>
-                        <select
-                            id="gender" name="gender"
-                            value={formData.gender || 'female'} onChange={handleInputChange}
-                            disabled={isSaving} className={styles.formInput} // Style select like input
-                        >
-                            <option value="female">Female</option>
-                            <option value="male">Male</option>
-                        </select>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="weight">Weight (kg):</label>
-                        <input
-                            type="number" id="weight" name="weight" min="1" step="0.1"
-                            value={formData.weight || ''} onChange={handleInputChange}
-                            disabled={isSaving} className={styles.formInput}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="height">Height (cm):</label>
-                        <input
-                            type="number" id="height" name="height" min="1" step="1"
-                            value={formData.height || ''} onChange={handleInputChange}
-                            disabled={isSaving} className={styles.formInput}
-                        />
-                    </div>
-                     <div className={styles.formGroup}>
-                        <label htmlFor="age">Age (years):</label>
-                        <input
-                            type="number" id="age" name="age" min="1" max="100" step="1"
-                            value={formData.age || ''} onChange={handleInputChange}
-                            disabled={isSaving} className={styles.formInput}
-                        />
-                    </div>
-                    {/* Read-only calculated fields */}
-                     <div className={styles.formGroup}>
-                        <label>Daily Calories (calculated):</label>
-                        <input type="text" value={profile.daily_calories?.toFixed(0) ?? 'N/A'} disabled className={styles.formInputReadOnly}/>
-                    </div>
-                     <div className={styles.formGroup}>
-                        <label>Daily Water (calculated, L):</label> {/* Changed to Liters */}
-                        <input type="text" value={profile.daily_water?.toFixed(2) ?? 'N/A'} disabled className={styles.formInputReadOnly}/>
-                    </div>
-                </div>
-
-                <div className={styles.formActions} style={{marginTop: '1.5rem'}}>
-                     <button type="submit" disabled={isSaving} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                        {isSaving ? <LoadingSpinner inline={true}/> : 'Save Profile'}
-                     </button>
-                </div>
-            </form>
-
-            <hr className={styles.divider} /> {/* Đường kẻ phân cách */}
-
-             {/* --- Change Password Form --- */}
-             <ChangePasswordForm />
+                    <form onSubmit={handleSubmit}>
+                        <div className={styles.formGrid}>
+                            {/* ... (các input fields cho profile) ... */}
+                             <div className={styles.formGroup}>
+                                <label htmlFor="username">Username:</label>
+                                <input type="text" id="username" name="username" value={formData.username || ''} onChange={handleInputChange} disabled={isSaving} className={styles.formInput} />
+                             </div>
+                             <div className={styles.formGroup}>
+                                <label htmlFor="gender">Gender:</label>
+                                <select id="gender" name="gender" value={formData.gender || 'female'} onChange={handleInputChange} disabled={isSaving} className={styles.formInput}>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                </select>
+                             </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="weight">Weight (kg):</label>
+                                <input type="number" id="weight" name="weight" min="1" step="0.1" value={formData.weight || ''} onChange={handleInputChange} disabled={isSaving} className={styles.formInput} />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="height">Height (cm):</label>
+                                <input type="number" id="height" name="height" min="1" step="1" value={formData.height || ''} onChange={handleInputChange} disabled={isSaving} className={styles.formInput} />
+                            </div>
+                             <div className={styles.formGroup}>
+                                <label htmlFor="age">Age (years):</label>
+                                <input type="number" id="age" name="age" min="1" max="100" step="1" value={formData.age || ''} onChange={handleInputChange} disabled={isSaving} className={styles.formInput} />
+                             </div>
+                             <div className={styles.formGroup}>
+                                <label>Daily Calories (calculated):</label>
+                                <input type="text" value={profile.daily_calories?.toFixed(0) ?? 'N/A'} disabled className={styles.formInputReadOnly}/>
+                            </div>
+                             <div className={styles.formGroup}>
+                                <label>Daily Water (calculated, L):</label>
+                                <input type="text" value={profile.daily_water?.toFixed(2) ?? 'N/A'} disabled className={styles.formInputReadOnly}/>
+                            </div>
+                        </div>
+                        <div className={styles.formActions} style={{marginTop: '1.5rem'}}>
+                            <button type="submit" disabled={isSaving} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
+                                {isSaving ? <LoadingSpinner inline={true}/> : 'Save Profile'}
+                            </button>
+                        </div>
+                    </form>
+                    <hr className={styles.divider} />
+                    <ChangePasswordForm />
+                </>
+            )}
+             {/* Hiển thị lỗi fetch ban đầu nếu có và không đang loading */}
+            {!isLoading && error && !profile && (
+                 <p className={styles.formError}>Error loading profile: {error}</p>
+            )}
+             {/* Hiển thị nếu fetch thành công nhưng không có profile */}
+             {!isLoading && !profile && !error && (
+                 <p>No profile data found.</p>
+             )}
         </div>
     );
 };
