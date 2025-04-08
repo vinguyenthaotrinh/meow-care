@@ -3,7 +3,7 @@ import React, { useState, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
 import styles from '../../styles/Settings.module.css';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
 const ChangePasswordForm = () => {
     const [oldPassword, setOldPassword] = useState('');

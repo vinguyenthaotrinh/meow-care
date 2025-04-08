@@ -26,12 +26,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ formType, onSubmit, isLoading, erro
   };
 
   const isLogin = formType === 'login';
-  // --- Thay đổi tiếng Việt sang tiếng Anh ---
   const pageTitle = isLogin ? 'Log in to your account' : 'Register a new account';
   const submitButtonText = isLogin ? 'Log in' : 'Create account';
   const switchLinkHref = isLogin ? '/register' : '/login';
   const switchLinkText = isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in';
-  // -----------------------------------------
 
   return (
     <div className={styles.authContainer}>
@@ -40,9 +38,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ formType, onSubmit, isLoading, erro
         {/* Thêm input 'name' nếu form là register và backend cần */}
         {/* {!isLogin && (
           <div className={styles.inputGroup}>
-            // --- Thay đổi tiếng Việt sang tiếng Anh ---
             <label htmlFor="name" className={styles.label}>Name</label>
-            // -----------------------------------------
             <input
               type="text"
               id="name"
@@ -84,7 +80,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ formType, onSubmit, isLoading, erro
             minLength={6} // Thêm validation cơ bản nếu muốn
             className={styles.input}
             disabled={isLoading}
-            placeholder="••••••••" // Placeholder giữ nguyên
+            placeholder="••••••••" // Placeholder
           />
         </div>
 

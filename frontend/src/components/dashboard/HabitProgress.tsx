@@ -4,7 +4,6 @@ import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem } from '../../types
 import LoadingSpinner from '../common/LoadingSpinner'; // Import LoadingSpinner
 import styles from '../../styles/Dashboard.module.css'; // Import CSS Module
 
-// --- Helper Functions (Move from index.tsx) ---
 const formatTime = (timeString: string | null | undefined): string => { /* ... (same as in index.tsx) */
     if (!timeString) return "N/A";
     try {
@@ -38,7 +37,7 @@ const calculatePercentage = (consumed: number | undefined, goal: number | undefi
         return 0;
     }
     const percentage = (consumed / goal) * 100;
-    return Math.min(Math.max(percentage, 0), 100); // Giữ trong khoảng 0-100
+    return Math.min(Math.max(percentage, 0), 100);
 };
 
 

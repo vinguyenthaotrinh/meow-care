@@ -34,7 +34,7 @@ const PersonalInformationSettings = () => {
         if (data.age !== undefined && data.age !== null && (data.age < 1 || data.age > 100)) {
             return "Age must be between 1 and 100.";
         }
-        return null; // No errors
+        return null; 
     };
     // --- End Validation Function ---
 

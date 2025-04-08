@@ -106,7 +106,6 @@ const HabitSettings = () => {
         }));
     };
 
-    // --- Save Handler ---
     const handleSaveHabit = async (
         e: FormEvent,
         habitType: 'sleep' | 'hydrate' | 'diet'
@@ -238,7 +237,7 @@ const HabitSettings = () => {
                  <h4 className={styles.subFormTitle}>Hydration</h4>
                  <div className={styles.formGroup}>
                     <label htmlFor="water_goal">Daily Water Goal (ml):</label>
-                    <input type="number" id="water_goal" name="water_goal" min="1" step="50"
+                    <input type="number" id="water_goal" name="water_goal" min="1" step="1"
                         value={hydrateData.water_goal ?? ''} // Use ?? for controlled input
                         onChange={(e) => handleInputChange(e, 'hydrate')}
                         disabled={isSaving.hydrate} required className={styles.formInput}
@@ -246,7 +245,7 @@ const HabitSettings = () => {
                  </div>
                  <div className={styles.formGroup}>
                      <label htmlFor="cup_size">Default Cup Size (ml):</label>
-                    <input type="number" id="cup_size" name="cup_size" min="1" step="10"
+                    <input type="number" id="cup_size" name="cup_size" min="1" step="1"
                         value={hydrateData.cup_size ?? ''} // Use ?? for controlled input
                         onChange={(e) => handleInputChange(e, 'hydrate')}
                         disabled={isSaving.hydrate} required className={styles.formInput}
@@ -296,7 +295,7 @@ const HabitSettings = () => {
                  <h4 className={styles.subFormTitle}>Diet</h4>
                  <div className={styles.formGroup}>
                      <label htmlFor="calories_goal">Daily Calorie Goal (kcal):</label>
-                    <input type="number" id="calories_goal" name="calories_goal" min="1" step="50"
+                    <input type="number" id="calories_goal" name="calories_goal" min="1" step="1"
                         value={dietData.calories_goal ?? ''} // Use ?? for controlled input
                         onChange={(e) => handleInputChange(e, 'diet')}
                         disabled={isSaving.diet} required className={styles.formInput}

@@ -14,7 +14,6 @@ const navItems = [
 const Navbar = () => {
   const router = useRouter();
 
-  // --- Logout Handler ---
   const handleLogout = () => {
     // Xóa token khỏi localStorage
     if (typeof window !== 'undefined') {

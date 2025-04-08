@@ -91,7 +91,6 @@ const TodoList: React.FC<TodoListProps> = ({
                                 >
                                     Completed
                                 </button>
-                                // *** MODIFICATION END ***
                             ) : (
                                 // Show active button based on type
                                 item.type === 'sleep' ? (
