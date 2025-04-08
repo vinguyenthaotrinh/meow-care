@@ -16,7 +16,7 @@ const RegisterPage = () => {
     const token = localStorage.getItem('authToken');
     if (token) {
       // Nếu có token, điều hướng người dùng tới trang dashboard
-      router.push('/dashboard');
+      router.push('/home');
     } else {
       setIsCheckingToken(false); // Kiểm tra xong, hiển thị form đăng ký
     }

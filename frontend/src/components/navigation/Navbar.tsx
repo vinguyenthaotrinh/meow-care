@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import styles from '../../styles/Navbar.module.css';
 
 const navItems = [
-  { name: 'Home', path: '/dashboard' },
-  { name: 'Habits', path: '/dashboard/habits' }, // Sẽ làm sau
-  { name: 'Focus', path: '/dashboard/focus' },   // Sẽ làm sau
-  { name: 'Profile', path: '/dashboard/profile' }, // Có thể gộp vào Settings hoặc để riêng
-  { name: 'Settings', path: '/dashboard/settings' }, // <-- Thêm mới
+  { name: 'Home', path: '/home' },
+  { name: 'Habits', path: '/habits' }, // Sẽ làm sau
+  { name: 'Focus', path: '/focus' },   // Sẽ làm sau
+  { name: 'Profile', path: '/profile' }, // Có thể gộp vào Settings hoặc để riêng
+  { name: 'Settings', path: '/settings' }, // <-- Thêm mới
 ];
 
 const Navbar = () => {
@@ -31,7 +31,7 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
         {navItems.map((item) => {
-          const isActive = router.pathname === item.path || (item.path !== '/dashboard' && router.pathname.startsWith(item.path));
+          const isActive = router.pathname === item.path || (item.path !== '' && router.pathname.startsWith(item.path));
 
           return (
             <Link key={item.name} href={item.path} passHref legacyBehavior>

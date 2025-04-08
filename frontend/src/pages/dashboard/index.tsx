@@ -9,6 +9,7 @@ import Image from 'next/image';
 import catImageSrc from '../../assets/images/default-cat.png';
 import HabitProgress from '../../components/dashboard/HabitProgress'; // Import HabitProgress
 import TodoList from '../../components/dashboard/TodoList'; // Import TodoList
+import DietUpdateModal from '@/components/dashboard/DietUpdateModal';
 
 // --- Helper Functions ---
 const formatTime = (timeString: string | null | undefined): string => {
