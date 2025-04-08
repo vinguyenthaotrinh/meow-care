@@ -1,57 +1,68 @@
 // src/components/settings/ChangePasswordForm.tsx
 import React, { useState, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
-import styles from '../../styles/Settings.module.css'; // Reuse settings styles
+import styles from '../../styles/Settings.module.css';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { toast } from 'react-toastify'; // Import toast
 
 const ChangePasswordForm = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    // Removed error/successMessage states - using toast
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setError(null);
-        setSuccessMessage(null);
 
+        // --- Detailed Validation ---
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            toast.error("Please fill in all password fields.");
+            return;
+        }
+        if (newPassword.length < 6) {
+            toast.error("New password must be at least 6 characters long.");
+            return;
+        }
         if (newPassword !== confirmPassword) {
-            setError("New passwords do not match.");
+            toast.error("New passwords do not match.");
             return;
         }
-        if (newPassword.length < 6) { // Basic validation
-            setError("New password must be at least 6 characters long.");
+        if (oldPassword === newPassword) {
+            toast.error("New password cannot be the same as the old password.");
             return;
         }
+        // --- End Validation ---
 
         setIsLoading(true);
-        const response = await fetchApi('/profile/change-password', {
-            method: 'PUT',
-            isProtected: true,
-            body: { old_password: oldPassword, new_password: newPassword },
-        });
-        setIsLoading(false);
+        try {
+            const response = await fetchApi('/profile/change-password', {
+                method: 'PUT',
+                isProtected: true,
+                body: { old_password: oldPassword, new_password: newPassword },
+            });
 
-        if (response.error) {
-            setError(response.error);
-        } else {
-            setSuccessMessage("Password changed successfully!");
-            // Clear fields after success
-            setOldPassword('');
-            setNewPassword('');
-            setConfirmPassword('');
-            // Hide success message after a few seconds
-            setTimeout(() => setSuccessMessage(null), 3000);
+            if (response.error) {
+                toast.error(response.error); // Use toast for errors
+            } else {
+                toast.success("Password changed successfully!"); // Use toast for success
+                // Clear fields after success
+                setOldPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+            }
+        } catch (err) {
+            console.error("Change password error:", err);
+            toast.error("An unexpected error occurred while changing the password.");
+        } finally {
+            setIsLoading(false); // Ensure loading is always set to false
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className={styles.subForm}> {/* Dùng subForm style */}
+        <form onSubmit={handleSubmit} className={styles.subForm}>
             <h4 className={styles.subFormTitle}>Change Password</h4>
-            {error && <p className={styles.formError}>{error}</p>}
-            {successMessage && <p className={styles.formSuccess}>{successMessage}</p>}
+            {/* Static messages removed, toasts will show notifications */}
 
             <div className={styles.formGroup}>
                 <label htmlFor="oldPassword">Old Password:</label>
@@ -63,6 +74,7 @@ const ChangePasswordForm = () => {
                     disabled={isLoading}
                     required
                     className={styles.formInput}
+                    autoComplete="current-password"
                 />
             </div>
             <div className={styles.formGroup}>
@@ -74,8 +86,9 @@ const ChangePasswordForm = () => {
                     onChange={(e) => setNewPassword(e.target.value)}
                     disabled={isLoading}
                     required
-                    minLength={6}
+                    minLength={6} // HTML5 validation
                     className={styles.formInput}
+                    autoComplete="new-password"
                 />
             </div>
             <div className={styles.formGroup}>
@@ -88,6 +101,7 @@ const ChangePasswordForm = () => {
                     disabled={isLoading}
                     required
                     className={styles.formInput}
+                    autoComplete="new-password"
                 />
             </div>
             <div className={styles.formActions}>

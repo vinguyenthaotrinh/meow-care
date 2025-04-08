@@ -45,7 +45,7 @@ const Navbar = () => {
        {/* --- User Actions (Add Logout Button) --- */}
        <div className={styles.userActions}>
            {/* Bạn có thể đặt nút Logout ở đây hoặc trong SettingsSidebar */}
-           <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
+           <button onClick={handleLogout} className={styles.logoutButton}>Log Out</button>
        </div>
     </nav>
   );

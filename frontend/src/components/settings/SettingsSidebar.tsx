@@ -32,7 +32,7 @@ const SettingsSidebar: React.FC<SettingsSidebarProps> = ({ activeSection, setAct
           className={activeSection === 'habits' ? styles.active : ''}
           onClick={() => setActiveSection('habits')}
         >
-          Habits
+          Habit Settings
         </li>
         <li onClick={handleLogout}> {/* Nút Logout riêng */}
           Log Out

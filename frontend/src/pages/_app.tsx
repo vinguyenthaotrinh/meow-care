@@ -1,24 +1,32 @@
 // src/pages/_app.tsx
-import '../styles/globals.css'; // Đảm bảo bạn import global CSS ở đây
-import type { AppProps } from 'next/app'; // Import kiểu dữ liệu cần thiết
+import '../styles/globals.css';
+import type { AppProps } from 'next/app';
 
-// Định nghĩa component App tùy chỉnh
+// --- React Toastify Imports ---
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// Optional: Customize Toastify CSS or import a specific theme
+
 function MyApp({ Component, pageProps }: AppProps) {
-  // Component: là component của trang hiện tại (ví dụ: LoginPage, RegisterPage)
-  // pageProps: là các props ban đầu được truyền cho trang đó
-
-  // Render component của trang hiện tại với các props của nó
-  return <Component {...pageProps} />;
-
-  /*
-  // Sau này nếu bạn có Layout chung, bạn sẽ bọc nó ở đây:
   return (
-      <Layout> // Ví dụ component Layout
-          <Component {...pageProps} />
-      </Layout>
+    <> {/* Use Fragment to wrap multiple elements */}
+      <Component {...pageProps} />
+      {/* --- Add ToastContainer here --- */}
+      {/* Configure options as needed */}
+      <ToastContainer
+        position="top-right" // Vị trí hiển thị
+        autoClose={4000} // Tự động đóng sau 4 giây
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light" // Hoặc "dark", "colored"
+      />
+    </>
   );
-  */
 }
 
-// Quan trọng: Export component này làm default export
 export default MyApp;
