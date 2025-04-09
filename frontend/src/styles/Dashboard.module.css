@@ -24,11 +24,9 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  position: relative; /* Needed for absolute positioning if needed */
 }
 
 /* --- Loading & Centering --- */
-/* This is for general centering, not the initial load */
 .centered {
   display: flex;
   justify-content: center;
@@ -38,28 +36,27 @@
   color: var(--text-secondary);
 }
 
-/* --- REMOVED: Full Page Spinner Container --- */
-/* .fullPageSpinnerContainer { ... } */
-
 /* --- NEW: Container for loading spinner within the main content area --- */
 .contentLoadingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px; /* Adjust as needed to prevent layout jump */
+  min-height: 400px; /* Give it some minimum height */
   width: 100%;
-  padding-top: 4rem; /* Push spinner down from navbar */
+  /* Optional: Add some padding-top if needed */
+  padding-top: 4rem;
+  /* No background overlay needed here, just center the spinner */
 }
 
 /* Optional: Style to dim content during individual updates */
-/*
 .contentDimmed {
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+  opacity: 0.8; /* Make content slightly transparent */
+  transition: opacity 0.3s ease-in-out;
+  /* Add pointer-events: none; if you want to disable interaction */
+  /* pointer-events: none; */
 }
-*/
 
-/* --- Base Spinner Style --- */
+/* Base Spinner Style (Used in overlays, etc.) */
 .spinner {
   border: 4px solid rgba(195, 177, 225, 0.2);
   border-left-color: var(--color-pastel-purple);
@@ -71,21 +68,17 @@
   vertical-align: middle;
 }
 
-/* Spinner inline is no longer used */
-/* .spinnerInline { ... } */
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
-
 /* --- Dashboard Home Page Specific Styles --- */
 .homeGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  margin-top: 0.5rem; /* Keep margin from top */
+  margin-top: 0.5rem;
 }
 
 .leftColumn,
@@ -127,6 +120,7 @@
 .habitIconsContainer {
   margin-bottom: 2rem;
 }
+
 .habitIconsList {
   display: flex;
   gap: 1.5rem;
@@ -136,6 +130,7 @@
   padding-bottom: 1rem;
   margin-top: 1rem;
 }
+
 .habitIconsList::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
@@ -147,6 +142,7 @@
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 0.25rem;
 }
+
 .habitIconWrapper {
   display: flex;
   flex-direction: column;
@@ -156,6 +152,7 @@
   min-width: 90px;
   flex-shrink: 0;
 }
+
 .iconCircle {
   width: 60px;
   height: 60px;
@@ -169,22 +166,32 @@
   overflow: hidden;
   transition: background-color 0.3s ease;
 }
+
 .iconCircle.wakeup.completed {
   background-color: var(--wakeup-completed-color);
 }
+
 .iconCircle.sleep.completed {
   background-color: var(--sleep-completed-color);
 }
+
 .iconSymbol {
   font-size: 1.8rem;
   z-index: 1;
   color: var(--text-primary);
 }
+
+.habitIconWrapper.completed .iconSymbol {
+  /* Optional: Change icon color on completion */
+  /* color: var(--color-white); */
+}
+
 .habitText {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.3;
 }
+
 .habitProgressText {
   font-weight: 500;
   color: var(--text-primary);
@@ -194,6 +201,7 @@
   text-align: center;
   margin-top: 2rem;
 }
+
 .catContainer img {
   max-width: 150px;
   height: auto;
@@ -202,8 +210,10 @@
 
 /* -- Right Column (Todo List) Styles -- */
 .todoListContainer {
-  /* Container styles */
+  /* Styles for the container if needed */
 }
+
+/* --- Wrapper cho mỗi item + phần mở rộng --- */
 .todoItemWrapper {
   margin-bottom: 0.8rem;
   background-color: var(--color-white);
@@ -213,6 +223,10 @@
   overflow: hidden;
   transition: box-shadow 0.2s ease;
 }
+/* Optional: Remove hover shadow if desired */
+/* .todoItemWrapper:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.06); } */
+
+/* --- Phần item chính --- */
 .todoItem {
   display: flex;
   justify-content: space-between;
@@ -220,18 +234,23 @@
   padding: 0.8rem 1rem;
   transition: opacity 0.3s ease;
 }
+
 .todoItem.loading {
   opacity: 0.6;
   pointer-events: none;
 }
+
+/* --- Container cho nội dung text chính --- */
 .todoContentWrapper {
   flex-grow: 1;
   margin-right: 1rem;
   overflow: hidden;
 }
+
 .todoContent {
-  /* Content styles */
+  /* Keep original styles if any */
 }
+
 .todoText {
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -242,6 +261,8 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
+
+/* --- NEW: Style for the row containing Progress, Details, Arrow --- */
 .detailsRow {
   display: flex;
   justify-content: space-between;
@@ -251,6 +272,7 @@
   user-select: none;
 }
 .detailsRow > .todoSubtext {
+  /* Progress text part */
   flex-grow: 1;
   margin-right: 0.5rem;
 }
@@ -259,6 +281,8 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* --- NEW: Style for the group containing "Details" text and the arrow --- */
 .detailsToggle {
   display: flex;
   align-items: center;
@@ -267,15 +291,20 @@
   padding: 0.3rem 0.5rem;
   border-radius: var(--border-radius);
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 .detailsToggle:hover {
   background-color: var(--background-alt);
 }
+
+/* --- NEW: Style for the "Details" text --- */
 .detailsText {
   font-size: 0.8rem;
   margin-right: 0.3rem;
   font-weight: 500;
 }
+
+/* --- Mũi tên Expand --- */
 .expandIcon {
   font-size: 0.8rem;
   transition: transform 0.2s ease-in-out;
@@ -285,11 +314,16 @@
 .expandIcon.expanded {
   transform: rotate(90deg);
 }
+/* --- End Details Toggle Group --- */
+
+/* --- Khu vực nút Actions --- */
 .todoActions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
 }
+
+/* Base style for all buttons/spans in actions */
 .todoActions button,
 .completedButton {
   padding: 0.5rem 0.8rem;
@@ -304,13 +338,17 @@
   border-radius: var(--border-radius);
   border: 1px solid transparent;
   line-height: 1.2;
-  cursor: default;
+  cursor: default; /* Default cursor, override below */
 }
+
+/* Common disabled style for action buttons */
 .todoActions button:disabled,
 .completedButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Nút update màu vàng */
 .updateButton {
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
@@ -323,8 +361,11 @@
 }
 .updateButton:disabled {
   background-color: var(--color-pastel-yellow);
+  /* Opacity and cursor inherited */
   border-color: var(--color-border);
 }
+
+/* Nút Complete màu tím mặc định (cho Sleep) */
 .todoActions button:not(.updateButton):not(.completedButton) {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
@@ -337,7 +378,10 @@
 }
 .todoActions button:not(.updateButton):not(.completedButton):disabled {
   background-color: var(--color-pastel-purple);
+  /* Opacity and cursor inherited */
 }
+
+/* --- Style cho nút Completed --- */
 .completedButton {
   background-color: #e9ecef;
   color: #6c757d;
@@ -346,14 +390,18 @@
   font-weight: 500;
 }
 .completedButton:disabled {
-  opacity: 1 !important;
+  opacity: 1 !important; /* Keep it fully opaque */
 }
+/* --- End Completed Button Style --- */
+
+/* --- Container cho danh sách món ăn mở rộng --- */
 .dietDetailsContainer {
   padding: 0.8rem 1rem 1rem 1rem;
   border-top: 1px solid var(--color-border);
   background-color: var(--background-alt);
   animation: fadeIn 0.3s ease-out;
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -364,12 +412,14 @@
     transform: translateY(0);
   }
 }
+
 .dishListTitle {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 0.8rem;
 }
+
 .dishList {
   list-style: none;
   padding: 0;
@@ -378,21 +428,25 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .dishItem {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
   padding: 0.3rem 0;
 }
+
 .dishName {
   color: var(--text-primary);
   margin-right: 1rem;
 }
+
 .dishCalories {
   color: var(--text-secondary);
   font-weight: 500;
   white-space: nowrap;
 }
+
 .noDishes {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -413,6 +467,7 @@
   z-index: 1000;
   padding: 1rem;
 }
+
 .dietModal {
   background-color: var(--color-white);
   padding: 2rem 2.5rem;
@@ -424,6 +479,8 @@
   position: relative;
   overflow: hidden;
 }
+
+/* --- Loading Overlay Inside Modal --- */
 .modalLoadingOverlay {
   position: absolute;
   top: 0;
@@ -437,10 +494,13 @@
   z-index: 10;
   border-radius: var(--border-radius);
 }
+/* Spinner trong overlay */
 .modalLoadingOverlay .spinner {
   width: 35px;
   height: 35px;
 }
+/* --- End Loading Overlay --- */
+
 .modalTitle {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -448,21 +508,25 @@
   font-weight: 600;
   font-size: 1.4rem;
 }
+
 .dietForm {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
+
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .formLabel {
   font-weight: 500;
   color: var(--text-secondary);
   font-size: 0.9rem;
 }
+
 .formInput {
   padding: 0.7rem 1rem;
   border-radius: var(--border-radius);
@@ -471,6 +535,7 @@
   font-family: inherit;
   background-color: var(--background-alt);
 }
+
 .formInput:focus {
   outline: none;
   border-color: var(--color-pastel-purple);
@@ -481,12 +546,15 @@
   background-color: #e9ecef;
   cursor: not-allowed;
 }
+
 .modalActions {
   display: flex;
   justify-content: flex-end;
   gap: 0.8rem;
   margin-top: 1.5rem;
 }
+
+/* --- Base styles cho nút trong modal --- */
 .modalButton,
 .modalButtonSecondary,
 .modalButtonPrimaryYellow {
@@ -498,12 +566,15 @@
   font-size: 0.95rem;
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }
+/* --- Disabled style chung --- */
 .modalButton:disabled,
 .modalButtonSecondary:disabled,
 .modalButtonPrimaryYellow:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Nút màu tím mặc định */
 .modalButton {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
@@ -511,6 +582,8 @@
 .modalButton:hover:not(:disabled) {
   opacity: 0.9;
 }
+
+/* --- Yellow 'Add' Button Style --- */
 .modalButtonPrimaryYellow {
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
@@ -522,8 +595,12 @@
 }
 .modalButtonPrimaryYellow:disabled {
   background-color: var(--color-pastel-yellow);
+  /* Opacity and cursor inherited */
   border-color: var(--color-border);
 }
+/* --- End Yellow Button Style --- */
+
+/* Nút Cancel */
 .modalButtonSecondary {
   background-color: var(--color-white);
   color: var(--text-secondary);
@@ -535,7 +612,10 @@
 }
 .modalButtonSecondary:disabled {
   background-color: var(--color-white);
+  /* Opacity and cursor inherited */
 }
+
+/* Lỗi trong modal */
 .modalError {
   color: var(--color-error);
   background-color: rgba(229, 62, 62, 0.1);
@@ -555,6 +635,7 @@
     padding: 1rem 1.5rem;
   }
 }
+
 @media (max-width: 600px) {
   .mainContent {
     padding: 0.5rem 1rem;
@@ -574,6 +655,7 @@
     font-size: 1.3rem;
   }
 }
+
 @media (max-width: 480px) {
   .habitIconWrapper {
     min-width: 70px;
@@ -585,6 +667,8 @@
   .iconSymbol {
     font-size: 1.5rem;
   }
+
+  /* Adjust todo item layout for small screens */
   .todoItemWrapper {
     margin-bottom: 1rem;
   }
@@ -594,11 +678,14 @@
   .todoContentWrapper {
     margin-right: 0.5rem;
   }
+  /* Actions might wrap on very small screens if needed */
+  /* .todoActions { flex-wrap: wrap; } */
   .todoActions button,
   .completedButton {
     padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
   }
+
   .modalActions {
     flex-direction: column-reverse;
     gap: 0.5rem;

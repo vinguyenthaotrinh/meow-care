@@ -103,7 +103,7 @@ const TodoList: React.FC<TodoListProps> = ({
                                     aria-expanded={isDietExpanded}
                                     aria-controls={`diet-details-${item.id}`}
                                 >
-                                    <span className={styles.detailsText}>Details</span> {/* Changed text */}
+                                    <span className={styles.detailsText}>See Details</span> {/* Changed text */}
                                     <span className={`${styles.expandIcon} ${isDietExpanded ? styles.expanded : ''}`} aria-hidden="true">
                                         ▶
                                     </span>

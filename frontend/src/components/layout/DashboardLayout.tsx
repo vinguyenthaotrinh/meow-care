@@ -21,7 +21,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   if (!isAuthenticated) {
     // Hook useAuth đã xử lý chuyển hướng, nên thực tế ít khi rơi vào đây
     // Có thể return một thông báo hoặc null
-    return <div className={styles.centered}>Bạn cần đăng nhập để truy cập trang này.</div>;
+    return <div className={styles.centered}>Login required to access this page.</div>;
   }
 
   // Nếu đã xác thực, hiển thị layout dashboard
