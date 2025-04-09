@@ -185,6 +185,11 @@ select.formInput:disabled {
   color: var(--text-on-primary-button);
   transition: background-color 0.2s ease;
 }
+.formButtonPrimary:disabled {
+  /* Kế thừa opacity từ .formButton:disabled */
+  /* Giữ màu nền tím */
+  background-color: var(--color-pastel-purple);
+}
 .formButtonPrimary:hover:not(:disabled) {
   background-color: #ae9acb;
   opacity: 1;

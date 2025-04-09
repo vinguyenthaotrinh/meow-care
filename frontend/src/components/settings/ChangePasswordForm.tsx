@@ -2,7 +2,6 @@
 import React, { useState, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
 import styles from '../../styles/Settings.module.css';
-import LoadingSpinner from '../common/LoadingSpinner';
 import { toast } from 'react-toastify';
 
 const ChangePasswordForm = () => {
@@ -10,7 +9,6 @@ const ChangePasswordForm = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    // Removed error/successMessage states - using toast
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -43,10 +41,9 @@ const ChangePasswordForm = () => {
             });
 
             if (response.error) {
-                toast.error(response.error); // Use toast for errors
+                toast.error(response.error);
             } else {
-                toast.success("Password changed successfully!"); // Use toast for success
-                // Clear fields after success
+                toast.success("Password changed successfully!");
                 setOldPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
@@ -55,58 +52,45 @@ const ChangePasswordForm = () => {
             console.error("Change password error:", err);
             toast.error("An unexpected error occurred while changing the password.");
         } finally {
-            setIsLoading(false); // Ensure loading is always set to false
+            setIsLoading(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className={styles.subForm}>
             <h4 className={styles.subFormTitle}>Change Password</h4>
-            {/* Static messages removed, toasts will show notifications */}
+            {/* Toasts show notifications */}
 
             <div className={styles.formGroup}>
                 <label htmlFor="oldPassword">Old Password:</label>
                 <input
-                    type="password"
-                    id="oldPassword"
-                    value={oldPassword}
+                    type="password" id="oldPassword" value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                    className={styles.formInput}
+                    disabled={isLoading} required className={styles.formInput}
                     autoComplete="current-password"
                 />
             </div>
             <div className={styles.formGroup}>
                 <label htmlFor="newPassword">New Password:</label>
                 <input
-                    type="password"
-                    id="newPassword"
-                    value={newPassword}
+                    type="password" id="newPassword" value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                    minLength={6} // HTML5 validation
-                    className={styles.formInput}
+                    disabled={isLoading} required minLength={6} className={styles.formInput}
                     autoComplete="new-password"
                 />
             </div>
             <div className={styles.formGroup}>
                 <label htmlFor="confirmPassword">Confirm New Password:</label>
                 <input
-                    type="password"
-                    id="confirmPassword"
-                    value={confirmPassword}
+                    type="password" id="confirmPassword" value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                    className={styles.formInput}
+                    disabled={isLoading} required className={styles.formInput}
                     autoComplete="new-password"
                 />
             </div>
             <div className={styles.formActions}>
                  <button type="submit" disabled={isLoading} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                    {isLoading ? <LoadingSpinner inline={true} /> : 'Change Password'}
+                    Change Password {/* Only Text */}
                  </button>
             </div>
         </form>

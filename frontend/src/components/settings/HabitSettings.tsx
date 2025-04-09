@@ -4,7 +4,7 @@ import { fetchApi } from '../../lib/api';
 import { SleepHabit, HydrateHabit, DietHabit } from '../../types/habit.types';
 import styles from '../../styles/Settings.module.css';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
 const HabitSettings = () => {
     // State for habit data
@@ -22,13 +22,12 @@ const HabitSettings = () => {
 
     // Initial Load Error state
     const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
-    // Removed saving errors/success states
 
     useEffect(() => {
         const fetchHabits = async () => {
             setIsLoading(true);
             setInitialLoadError(null);
-            let errorOccurred = false; // Flag to track if any fetch failed
+            let errorOccurred = false;
             try {
                 const [sleepRes, hydrateRes, dietRes] = await Promise.all([
                     fetchApi<SleepHabit>('/sleep/habit', { isProtected: true }),
@@ -36,7 +35,6 @@ const HabitSettings = () => {
                     fetchApi<DietHabit>('/diet/habit', { isProtected: true }),
                 ]);
 
-                // Process each response, set data or track error
                 if (sleepRes.data) setSleepData(sleepRes.data);
                 else if (sleepRes.status !== 404) errorOccurred = true;
 
@@ -51,7 +49,6 @@ const HabitSettings = () => {
                 } else if (dietRes.status !== 404) errorOccurred = true;
 
                 if (errorOccurred) {
-                     // Combine errors or show a generic one if needed
                      const errorMsg = "Failed to load some habit settings.";
                      setInitialLoadError(errorMsg);
                      toast.error(errorMsg);
@@ -69,7 +66,7 @@ const HabitSettings = () => {
         fetchHabits();
     }, []);
 
-    // --- Reminder Handlers (No changes needed here) ---
+    // --- Reminder Handlers ---
     const handleAddReminder = (habitType: 'hydrate' | 'diet') => {
         const setter = habitType === 'hydrate' ? setHydrateReminders : setDietReminders;
         setter(prev => [...prev, "09:00"]);
@@ -118,10 +115,9 @@ const HabitSettings = () => {
         // Prepare data, including reminders
         let dataToSend: any = { ...dataMap[habitType] };
          if (habitType === 'hydrate') {
-            // Ensure reminders are valid times or filter out invalid ones if needed
-            dataToSend.reminder_time = hydrateReminders.filter(time => !!time); // Example: filter empty strings
+            dataToSend.reminder_time = hydrateReminders.filter(time => !!time); // Filter empty strings
         } else if (habitType === 'diet') {
-            dataToSend.reminder_time = dietReminders.filter(time => !!time);
+            dataToSend.reminder_time = dietReminders.filter(time => !!time); // Filter empty strings
         }
 
         // --- Validation ---
@@ -134,10 +130,6 @@ const HabitSettings = () => {
              const cup = dataToSend.cup_size;
             if (goal === undefined || goal === null || isNaN(goal) || goal <= 0) validationError = 'Valid Water Goal (ml) is required.';
             else if (cup === undefined || cup === null || isNaN(cup) || cup <= 0) validationError = 'Valid Cup Size (ml) is required.';
-            // Optional: Add validation for reminder time format if strictly needed
-            // else if (dataToSend.reminder_time?.some(time => !/^\d{2}:\d{2}$/.test(time))) {
-            //     validationError = 'One or more reminder times are invalid.';
-            // }
         } else if (habitType === 'diet') {
              const goal = dataToSend.calories_goal;
             if (goal === undefined || goal === null || isNaN(goal) || goal <= 0) validationError = 'Valid Calorie Goal (kcal) is required.';
@@ -145,7 +137,7 @@ const HabitSettings = () => {
 
         if (validationError) {
             toast.error(validationError);
-            return; // Stop submission if validation fails
+            return;
         }
         // --- End Validation ---
 
@@ -159,8 +151,6 @@ const HabitSettings = () => {
 
             if (response.data) {
                 toast.success(`${habitType.charAt(0).toUpperCase() + habitType.slice(1)} habit saved successfully!`);
-                // Optionally update local state if necessary
-                // Example: if backend cleans up reminder times, update state
                  if (habitType === 'hydrate' && response.data.reminder_time) setHydrateReminders(response.data.reminder_time);
                  if (habitType === 'diet' && response.data.reminder_time) setDietReminders(response.data.reminder_time);
             } else {
@@ -174,7 +164,6 @@ const HabitSettings = () => {
         }
     };
 
-    // --- Conditional Rendering (Layout Fix) ---
     if (isLoading) {
         return (
             <div className={styles.settingsSection}>
@@ -188,21 +177,15 @@ const HabitSettings = () => {
     if (initialLoadError) {
         return (
            <div className={styles.settingsSection}>
-                 {/* Optional: Keep title or structure */}
-                 {/* <h3 className={styles.sectionTitle}>Habit Settings</h3> */}
                  <p className={styles.formError} style={{marginTop: '2rem'}}>Error: {initialLoadError}</p>
             </div>
         );
     }
-    // --- End Conditional Rendering ---
 
-    // --- Render Actual Content ---
     return (
         <div className={styles.settingsSection}>
             <h3 className={styles.sectionTitle}>Habit Settings</h3>
             <p className={styles.sectionDescription}>Set your daily goals. Saving will reset today's progress for that habit.</p>
-
-            {/* Static messages removed */}
 
             {/* --- Sleep Form --- */}
             <form onSubmit={(e) => handleSaveHabit(e, 'sleep')} className={styles.subForm}>
@@ -225,7 +208,7 @@ const HabitSettings = () => {
                 </div>
                 <div className={styles.formActions}>
                     <button type="submit" disabled={isSaving.sleep} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                        {isSaving.sleep ? <LoadingSpinner inline={true}/> : 'Save Sleep Habit'}
+                        Save Sleep Habit {/* Only Text */}
                     </button>
                 </div>
             </form>
@@ -238,7 +221,7 @@ const HabitSettings = () => {
                  <div className={styles.formGroup}>
                     <label htmlFor="water_goal">Daily Water Goal (ml):</label>
                     <input type="number" id="water_goal" name="water_goal" min="1" step="1"
-                        value={hydrateData.water_goal ?? ''} // Use ?? for controlled input
+                        value={hydrateData.water_goal ?? ''}
                         onChange={(e) => handleInputChange(e, 'hydrate')}
                         disabled={isSaving.hydrate} required className={styles.formInput}
                     />
@@ -246,20 +229,18 @@ const HabitSettings = () => {
                  <div className={styles.formGroup}>
                      <label htmlFor="cup_size">Default Cup Size (ml):</label>
                     <input type="number" id="cup_size" name="cup_size" min="1" step="1"
-                        value={hydrateData.cup_size ?? ''} // Use ?? for controlled input
+                        value={hydrateData.cup_size ?? ''}
                         onChange={(e) => handleInputChange(e, 'hydrate')}
                         disabled={isSaving.hydrate} required className={styles.formInput}
                     />
                  </div>
-
-                 {/* --- Hydrate Reminders --- */}
                  <div className={styles.formGroup}>
                     <label>Reminders:</label>
                     {hydrateReminders.length === 0 && <p className={styles.noReminders}>No reminders set.</p>}
                     <div className={styles.remindersList}>
                         {hydrateReminders.map((time, index) => (
                             <div key={`hydrate-${index}`} className={styles.reminderItem}>
-                                <input type="time" value={time} required // Add required if needed
+                                <input type="time" value={time} required
                                     onChange={(e) => handleReminderChange(e, 'hydrate', index)}
                                     disabled={isSaving.hydrate} className={styles.formInput}
                                 />
@@ -267,23 +248,17 @@ const HabitSettings = () => {
                                     onClick={() => handleRemoveReminder('hydrate', index)}
                                     disabled={isSaving.hydrate} className={styles.removeReminderButton}
                                     aria-label={`Remove ${time || 'empty'} reminder`}
-                                >
-                                    ×
-                                </button>
+                                > × </button>
                             </div>
                         ))}
                     </div>
                     <button type="button" onClick={() => handleAddReminder('hydrate')}
                         disabled={isSaving.hydrate} className={styles.addReminderButton}
-                    >
-                        + Add Reminder
-                    </button>
+                    > + Add Reminder </button>
                  </div>
-                 {/* --- End Hydrate Reminders --- */}
-
                  <div className={styles.formActions}>
                      <button type="submit" disabled={isSaving.hydrate} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                         {isSaving.hydrate ? <LoadingSpinner inline={true}/> : 'Save Hydrate Habit'}
+                         Save Hydrate Habit {/* Only Text */}
                      </button>
                  </div>
             </form>
@@ -296,13 +271,11 @@ const HabitSettings = () => {
                  <div className={styles.formGroup}>
                      <label htmlFor="calories_goal">Daily Calorie Goal (kcal):</label>
                     <input type="number" id="calories_goal" name="calories_goal" min="1" step="1"
-                        value={dietData.calories_goal ?? ''} // Use ?? for controlled input
+                        value={dietData.calories_goal ?? ''}
                         onChange={(e) => handleInputChange(e, 'diet')}
                         disabled={isSaving.diet} required className={styles.formInput}
                     />
                  </div>
-
-                  {/* --- Diet Reminders --- */}
                  <div className={styles.formGroup}>
                     <label>Reminders:</label>
                      {dietReminders.length === 0 && <p className={styles.noReminders}>No reminders set.</p>}
@@ -317,23 +290,17 @@ const HabitSettings = () => {
                                     onClick={() => handleRemoveReminder('diet', index)}
                                     disabled={isSaving.diet} className={styles.removeReminderButton}
                                     aria-label={`Remove ${time || 'empty'} reminder`}
-                                >
-                                    ×
-                                </button>
+                                > × </button>
                             </div>
                         ))}
                     </div>
                     <button type="button" onClick={() => handleAddReminder('diet')}
                         disabled={isSaving.diet} className={styles.addReminderButton}
-                    >
-                        + Add Reminder
-                    </button>
+                    > + Add Reminder </button>
                  </div>
-                 {/* --- End Diet Reminders --- */}
-
-                  <div className={styles.formActions}>
+                 <div className={styles.formActions}>
                      <button type="submit" disabled={isSaving.diet} className={`${styles.formButton} ${styles.formButtonPrimary}`}>
-                         {isSaving.diet ? <LoadingSpinner inline={true}/> : 'Save Diet Habit'}
+                         Save Diet Habit {/* Only Text */}
                      </button>
                  </div>
             </form>

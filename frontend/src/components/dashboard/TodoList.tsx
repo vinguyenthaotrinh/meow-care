@@ -41,6 +41,7 @@ const TodoList: React.FC<TodoListProps> = ({
     const handleFoodAdded = (updatedLog: DietLog) => {
         updateTodoInState({ ...updatedLog, type: 'diet' });
         handleCloseDietModal();
+        // Optionally keep it expanded after adding food
         setExpandedDietLogId(updatedLog.id);
     };
 
@@ -61,7 +62,7 @@ const TodoList: React.FC<TodoListProps> = ({
                     <div key={item.id} className={styles.todoItemWrapper}>
                         <div className={`${styles.todoItem} ${itemIsLoading ? styles.loading : ''}`}>
                             {/* --- Phần nội dung chính (text) --- */}
-                            <div className={styles.todoContentWrapper}> {/* Vẫn giữ wrapper này */}
+                            <div className={styles.todoContentWrapper}>
                                 <div className={styles.todoContent}>
                                     {item.type === 'sleep' && (
                                         <>
@@ -80,23 +81,21 @@ const TodoList: React.FC<TodoListProps> = ({
                                         </>
                                     )}
                                     {item.type === 'diet' && (
-                                        // *** START Diet Content Refactor ***
                                         <div> {/* Container cho text */}
                                             <p className={styles.todoText}>Eat well</p>
+                                            {/* Progress text now part of the main content */}
                                             <p className={styles.todoSubtext}>
                                                 Progress: {formatAmount(item.consumed_calories, 'kcal')} / {formatAmount(item.calories_goal, 'kcal')}
                                             </p>
                                         </div>
-                                        // *** END Diet Content Refactor ***
                                     )}
                                 </div>
                             </div>
 
-                            {/* --- Phần Expand Toggle (NEW POSITION) --- */}
-                            {/* Chỉ hiển thị nút expand cho Diet */}
+                            {/* --- Phần Expand Toggle (Cho Diet) --- */}
                             {item.type === 'diet' && (
                                 <div
-                                    className={styles.detailsToggle} // Dùng lại class này hoặc tạo class mới
+                                    className={styles.detailsToggle} // Dùng class này để style
                                     onClick={() => toggleDietExpansion(item.id)}
                                     role="button"
                                     tabIndex={0}
@@ -104,7 +103,7 @@ const TodoList: React.FC<TodoListProps> = ({
                                     aria-expanded={isDietExpanded}
                                     aria-controls={`diet-details-${item.id}`}
                                 >
-                                    <span className={styles.detailsText}>See Details</span>
+                                    <span className={styles.detailsText}>Details</span> {/* Changed text */}
                                     <span className={`${styles.expandIcon} ${isDietExpanded ? styles.expanded : ''}`} aria-hidden="true">
                                         ▶
                                     </span>
@@ -113,17 +112,28 @@ const TodoList: React.FC<TodoListProps> = ({
 
                             {/* --- Phần Actions (Nút bấm) --- */}
                             <div className={styles.todoActions}>
-                                {itemIsLoading ? <LoadingSpinner className={styles.spinnerInline} /> : item.completed ? (
+                                {/* Show disabled button version if loading, otherwise show active button or completed */}
+                                {item.completed ? (
                                     <button className={styles.completedButton} disabled>Completed</button>
-                                ) : (
+                                ) : itemIsLoading ? (
+                                    // Render a disabled version of the correct button type
                                     item.type === 'sleep' ? (
-                                        <button onClick={() => handleCompleteSleep(item.id)} disabled={itemIsLoading}>Complete</button>
+                                        <button disabled>Complete</button> // Match default button style when disabled
                                     ) : item.type === 'hydrate' ? (
-                                        <button className={styles.updateButton} onClick={() => handleUpdateHydrate(item.id)} disabled={itemIsLoading}>
+                                        <button className={styles.updateButton} disabled>+ {formatAmount(item.cup_size, 'ml')}</button> // Match update button style when disabled
+                                    ) : item.type === 'diet' ? (
+                                        <button className={styles.updateButton} disabled>Add food</button> // Match update button style when disabled
+                                    ) : null
+                                ) : (
+                                    // Render the active buttons if not loading and not completed
+                                    item.type === 'sleep' ? (
+                                        <button onClick={() => handleCompleteSleep(item.id)}>Complete</button>
+                                    ) : item.type === 'hydrate' ? (
+                                        <button className={styles.updateButton} onClick={() => handleUpdateHydrate(item.id)}>
                                             + {formatAmount(item.cup_size, 'ml')}
                                         </button>
                                     ) : item.type === 'diet' ? (
-                                        <button className={styles.updateButton} onClick={() => handleOpenDietModalProp(item.id)} disabled={itemIsLoading}>
+                                        <button className={styles.updateButton} onClick={() => handleOpenDietModalProp(item.id)}>
                                             Add food
                                         </button>
                                     ) : null
@@ -131,10 +141,9 @@ const TodoList: React.FC<TodoListProps> = ({
                             </div>
                         </div>
 
-                        {/* --- Phần mở rộng Diet (Giữ nguyên vị trí) --- */}
+                        {/* --- Phần mở rộng Diet --- */}
                         {isDietExpanded && item.type === 'diet' && (
                            <div id={`diet-details-${item.id}`} className={styles.dietDetailsContainer}>
-                               {/* ... nội dung danh sách món ăn ... */}
                                 {item.dishes && item.dishes.length > 0 ? (
                                     <>
                                         <h5 className={styles.dishListTitle}>Logged Foods:</h5>
@@ -153,7 +162,7 @@ const TodoList: React.FC<TodoListProps> = ({
                            </div>
                         )}
 
-                        {/* Diet Modal Rendering (Giữ nguyên) */}
+                        {/* Diet Modal Rendering */}
                         {item.type === 'diet' && dietModalOpen === item.id && (
                             <DietUpdateModal
                                 logId={item.id}
