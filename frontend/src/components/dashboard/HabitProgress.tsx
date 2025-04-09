@@ -84,7 +84,7 @@ const HabitProgress: React.FC<HabitProgressProps> = ({ todos, sleepHabit, isLoad
                     <span className={styles.iconSymbol}>🔆</span>
                 </div>
                 <span className={styles.habitText}>
-                    Wake up<br />
+                    Wake-up<br />
                     <span className={styles.habitProgressText}>
                         {sleepHabit ? formatTime(sleepHabit.wakeup_time) : 'Goal N/A'}
                         {wakeUpLog?.completed && ' ✓'}
@@ -112,7 +112,7 @@ const HabitProgress: React.FC<HabitProgressProps> = ({ todos, sleepHabit, isLoad
                     <span className={styles.iconSymbol}>🥛</span>
                 </div>
                 <span className={styles.habitText}>
-                    Hydrate<br />
+                    Hydration<br />
                     <span className={styles.habitProgressText}>
                         {formatAmount(todayHydrateLog?.consumed_water, 'ml')} / {formatAmount(todayHydrateLog?.water_goal, 'ml')}
                         {todayHydrateLog?.completed && ' ✓'}

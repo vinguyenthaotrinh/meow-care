@@ -5,7 +5,7 @@ import styles from '../../styles/Navbar.module.css';
 
 const navItems = [
   { name: 'Home', path: '/home' },
-  { name: 'Habits', path: '/habits' }, // Sẽ làm sau
+  { name: 'Rewards', path: '/rewards' }, // Sẽ làm sau
   { name: 'Focus', path: '/focus' },   // Sẽ làm sau
   { name: 'Profile', path: '/profile' }, // Có thể gộp vào Settings hoặc để riêng
   { name: 'Settings', path: '/settings' }, // <-- Thêm mới

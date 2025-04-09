@@ -33,6 +33,11 @@ export interface HydrateLog {
 }
 
 // --- Diet ---
+export interface DietDish { // Đảm bảo type này tồn tại
+  name: string;
+  calories: number;
+}
+
 export interface DietHabit {
   calories_goal: number;
   reminder_time?: string[]; // List of "HH:MM:SS"
@@ -42,9 +47,28 @@ export interface DietLog {
   id: string;
   user_id: string;
   calories_goal: number;
-  dishes: Record<string, any>; // JSON object
+  dishes: DietDish[]; // *** QUAN TRỌNG: Đảm bảo là DietDish[] ***
   consumed_calories: number;
   date: string; // Format "YYYY-MM-DD"
+  completed: boolean;
+}
+
+// export interface DietLog {
+//   id: string;
+//   user_id: string;
+//   calories_goal: number;
+//   dishes: Record<string, any>; // JSON object
+//   consumed_calories: number;
+//   date: string; // Format "YYYY-MM-DD"
+//   completed: boolean;
+// }
+export interface DietLog {
+  id: string;
+  user_id: string;
+  calories_goal: number;
+  dishes: DietDish[]; // <-- Cập nhật thành mảng DietDish[]
+  consumed_calories: number;
+  date: string;
   completed: boolean;
 }
 

@@ -51,6 +51,7 @@
   z-index: 1000;
 }
 
+/* Base Spinner Style */
 .spinner {
   border: 4px solid rgba(195, 177, 225, 0.2);
   border-left-color: var(--color-pastel-purple);
@@ -58,50 +59,22 @@
   width: 40px; /* Kích thước mặc định */
   height: 40px;
   animation: spin 1s linear infinite;
-  /* Thêm display và vertical-align để căn chỉnh tốt hơn khi inline */
-  display: inline-block;
-  vertical-align: middle;
+  display: inline-block; /* Allows margin and alignment */
+  vertical-align: middle; /* Better alignment with text/other elements */
 }
 
 /* Spinner nhỏ hơn dùng inline (ví dụ trong nút) */
-/* Đảm bảo selector này đúng với class bạn thêm trong component */
-.spinner.inline {
-  width: 1em; /* Kích thước dựa trên font size của parent (nút) */
-  height: 1em;
-  border-width: 2px; /* Viền mỏng hơn */
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Style spinner inline (MỚI) */
 .spinnerInline {
-  /* Kế thừa animation và border-radius */
-  composes: spinner; /* Nếu dùng CSS Modules thuần túy, kế thừa không trực tiếp như này, cần định nghĩa lại */
-
-  /* Định nghĩa lại các thuộc tính cần thay đổi */
-  border-width: 2px; /* Viền mỏng hơn */
-  width: 16px; /* Kích thước nhỏ hơn */
-  height: 16px;
-  /* Bỏ margin/padding mặc định nếu có, hoặc thêm margin phù hợp */
-  margin: 0 0.2rem; /* Thêm chút khoảng cách ngang nếu cần */
-  display: inline-block; /* Đảm bảo nó nằm trên cùng dòng */
-  vertical-align: middle; /* Căn giữa theo chiều dọc với text */
-
-  /* Ghi đè lại màu border nếu cần */
-  border-left-color: currentColor; /* Dùng màu text của button làm màu quay */
-  border-top-color: rgba(0, 0, 0, 0.1);
-  border-right-color: rgba(0, 0, 0, 0.1);
-  border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  /* Inherit animation and border-radius */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* Lighter border for inline */
+  border-left-color: currentColor; /* Use text color for the spinning part */
+  border-radius: 50%;
+  width: 1em; /* Size based on parent font-size */
+  height: 1em;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.2rem; /* Optional horizontal spacing */
 }
 
 @keyframes spin {
@@ -220,7 +193,7 @@
 }
 
 .habitIconWrapper.completed .iconSymbol {
-  /* color: var(--color-white); */ /* Optional */
+  /* color: var(--color-white); */ /* Optional: Change icon color on completion */
 }
 
 .habitText {
@@ -250,19 +223,29 @@
   /* Styles for the container if needed */
 }
 
+/* --- Wrapper cho mỗi item + phần mở rộng --- */
+.todoItemWrapper {
+  margin-bottom: 0.8rem; /* Khoảng cách giữa các wrapper */
+  background-color: var(--color-white); /* Nền trắng chung */
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04); /* Shadow nhẹ */
+  overflow: hidden; /* Giúp border-radius hoạt động đúng với phần mở rộng */
+  transition: box-shadow 0.2s ease;
+}
+/* Optional: Remove hover shadow if desired */
+/* .todoItemWrapper:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+} */
+
+/* --- Phần item chính --- */
 .todoItem {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; /* Căn giữa theo chiều dọc */
   padding: 0.8rem 1rem;
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  margin-bottom: 0.8rem;
-  transition: box-shadow 0.2s ease, opacity 0.3s ease; /* Add opacity transition */
-}
-.todoItem:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.3s ease; /* Add opacity transition for loading */
+  /* Removed background, border, radius, margin-bottom from here */
 }
 
 .todoItem.loading {
@@ -270,28 +253,76 @@
   pointer-events: none;
 }
 
-.todoContent {
-  flex-grow: 1;
-  margin-right: 1rem;
+/* --- Container cho nội dung text chính --- */
+.todoContentWrapper {
+  flex-grow: 1; /* Chiếm hết không gian còn lại */
+  margin-right: 1rem; /* Khoảng cách với phần tử tiếp theo (details hoặc action) */
+  overflow: hidden; /* Tránh text dài làm vỡ layout */
 }
+
+.todoContent {
+  /* Keep original styles if any */
+}
+
 .todoText {
   font-size: 0.95rem;
   color: var(--text-primary);
-  margin-bottom: 0.2rem;
   font-weight: 500;
+  margin-bottom: 0.2rem; /* Khoảng cách giữa title và subtext */
 }
 .todoSubtext {
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
+/* --- Nhóm Details Toggle --- */
+.detailsToggle {
+  display: flex; /* Sắp xếp text 'Details' và icon ngang hàng */
+  align-items: center; /* Căn giữa text và icon theo chiều dọc */
+  cursor: pointer;
+  user-select: none;
+  color: var(--text-secondary);
+  padding: 0.3rem 0.5rem; /* Thêm padding để dễ bấm hơn */
+  border-radius: var(--border-radius); /* Bo góc nhẹ */
+  transition: background-color 0.2s ease; /* Hiệu ứng hover */
+  flex-shrink: 0; /* Ngăn không bị co lại */
+  margin-right: 0.8rem; /* Khoảng cách với nút Actions bên phải */
+}
+.detailsToggle:hover {
+  background-color: var(--background-alt); /* Nền xám nhẹ khi hover */
+}
+.detailsToggle:focus-visible {
+  outline: 2px solid var(--color-pastel-purple);
+  outline-offset: 1px;
+}
+
+.detailsText {
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
+  font-weight: 500;
+}
+
+.expandIcon {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease-in-out;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.expandIcon.expanded {
+  transform: rotate(90deg);
+}
+/* --- End Details Toggle --- */
+
+/* --- Khu vực nút Actions --- */
 .todoActions {
   flex-shrink: 0; /* Ngăn action bị co lại */
+  display: flex; /* Đảm bảo các nút bên trong được sắp xếp */
+  align-items: center; /* Căn các nút thẳng hàng nếu có nhiều nút */
 }
 
 .todoActions button,
-.todoActions span,
 .completedButton {
+  /* Include completedButton here */
   padding: 0.5rem 0.8rem;
   font-size: 0.85rem;
   margin-left: 0.5rem;
@@ -300,35 +331,25 @@
   align-items: center;
   justify-content: center;
   gap: 0.3rem;
-  vertical-align: middle; /* Giúp căn chỉnh tốt hơn khi có text và icon */
-  border-radius: var(
-    --border-radius
-  ); /* Ensure completed button also has border radius */
-  border: 1px solid transparent; /* Add transparent border for consistent height */
-  cursor: default; /* Default cursor for completed button */
-  line-height: 1.2; /* Adjust line height if needed */
+  vertical-align: middle;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent; /* Base border for height consistency */
+  line-height: 1.2;
+  cursor: default; /* Default cursor, override for active buttons */
 }
 /* Style riêng cho spinner trong actions */
-.todoActions .spinner {
-  width: 1.2em; /* Hơi to hơn */
-  height: 1.2em;
-  border-width: 2px;
+.todoActions .spinnerInline {
+  /* Use the specific inline spinner class */
+  width: 1.1em; /* Adjust size as needed */
+  height: 1.1em;
 }
-
-/* Keep checkIcon styles if you might use it elsewhere, otherwise remove */
-/* .checkIcon {
-    color: #28a745;
-    font-size: 1.4rem;
-    font-weight: bold;
-    line-height: 1;
-} */
 
 /* Nút update màu vàng */
 .updateButton {
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
-  border: 1px solid var(--color-border); /* Thêm border giống nút secondary */
-  cursor: pointer; /* Ensure cursor is pointer for active buttons */
+  border: 1px solid var(--color-border);
+  cursor: pointer;
 }
 .updateButton:hover:not(:disabled) {
   background-color: #fafa85;
@@ -336,15 +357,15 @@
 }
 .updateButton:disabled {
   background-color: var(--color-pastel-yellow);
-  opacity: 0.6; /* Apply standard disabled opacity */
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Nút Complete màu tím mặc định */
+/* Nút Complete màu tím mặc định (cho Sleep) */
 .todoActions button:not(.updateButton):not(.completedButton) {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
-  border: 1px solid transparent; /* Consistent border */
+  border: 1px solid transparent;
   cursor: pointer;
 }
 .todoActions
@@ -357,16 +378,78 @@
   cursor: not-allowed;
 }
 
-/* --- Style cho nút Completed (NEW) --- */
+/* --- Style cho nút Completed --- */
 .completedButton {
   background-color: #e9ecef; /* Light grey background */
   color: #6c757d; /* Grey text */
   border: 1px solid #ced4da; /* Light grey border */
   cursor: not-allowed; /* Explicitly set cursor */
-  /* No hover effect needed as it's disabled */
-  font-weight: 500; /* Less prominent font weight */
+  font-weight: 500;
+}
+.completedButton:disabled {
+  /* Ensure opacity is full for completed */
+  opacity: 1 !important;
 }
 /* --- End Completed Button Style --- */
+
+/* --- Container cho danh sách món ăn mở rộng --- */
+.dietDetailsContainer {
+  padding: 0.8rem 1rem 1rem 1rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--background-alt);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dishListTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+
+.dishList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dishItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 0.3rem 0;
+}
+
+.dishName {
+  color: var(--text-primary);
+  margin-right: 1rem;
+}
+
+.dishCalories {
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.noDishes {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
 
 /* --- Diet Modal Styles --- */
 .dietModalOverlay {
@@ -375,39 +458,39 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Overlay đậm hơn */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  padding: 1rem; /* Padding cho màn hình nhỏ */
+  padding: 1rem;
 }
 
 .dietModal {
-  background-color: var(--color-white); /* Nền trắng cho modal */
+  background-color: var(--color-white);
   padding: 2rem 2.5rem;
   border-radius: var(--border-radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 450px; /* Giới hạn chiều rộng */
+  max-width: 450px;
   border: 1px solid var(--color-border);
-  position: relative; /* --- Cần cho overlay loading --- */
-  overflow: hidden; /* Ngăn content tràn */
+  position: relative;
+  overflow: hidden;
 }
 
-/* --- Loading Overlay Inside Modal (Thêm từ bước trước) --- */
+/* --- Loading Overlay Inside Modal --- */
 .modalLoadingOverlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.85); /* Nền trắng mờ hơn chút */
+  background-color: rgba(255, 255, 255, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10; /* Nổi lên trên form */
-  border-radius: var(--border-radius); /* Match modal */
+  z-index: 10;
+  border-radius: var(--border-radius);
 }
 /* Spinner trong overlay */
 .modalLoadingOverlay .spinner {
@@ -420,14 +503,14 @@
   text-align: center;
   margin-bottom: 1.5rem;
   color: var(--color-pastel-purple);
-  font-weight: 600; /* Giảm weight chút */
+  font-weight: 600;
   font-size: 1.4rem;
 }
 
 .dietForm {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem; /* Khoảng cách trong form */
+  gap: 1.2rem;
 }
 
 .formGroup {
@@ -439,7 +522,7 @@
 .formLabel {
   font-weight: 500;
   color: var(--text-secondary);
-  font-size: 0.9rem; /* Nhỏ hơn chút */
+  font-size: 0.9rem;
 }
 
 .formInput {
@@ -448,38 +531,38 @@
   border: 1px solid var(--color-border);
   font-size: 1rem;
   font-family: inherit;
-  background-color: var(--background-alt); /* Nền xám nhẹ */
+  background-color: var(--background-alt);
 }
 
 .formInput:focus {
   outline: none;
   border-color: var(--color-pastel-purple);
   box-shadow: 0 0 0 2px rgba(195, 177, 225, 0.3);
-  background-color: var(--color-white); /* Nền trắng khi focus */
+  background-color: var(--color-white);
 }
 .formInput:disabled {
-  background-color: #e9ecef; /* Nền rõ hơn khi disabled */
+  background-color: #e9ecef;
   cursor: not-allowed;
 }
 
 .modalActions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.8rem; /* Khoảng cách nút */
-  margin-top: 1.5rem; /* Khoảng cách trên nút */
+  gap: 0.8rem;
+  margin-top: 1.5rem;
 }
 
 /* --- Base styles cho nút trong modal --- */
 .modalButton,
 .modalButtonSecondary,
-.modalButtonPrimaryYellow /* Thêm nút vàng vào đây */ {
+.modalButtonPrimaryYellow {
   padding: 0.7rem 1.5rem;
   border-radius: var(--border-radius);
   font-weight: 600;
   border: none;
   cursor: pointer;
   font-size: 0.95rem;
-  transition: background-color 0.2s ease, opacity 0.2s ease; /* Thêm transition */
+  transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 /* --- Disabled style chung --- */
 .modalButton:disabled,
@@ -498,17 +581,16 @@
   opacity: 0.9;
 }
 
-/* --- Yellow 'Add' Button Style (Thêm từ bước trước) --- */
+/* --- Yellow 'Add' Button Style --- */
 .modalButtonPrimaryYellow {
   background-color: var(--color-pastel-yellow);
-  color: var(--text-primary); /* Black text */
-  border: 1px solid var(--color-border); /* Giống secondary */
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
 }
 .modalButtonPrimaryYellow:hover:not(:disabled) {
-  background-color: #fafa85; /* Lighter yellow */
+  background-color: #fafa85;
   opacity: 1;
 }
-/* Giữ nền vàng khi disabled, opacity đã handle ở trên */
 .modalButtonPrimaryYellow:disabled {
   background-color: var(--color-pastel-yellow);
 }
@@ -516,15 +598,14 @@
 
 /* Nút Cancel */
 .modalButtonSecondary {
-  background-color: var(--color-white); /* Nền trắng */
-  color: var(--text-secondary); /* Chữ xám */
+  background-color: var(--color-white);
+  color: var(--text-secondary);
   border: 1px solid var(--color-border);
 }
 .modalButtonSecondary:hover:not(:disabled) {
-  background-color: var(--background-alt); /* Nền xám nhẹ khi hover */
+  background-color: var(--background-alt);
   border-color: #ccc;
 }
-/* Giữ nền trắng khi disabled, opacity đã handle */
 .modalButtonSecondary:disabled {
   background-color: var(--color-white);
 }
@@ -537,7 +618,6 @@
   padding: 0.75rem 1rem;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
-  /* margin-bottom: 1rem; */ /* Bỏ margin dưới nếu muốn nó sát hơn */
   text-align: center;
 }
 
@@ -547,26 +627,24 @@
     grid-template-columns: 1fr;
   }
   .mainContent {
-    padding: 1rem 1.5rem; /* Điều chỉnh padding */
+    padding: 1rem 1.5rem;
   }
-  /* Icon list đã có scroll ngang nên không cần space-around */
 }
 
 @media (max-width: 600px) {
-  /* Thêm breakpoint nhỏ hơn */
   .mainContent {
     padding: 0.5rem 1rem;
   }
   .leftColumn,
   .rightColumn {
-    padding: 1rem; /* Giảm padding cột */
+    padding: 1rem;
   }
   .sectionTitle {
     font-size: 1.2rem;
     margin-bottom: 1rem;
   }
   .dietModal {
-    padding: 1.5rem; /* Giảm padding modal */
+    padding: 1.5rem;
   }
   .modalTitle {
     font-size: 1.3rem;
@@ -575,7 +653,7 @@
 
 @media (max-width: 480px) {
   .habitIconWrapper {
-    min-width: 70px; /* Nhỏ hơn nữa */
+    min-width: 70px;
   }
   .iconCircle {
     width: 50px;
@@ -584,24 +662,37 @@
   .iconSymbol {
     font-size: 1.5rem;
   }
+
+  /* Adjust todo item layout for small screens */
+  .todoItemWrapper {
+    margin-bottom: 1rem; /* More space between items */
+  }
   .todoItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.7rem; /* Tăng gap chút */
-    padding: 1rem; /* Tăng padding item */
+    /* Keep flex-row, adjust padding */
+    padding: 0.8rem; /* Slightly less padding */
+  }
+  .todoContentWrapper {
+    margin-right: 0.5rem; /* Less space */
   }
   .todoActions {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
+    /* Actions might wrap if buttons are too wide */
   }
+  .todoActions button,
+  .completedButton {
+    padding: 0.4rem 0.6rem; /* Smaller button padding */
+    font-size: 0.8rem;
+  }
+
   .modalActions {
-    flex-direction: column-reverse; /* Stack nút trên mobile */
+    flex-direction: column-reverse;
     gap: 0.5rem;
   }
   .modalButton,
   .modalButtonSecondary,
   .modalButtonPrimaryYellow {
-    width: 100%; /* Nút full width */
+    width: 100%;
+  }
+  .dietDetailsContainer {
+    padding: 0.8rem; /* Less padding inside expanded area */
   }
 }
