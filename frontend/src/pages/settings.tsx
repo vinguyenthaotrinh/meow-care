@@ -1,4 +1,4 @@
-// src/pages/dashboard/settings.tsx
+// src/pages/settings.tsx
 import React from 'react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import SettingsLayout from '../components/settings/SettingsLayout';

@@ -1,32 +1,30 @@
 /* src/styles/Home.module.css */
 
-/* --- Biến màu mới cho Progress --- */
+/* --- Progress Colors (Keep as User provided) --- */
 :root {
-  --hydrate-progress-color: #89cff0; /* Màu xanh dương nhạt cho nước */
-  --diet-progress-color: #fdba74; /* Màu cam nhạt cho diet */
-  --sleep-completed-color: #c3b1e1; /* Màu tím pastel khi hoàn thành sleep */
-  --wakeup-completed-color: #fafa8a; /* Vàng pastel */
-  --icon-background-default: #ffffff; /* Màu nền mặc định icon */
-  --icon-border-color: var(--color-border); /* Viền icon */
+  --hydrate-progress-color: #89cff0;
+  --diet-progress-color: #fdba74;
+  --sleep-completed-color: #c3b1e1; /* User's previous code had this */
+  --wakeup-completed-color: #fafa8a;
+  --icon-background-default: #ffffff;
+  --icon-border-color: var(--color-border);
 }
 
-/* --- Layout --- */
+/* --- Base styles (Keep User's provided styles) --- */
 .dashboardContainer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--background-light);
-}
-
+} /* Original user bg */
 .mainContent {
   flex-grow: 1;
-  padding: 0.5rem 2rem; /* Giảm padding top/bottom */
+  padding: 0.5rem 2rem;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative; /* Needed for absolute positioning of popup */
 }
-
-/* --- Loading & Centering --- */
 .centered {
   display: flex;
   justify-content: center;
@@ -35,30 +33,20 @@
   font-size: 1.2rem;
   color: var(--text-secondary);
 }
-
-/* --- NEW: Container for loading spinner within the main content area --- */
 .contentLoadingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px; /* Give it some minimum height */
+  min-height: 400px;
   width: 100%;
-  /* Optional: Add some padding-top if needed */
   padding-top: 4rem;
-  /* No background overlay needed here, just center the spinner */
 }
-
-/* Optional: Style to dim content during individual updates */
 .contentDimmed {
-  opacity: 0.8; /* Make content slightly transparent */
+  opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
-  /* Add pointer-events: none; if you want to disable interaction */
-  /* pointer-events: none; */
 }
-
-/* Base Spinner Style (Used in overlays, etc.) */
 .spinner {
-  border: 4px solid rgba(195, 177, 225, 0.2);
+  border: 4px solid rgba(150, 123, 182, 0.2);
   border-left-color: var(--color-pastel-purple);
   border-radius: 50%;
   width: 40px;
@@ -66,93 +54,56 @@
   animation: spin 1s linear infinite;
   display: inline-block;
   vertical-align: middle;
-}
-
+} /* Adjusted spinner color based on user's purple */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
-/* --- Dashboard Home Page Specific Styles --- */
-.homeGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 0.5rem;
-}
 
-.leftColumn,
-.rightColumn {
-  background-color: var(--background-alt);
-  padding: 1.5rem;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-}
-
+/* --- Section Title (Keep User's style) --- */
 .sectionTitle {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  color: var(--color-pastel-purple);
+  color: var(--color-pastel-purple); /* User's purple */
 }
 
-/* -- Left Column Styles -- */
-.userStats {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-.statItem {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-.statLabel {
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-right: 0.5rem;
-}
-.statValue {
-  font-weight: 600;
-  color: var(--text-primary);
+/* --- NEW: Main Layout Grid --- */
+.mainLayoutGrid {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* Habits | Cat | Progress */
+  gap: 2rem; /* Adjust gap between columns */
+  align-items: flex-start; /* Align items at the top */
+  padding: 2rem 0; /* Add padding around the grid */
+  position: relative; /* Parent for absolute popup */
+  max-width: 950px; /* Max width for the 3-column layout */
+  margin: 1rem auto; /* Center the grid, adjust vertical margin */
 }
 
-.habitIconsContainer {
-  margin-bottom: 2rem;
-}
-
-.habitIconsList {
+/* --- Column 1: Habit Icons Grid --- */
+.habitColumnGrid {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  white-space: nowrap;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-  margin-top: 1rem;
+  flex-direction: column;
+  gap: 1.5rem; /* Vertical gap between rows */
 }
 
-.habitIconsList::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
-}
-.habitIconsList::-webkit-scrollbar-track {
-  background: transparent;
-}
-.habitIconsList::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
+.habitRow {
+  display: flex;
+  gap: 1.5rem; /* Horizontal gap between icons in a row */
+  justify-content: flex-start; /* Align icons to the start of the row */
 }
 
+/* --- Habit Icon Styles (Keep MOST User's styles) --- */
 .habitIconWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.6rem;
-  min-width: 90px;
+  min-width: 85px; /* Slightly smaller min-width */
   flex-shrink: 0;
 }
-
 .iconCircle {
   width: 60px;
   height: 60px;
@@ -164,56 +115,197 @@
   border: 1px solid var(--icon-border-color);
   background-color: var(--icon-background-default);
   overflow: hidden;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease,
+    transform 0.2s ease; /* Added transform */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
-
 .iconCircle.wakeup.completed {
   background-color: var(--wakeup-completed-color);
-}
-
+  border-color: #e9e98e;
+} /* Adjusted border */
 .iconCircle.sleep.completed {
   background-color: var(--sleep-completed-color);
-}
-
+  border-color: #b1a1ce;
+} /* Adjusted border */
 .iconSymbol {
   font-size: 1.8rem;
   z-index: 1;
   color: var(--text-primary);
 }
-
-.habitIconWrapper.completed .iconSymbol {
-  /* Optional: Change icon color on completion */
-  /* color: var(--color-white); */
-}
-
 .habitText {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   line-height: 1.3;
-}
-
+  margin-top: 0.1rem;
+} /* Smaller font, less margin */
 .habitProgressText {
   font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+} /* Smaller progress text */
+.habitIconWrapper.completed .iconSymbol {
+  /* Optional style */
+}
+
+/* --- Style for the Task Trigger Button (6th icon) --- */
+.taskTriggerButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* Ensure wrapper itself doesn't have odd spacing */
+  line-height: 0; /* Prevent extra space from button line-height */
+}
+.taskTriggerButton .iconCircle {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+}
+.taskTriggerButton:hover .iconCircle {
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+  transform: scale(1.05); /* Keep scale on hover */
+}
+.taskTriggerButton:focus-visible {
+  /* Accessibility focus */
+  outline: none; /* Remove default button outline */
+}
+/* Apply focus style to the circle inside the button */
+.taskTriggerButton:focus-visible .iconCircle {
+  outline: 2px solid var(--color-pastel-purple);
+  outline-offset: 2px;
+}
+
+/* --- Column 2: Cat's Room --- */
+.catRoom {
+  /* background-color: var(--color-white); Removed */
+  border-radius: var(--border-radius);
+  /* padding: 1.5rem; */ /* Padding might interfere with background fill */
+  border: 1px solid var(--color-border);
+  display: flex; /* Center the cat image */
+  justify-content: center;
+  align-items: center;
+  min-height: 350px; /* !!! Taller */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative; /* For positioning background and cat */
+  overflow: hidden; /* Clip background image */
+}
+.catRoomBackground {
+  z-index: 0; /* Background behind cat */
+  /* Opacity can be adjusted here if needed */
+  /* opacity: 0.8; */
+}
+.catImage {
+  position: relative; /* Ensure cat is on top of background */
+  z-index: 1;
+  /* Add margin if needed to position cat within room */
+  /* margin-bottom: 1rem; */
+}
+
+/* --- Column 3: Progress Info --- */
+.progressInfo {
+  padding: 1.5rem 1rem 1.5rem 0; /* Adjust padding */
+  min-width: 180px; /* Ensure it has some width */
+}
+.progressInfo .sectionTitle {
+  margin-bottom: 1rem;
+  text-align: left; /* Align title left */
+  font-size: 1.1rem; /* Slightly smaller title */
+  color: var(--color-pastel-purple);
+  padding-bottom: 0; /* No bottom padding */
+}
+.progressInfo .statItem {
+  margin-bottom: 0.6rem; /* Adjust spacing */
+  font-size: 0.95rem; /* Adjust font size */
+  text-align: left; /* Align stats left */
+}
+.statLabel {
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-right: 0.5rem;
+  display: inline-block;
+  width: 60px; /* Align labels */
+}
+.statValue {
+  font-weight: 600;
   color: var(--text-primary);
 }
 
-.catContainer {
+/* --- NEW: Task Popup Container (Positioned Absolutely) --- */
+.tasksPopupContainer {
+  position: absolute;
+  /* Position relative to the trigger button area */
+  top: calc(
+    1.5rem * 2 + 60px * 2 + 0.6rem * 2 + 0.8rem * 2
+  ); /* Estimate top based on 2 rows of icons + gaps */
+  left: calc(
+    90px * 2 + 1.5rem + 2rem
+  ); /* Estimate left based on 2 icons width + gap + grid gap */
+  transform: translate(-50%, -5%); /* Adjust position slightly */
+
+  width: 90%; /* Responsive width */
+  max-width: 420px; /* Limit max width */
+  max-height: 80vh; /* Limit height */
+  background-color: var(--background-alt); /* Light grey background */
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Softer shadow */
+  z-index: 100;
+  /* Transition for appearing */
+  transform-origin: bottom center; /* Scale from bottom */
+  transform: scale(0.9) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tasksPopupContainer.visible {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.tasksPopupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+.tasksPopupHeader .sectionTitle {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  font-size: 1.2rem;
+}
+.closeTasksButton {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.1rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+.closeTasksButton:hover {
+  color: var(--text-primary);
+}
+.todoListScrollable {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 0.3rem;
+  margin-right: -0.3rem; /* Offset scrollbar padding */
+}
+.noTasks {
   text-align: center;
-  margin-top: 2rem;
+  color: var(--text-secondary);
+  padding: 2rem 1rem;
+  font-style: italic;
 }
 
-.catContainer img {
-  max-width: 150px;
-  height: auto;
-  margin-top: 1rem;
-}
-
-/* -- Right Column (Todo List) Styles -- */
-.todoListContainer {
-  /* Styles for the container if needed */
-}
-
-/* --- Wrapper cho mỗi item + phần mở rộng --- */
+/* --- Todo Item Styles (Keep User's extensive styles) --- */
+/* Wrapper */
 .todoItemWrapper {
   margin-bottom: 0.8rem;
   background-color: var(--color-white);
@@ -223,10 +315,7 @@
   overflow: hidden;
   transition: box-shadow 0.2s ease;
 }
-/* Optional: Remove hover shadow if desired */
-/* .todoItemWrapper:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.06); } */
-
-/* --- Phần item chính --- */
+/* Item main part */
 .todoItem {
   display: flex;
   justify-content: space-between;
@@ -234,23 +323,19 @@
   padding: 0.8rem 1rem;
   transition: opacity 0.3s ease;
 }
-
 .todoItem.loading {
   opacity: 0.6;
   pointer-events: none;
 }
-
-/* --- Container cho nội dung text chính --- */
+/* Content */
 .todoContentWrapper {
   flex-grow: 1;
   margin-right: 1rem;
   overflow: hidden;
 }
-
 .todoContent {
   /* Keep original styles if any */
 }
-
 .todoText {
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -261,8 +346,7 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
-
-/* --- NEW: Style for the row containing Progress, Details, Arrow --- */
+/* Details Row */
 .detailsRow {
   display: flex;
   justify-content: space-between;
@@ -272,7 +356,6 @@
   user-select: none;
 }
 .detailsRow > .todoSubtext {
-  /* Progress text part */
   flex-grow: 1;
   margin-right: 0.5rem;
 }
@@ -281,8 +364,7 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
-
-/* --- NEW: Style for the group containing "Details" text and the arrow --- */
+/* Details Toggle Group */
 .detailsToggle {
   display: flex;
   align-items: center;
@@ -296,15 +378,12 @@
 .detailsToggle:hover {
   background-color: var(--background-alt);
 }
-
-/* --- NEW: Style for the "Details" text --- */
 .detailsText {
   font-size: 0.8rem;
   margin-right: 0.3rem;
   font-weight: 500;
 }
-
-/* --- Mũi tên Expand --- */
+/* Expand Icon */
 .expandIcon {
   font-size: 0.8rem;
   transition: transform 0.2s ease-in-out;
@@ -314,16 +393,13 @@
 .expandIcon.expanded {
   transform: rotate(90deg);
 }
-/* --- End Details Toggle Group --- */
-
-/* --- Khu vực nút Actions --- */
+/* Actions */
 .todoActions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
 }
-
-/* Base style for all buttons/spans in actions */
+/* Base action button */
 .todoActions button,
 .completedButton {
   padding: 0.5rem 0.8rem;
@@ -338,17 +414,14 @@
   border-radius: var(--border-radius);
   border: 1px solid transparent;
   line-height: 1.2;
-  cursor: default; /* Default cursor, override below */
+  cursor: default;
 }
-
-/* Common disabled style for action buttons */
 .todoActions button:disabled,
 .completedButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* Nút update màu vàng */
+/* Update button */
 .updateButton {
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
@@ -361,11 +434,9 @@
 }
 .updateButton:disabled {
   background-color: var(--color-pastel-yellow);
-  /* Opacity and cursor inherited */
   border-color: var(--color-border);
 }
-
-/* Nút Complete màu tím mặc định (cho Sleep) */
+/* Complete button */
 .todoActions button:not(.updateButton):not(.completedButton) {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
@@ -378,10 +449,8 @@
 }
 .todoActions button:not(.updateButton):not(.completedButton):disabled {
   background-color: var(--color-pastel-purple);
-  /* Opacity and cursor inherited */
 }
-
-/* --- Style cho nút Completed --- */
+/* Completed button */
 .completedButton {
   background-color: #e9ecef;
   color: #6c757d;
@@ -390,18 +459,15 @@
   font-weight: 500;
 }
 .completedButton:disabled {
-  opacity: 1 !important; /* Keep it fully opaque */
+  opacity: 1 !important;
 }
-/* --- End Completed Button Style --- */
-
-/* --- Container cho danh sách món ăn mở rộng --- */
+/* Diet details */
 .dietDetailsContainer {
   padding: 0.8rem 1rem 1rem 1rem;
   border-top: 1px solid var(--color-border);
   background-color: var(--background-alt);
   animation: fadeIn 0.3s ease-out;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -412,14 +478,12 @@
     transform: translateY(0);
   }
 }
-
 .dishListTitle {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 0.8rem;
 }
-
 .dishList {
   list-style: none;
   padding: 0;
@@ -428,32 +492,28 @@
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .dishItem {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
   padding: 0.3rem 0;
 }
-
 .dishName {
   color: var(--text-primary);
   margin-right: 1rem;
 }
-
 .dishCalories {
   color: var(--text-secondary);
   font-weight: 500;
   white-space: nowrap;
 }
-
 .noDishes {
   font-size: 0.9rem;
   color: var(--text-secondary);
   font-style: italic;
 }
 
-/* --- Diet Modal Styles --- */
+/* --- Diet Modal Styles (Keep User's style) --- */
 .dietModalOverlay {
   position: fixed;
   top: 0;
@@ -464,10 +524,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1100;
   padding: 1rem;
 }
-
 .dietModal {
   background-color: var(--color-white);
   padding: 2rem 2.5rem;
@@ -479,8 +538,6 @@
   position: relative;
   overflow: hidden;
 }
-
-/* --- Loading Overlay Inside Modal --- */
 .modalLoadingOverlay {
   position: absolute;
   top: 0;
@@ -494,13 +551,10 @@
   z-index: 10;
   border-radius: var(--border-radius);
 }
-/* Spinner trong overlay */
 .modalLoadingOverlay .spinner {
   width: 35px;
   height: 35px;
 }
-/* --- End Loading Overlay --- */
-
 .modalTitle {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -508,25 +562,21 @@
   font-weight: 600;
   font-size: 1.4rem;
 }
-
 .dietForm {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
-
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .formLabel {
   font-weight: 500;
   color: var(--text-secondary);
   font-size: 0.9rem;
 }
-
 .formInput {
   padding: 0.7rem 1rem;
   border-radius: var(--border-radius);
@@ -535,26 +585,22 @@
   font-family: inherit;
   background-color: var(--background-alt);
 }
-
 .formInput:focus {
   outline: none;
   border-color: var(--color-pastel-purple);
-  box-shadow: 0 0 0 2px rgba(195, 177, 225, 0.3);
+  box-shadow: 0 0 0 2px rgba(150, 123, 182, 0.3);
   background-color: var(--color-white);
 }
 .formInput:disabled {
   background-color: #e9ecef;
   cursor: not-allowed;
 }
-
 .modalActions {
   display: flex;
   justify-content: flex-end;
   gap: 0.8rem;
   margin-top: 1.5rem;
 }
-
-/* --- Base styles cho nút trong modal --- */
 .modalButton,
 .modalButtonSecondary,
 .modalButtonPrimaryYellow {
@@ -566,15 +612,12 @@
   font-size: 0.95rem;
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }
-/* --- Disabled style chung --- */
 .modalButton:disabled,
 .modalButtonSecondary:disabled,
 .modalButtonPrimaryYellow:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* Nút màu tím mặc định */
 .modalButton {
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
@@ -582,8 +625,6 @@
 .modalButton:hover:not(:disabled) {
   opacity: 0.9;
 }
-
-/* --- Yellow 'Add' Button Style --- */
 .modalButtonPrimaryYellow {
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
@@ -595,12 +636,8 @@
 }
 .modalButtonPrimaryYellow:disabled {
   background-color: var(--color-pastel-yellow);
-  /* Opacity and cursor inherited */
   border-color: var(--color-border);
 }
-/* --- End Yellow Button Style --- */
-
-/* Nút Cancel */
 .modalButtonSecondary {
   background-color: var(--color-white);
   color: var(--text-secondary);
@@ -612,10 +649,7 @@
 }
 .modalButtonSecondary:disabled {
   background-color: var(--color-white);
-  /* Opacity and cursor inherited */
 }
-
-/* Lỗi trong modal */
 .modalError {
   color: var(--color-error);
   background-color: rgba(229, 62, 62, 0.1);
@@ -628,11 +662,45 @@
 
 /* --- Responsive --- */
 @media (max-width: 900px) {
-  .homeGrid {
-    grid-template-columns: 1fr;
+  .mainLayoutGrid {
+    grid-template-columns: auto 1fr; /* Habits | Cat + Progress */
+    grid-template-areas:
+      "habits cat"
+      "habits progress";
+    max-width: 95%;
+    gap: 1rem 1.5rem; /* Row gap, Column gap */
+    padding: 1rem 0; /* Less padding */
   }
-  .mainContent {
-    padding: 1rem 1.5rem;
+  .habitColumnGrid {
+    grid-area: habits;
+    gap: 1rem; /* Less gap between rows */
+  }
+  .habitRow {
+    gap: 1rem;
+  }
+  .catRoom {
+    grid-area: cat;
+    min-height: 250px;
+  } /* Adjust height */
+  .progressInfo {
+    grid-area: progress;
+    padding: 1rem 0;
+  }
+
+  /* Adjust popup position - maybe simpler positioning */
+  .tasksPopupContainer {
+    position: fixed; /* Revert to fixed for simplicity below 900px */
+    bottom: 0;
+    right: 0;
+    left: auto; /* Reset left */
+    transform: translateY(100%); /* Hidden below */
+    max-width: 450px;
+    width: 90%;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    max-height: 70vh;
+  }
+  .tasksPopupContainer.visible {
+    transform: translateY(0);
   }
 }
 
@@ -640,10 +708,72 @@
   .mainContent {
     padding: 0.5rem 1rem;
   }
-  .leftColumn,
-  .rightColumn {
-    padding: 1rem;
+  .mainLayoutGrid {
+    grid-template-columns: 1fr; /* Stack everything */
+    grid-template-areas:
+      "habits" /* Make habits first */
+      "cat"
+      "progress";
+    gap: 1.5rem; /* Only row gap */
+    padding: 1rem 0;
+    max-width: 100%;
+    margin: 0 auto; /* Center stack */
   }
+  .habitColumnGrid {
+    flex-direction: row; /* Change back to row for horizontal scroll */
+    overflow-x: auto;
+    padding: 0.5rem 0 1rem 0;
+    width: 100%;
+    gap: 1rem;
+    justify-content: flex-start;
+    /* Add scrollbar styling if needed */
+    white-space: nowrap;
+    &::-webkit-scrollbar {
+      height: 0.4rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 0.2rem;
+    }
+  }
+  .habitRow {
+    /* Reset row specific styles if column is row now */
+    gap: 1rem; /* Keep gap between icons */
+  }
+
+  .catRoom {
+    min-height: 200px;
+    width: 90%;
+    margin: 0 auto;
+  }
+  .progressInfo {
+    padding: 1rem;
+    text-align: center;
+  } /* Center progress */
+  .progressInfo .sectionTitle,
+  .progressInfo .statItem {
+    text-align: center;
+  }
+  .statLabel {
+    width: auto;
+  } /* Reset label width */
+
+  /* Keep original popup styles for small screens */
+  .tasksPopupContainer {
+    left: 0; /* Full width */
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    max-height: 70vh;
+    padding: 1rem;
+    transform: translateY(100%);
+  }
+  .tasksPopupContainer.visible {
+    transform: translateY(0);
+  }
+
+  /* Keep user's mobile styles for todo items and modal */
   .sectionTitle {
     font-size: 1.2rem;
     margin-bottom: 1rem;
@@ -654,9 +784,6 @@
   .modalTitle {
     font-size: 1.3rem;
   }
-}
-
-@media (max-width: 480px) {
   .habitIconWrapper {
     min-width: 70px;
   }
@@ -667,25 +794,30 @@
   .iconSymbol {
     font-size: 1.5rem;
   }
-
-  /* Adjust todo item layout for small screens */
   .todoItemWrapper {
     margin-bottom: 1rem;
   }
   .todoItem {
     padding: 0.8rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
   .todoContentWrapper {
-    margin-right: 0.5rem;
+    margin-right: 0;
+    width: 100%;
   }
-  /* Actions might wrap on very small screens if needed */
-  /* .todoActions { flex-wrap: wrap; } */
+  .todoActions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
   .todoActions button,
   .completedButton {
     padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
   }
-
   .modalActions {
     flex-direction: column-reverse;
     gap: 0.5rem;
