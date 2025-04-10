@@ -14,26 +14,17 @@ const navItems = [
 const Navbar = () => {
   const router = useRouter();
 
-  const handleLogout = () => {
-    // Xóa token khỏi localStorage
-    if (typeof window !== 'undefined') {
-        localStorage.removeItem('authToken');
-    }
-    // Điều hướng về trang login
-    router.push('/login');
-    // Có thể hiển thị thông báo logout thành công nếu muốn
-    console.log("User logged out");
-  };
-
-
   return (
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
         {navItems.map((item) => {
-          const isActive = router.pathname === item.path || (item.path !== '' && router.pathname.startsWith(item.path));
+          // --- CẬP NHẬT LOGIC isActive ---
+          // So sánh chính xác đường dẫn hiện tại với đường dẫn của item
+          const isActive = router.pathname === item.path;
 
           return (
             <Link key={item.name} href={item.path} passHref legacyBehavior>
+              {/* Áp dụng class 'active' nếu isActive là true */}
               <a className={`${styles.navItem} ${isActive ? styles.active : ''}`}>
                 {item.name}
               </a>
@@ -41,11 +32,11 @@ const Navbar = () => {
           );
         })}
       </div>
-       {/* --- User Actions (Add Logout Button) --- */}
-       <div className={styles.userActions}>
-           {/* Bạn có thể đặt nút Logout ở đây hoặc trong SettingsSidebar */}
-           <button onClick={handleLogout} className={styles.logoutButton}>Log Out</button>
-       </div>
+       {/* --- User Actions (Optional Logout Button) --- */}
+       {/* Bạn có thể bỏ comment phần này nếu muốn nút logout ở góc */}
+       {/* <div className={styles.userActions}>
+           <button onClick={handleLogout} className={styles.logoutButton}>Logout</button>
+       </div> */}
     </nav>
   );
 };

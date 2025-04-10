@@ -1,8 +1,7 @@
 // src/components/dashboard/TodoList.tsx
 import React, { useState } from 'react';
 import { TodoItem, SleepLog, HydrateLog, DietLog, DietDish } from '../../types/habit.types';
-import LoadingSpinner from '../common/LoadingSpinner';
-import styles from '../../styles/Dashboard.module.css';
+import styles from '../../styles/Home.module.css';
 import DietUpdateModal from './DietUpdateModal';
 
 interface TodoListProps {

@@ -1,95 +1,71 @@
 // src/pages/login.tsx
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'; // Để điều hướng sau khi login thành công
 import AuthForm from '../components/auth/AuthForm';
-import { fetchApi, resetSessionExpiredAlertFlag } from '../lib/api'; // Import reset function
-import { toast } from 'react-toastify'; // Import toast
-import LoadingSpinner from '../components/common/LoadingSpinner'; // Import a loading spinner
+import { fetchApi } from '../lib/api'; // Import hàm gọi API
 
 const LoginPage = () => {
-  const [isLoading, setIsLoading] = useState(false); // For login API call
-  const [isCheckingToken, setIsCheckingToken] = useState(true); // For initial token check
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isCheckingToken, setIsCheckingToken] = useState(true); // State để kiểm tra token
   const router = useRouter();
 
-  // Check for existing token on mount
+  // Kiểm tra token khi trang login được load
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
-      // If token exists, redirect to dashboard immediately
-      console.log("Existing token found, redirecting to dashboard.");
-      router.replace('/dashboard'); // Use replace to avoid login page in history
+      // Nếu có token, điều hướng người dùng tới trang dashboard/home
+      router.push('/home');
     } else {
-      // No token, allow rendering the login form
-      setIsCheckingToken(false);
+      setIsCheckingToken(false); // Xong kiểm tra token, có thể hiển thị form login
     }
-    // Run only once on component mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array
+  }, [router]);
 
   const handleLogin = async (formData: any) => {
-    // Basic client-side validation
-    if (!formData.email || !formData.password) {
-        toast.error("Please enter both email and password.");
-        return;
-    }
-
     setIsLoading(true);
+    setError(null); // Reset lỗi trước khi gọi API
 
-    try {
-        // Use the correct endpoint '/login' based on your Flask routes
-        const response = await fetchApi<{ token: string }>('/login', {
-          method: 'POST',
-          body: formData,
-          // isProtected is false for the login route itself
-        });
+    const response = await fetchApi<{ token: string }>('/auth/login', {
+      method: 'POST',
+      body: formData,
+    });
 
-        if (response.error) {
-          console.error("Login API Error:", response.error);
-          toast.error(response.error || 'Login failed. Please check credentials.');
-        } else if (response.data?.token) {
-          // Login successful!
-          console.log('Login successful');
-          localStorage.setItem('authToken', response.data.token);
+    setIsLoading(false);
 
-          // *** Reset the session expired flag ***
-          resetSessionExpiredAlertFlag();
+    if (response.error) {
+      setError(response.error); // Hiển thị lỗi từ API
+    } else if (response.data?.token) {
+      // Thành công!
+      console.log('Login successful, token:', response.data.token);
+      // --- Xử lý token ---
+      // 1. Lưu token (ví dụ: vào localStorage)
+      localStorage.setItem('authToken', response.data.token);
 
-          toast.success('Login successful! Redirecting...');
-          // Redirect to the main dashboard page
-          router.push('/dashboard'); // Correct redirect target
-        } else {
-          // Unexpected case: no error, no token
-          console.error("Login unexpected response:", response);
-           toast.error('Login failed: Unexpected response from the server.');
-        }
-    } catch (err) {
-         // Catch errors from fetchApi itself (e.g., network errors)
-         console.error("Login submission error:", err);
-         // err might already be an object from fetchApi with an error message
-         const errorMessage = (err as any)?.error || "An error occurred during login. Please try again.";
-         toast.error(errorMessage);
-    } finally {
-        setIsLoading(false);
+      // 2. Điều hướng người dùng đến trang chính hoặc dashboard/home
+      // Thay '/dashboard/home' bằng trang bạn muốn người dùng đến sau khi đăng nhập
+      router.push('/home'); // Ví dụ: chuyển đến trang dashboard/home
+      // Hoặc có thể là router.push('/'); nếu muốn về trang chủ
+    } else {
+      // Trường hợp không có lỗi nhưng cũng không có token (bất thường)
+       // --- Thay đổi tiếng Việt sang tiếng Anh ---
+       setError('Login failed: Unexpected response from server.');
+       // -----------------------------------------
     }
   };
 
-  // Show loading indicator while checking for token
   if (isCheckingToken) {
     return (
-      <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <LoadingSpinner />
-      </main>
+      <div></div> // Bạn có thể thay bằng một spinner hoặc loading animation ở đây
     );
   }
 
-  // Render login form once token check is complete and no token was found
   return (
-    <main> {/* Ensure main has appropriate styles from globals.css */}
+    <main> {/* Sử dụng thẻ main đã style trong globals.css */}
       <AuthForm
         formType="login"
         onSubmit={handleLogin}
         isLoading={isLoading}
-        error={null} // Errors are handled by toast notifications
+        error={error}
       />
     </main>
   );

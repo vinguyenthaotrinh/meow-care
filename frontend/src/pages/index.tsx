@@ -1,6 +1,6 @@
 // src/pages/index.tsx
 import Link from 'next/link';
-import styles from '../styles/Home.module.css'; // Bạn có thể tạo file CSS riêng cho trang chủ
+import styles from '../styles/Landing.module.css'; // Bạn có thể tạo file CSS riêng cho trang chủ
 
 const HomePage = () => {
   return (

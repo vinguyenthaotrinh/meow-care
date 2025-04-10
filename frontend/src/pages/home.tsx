@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import { fetchApi } from '../../lib/api';
-import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, UserStats, DietDish } from '../../types/habit.types'; // Ensure DietDish is imported
-import LoadingSpinner from '../../components/common/LoadingSpinner';
-import styles from '../../styles/Dashboard.module.css';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { fetchApi } from '@/lib/api';
+import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, UserStats, DietDish } from '@/types/habit.types'; // Ensure DietDish is imported
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import styles from '@/styles/Home.module.css';
 import Image from 'next/image';
-import catImageSrc from '../../assets/images/default-cat.png';
-import HabitProgress from '../../components/dashboard/HabitProgress';
-import TodoList from '../../components/dashboard/TodoList';
-import DietUpdateModal from '@/components/dashboard/DietUpdateModal';
+import catImageSrc from '@/assets/images/default-cat.png';
+import HabitProgress from '@/components/home/HabitProgress';
+import TodoList from '@/components/home/TodoList';
+import DietUpdateModal from '@/components/home/DietUpdateModal';
 
 // --- Helper Functions ---
 const formatTime = (timeString: string | null | undefined): string => {
@@ -132,7 +132,10 @@ const DashboardHomePage = () => {
         if (response.data) updateTodoInState({ ...response.data, type: 'hydrate' });
         else setError(response.error || 'Failed to update water intake.');
     };
-    const handleUpdateDiet = (logId: string) => { setDietModalOpen(logId); };
+    const handleUpdateDiet = (logId: string): Promise<void> => { 
+        setDietModalOpen(logId); 
+        return Promise.resolve();
+    };
     const handleCloseDietModal = () => { setDietModalOpen(null); };
     const handleFoodAddedToLog = useCallback((updatedLog: DietLog) => {
         // Ensure the updated log still has the 'type' property for TodoItem compatibility
@@ -174,20 +177,18 @@ const DashboardHomePage = () => {
 
                         {/* Cat Image */}
                         <div className={styles.catContainer}>
-                             <h2 className={styles.sectionTitle} style={{ marginBottom: '0.5rem' }}>Your Companion</h2>
+                             {/* <h2 className={styles.sectionTitle} style={{ marginBottom: '0.5rem' }}>Your Companion</h2> */}
                             <Image src={catImageSrc} alt="User's companion cat" width={150} height={150} priority style={{ objectFit: 'contain' }}/>
                         </div>
                     </div>
 
                     {/* --- Right Column --- */}
                     <div className={styles.rightColumn}>
-                        <h2 className={styles.sectionTitle}>Today's Tasks</h2>
+                        <h2 className={styles.sectionTitle}>Daily Tasks</h2>
                         {/* Todo List */}
                         <TodoList
                             todos={todos}
                             isUpdating={isUpdating}
-                            setItemLoading={setItemLoading} // Pass if TodoList needs it
-                            setError={setError} // Pass if TodoList needs it
                             handleCompleteSleep={handleCompleteSleep}
                             handleUpdateHydrate={handleUpdateHydrate}
                             handleUpdateDiet={handleUpdateDiet} // This opens the modal

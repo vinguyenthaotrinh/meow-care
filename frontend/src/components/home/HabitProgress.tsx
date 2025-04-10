@@ -1,10 +1,10 @@
 // src/components/dashboard/HabitProgress.tsx
 import React from 'react';
 import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem } from '../../types/habit.types';
-import LoadingSpinner from '../common/LoadingSpinner'; // Import LoadingSpinner
-import styles from '../../styles/Dashboard.module.css'; // Import CSS Module
+import LoadingSpinner from '../common/LoadingSpinner';
+import styles from '../../styles/Home.module.css';
 
-const formatTime = (timeString: string | null | undefined): string => { /* ... (same as in index.tsx) */
+const formatTime = (timeString: string | null | undefined): string => {
     if (!timeString) return "N/A";
     try {
         // Nếu backend trả về "HH:MM:SS"

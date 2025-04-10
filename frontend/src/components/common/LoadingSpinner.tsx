@@ -1,5 +1,5 @@
 // src/components/common/LoadingSpinner.tsx
-import styles from '../../styles/Dashboard.module.css';
+import styles from '../../styles/Home.module.css';
 
 // Định nghĩa kiểu cho props
 interface LoadingSpinnerProps {

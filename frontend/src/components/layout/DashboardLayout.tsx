@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 import Navbar from '../navigation/Navbar';
 import { useAuth } from '../../hooks/useAuth'; // Import hook kiểm tra auth
 import LoadingSpinner from '../common/LoadingSpinner'; // Import component loading (tạo ở bước sau)
-import styles from '../../styles/Dashboard.module.css'; // CSS cho layout dashboard
+import styles from '../../styles/Home.module.css'; // CSS cho layout dashboard
 
 interface DashboardLayoutProps {
   children: ReactNode;

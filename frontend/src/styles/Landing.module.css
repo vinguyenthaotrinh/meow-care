@@ -1,0 +1,48 @@
+/* src/styles/Home.module.css */
+.main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  
+  .title {
+    margin-bottom: 1rem;
+    line-height: 1.15;
+    font-size: 3rem; /* Kích thước lớn hơn cho tiêu đề chính */
+    font-weight: 700;
+    color: var(--color-pastel-purple); /* Sử dụng màu tím pastel */
+  }
+  
+  .description {
+    margin-bottom: 2.5rem;
+    line-height: 1.5;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+  }
+  
+  .buttonContainer {
+    display: flex;
+    gap: 1rem; /* Khoảng cách giữa 2 nút */
+  }
+  
+  .button {
+    /* Styles cơ bản đã có trong globals.css */
+    padding: 0.8rem 1.8rem;
+    font-size: 1rem;
+    /* Kế thừa màu tím từ globals.css */
+  }
+  
+  .buttonSecondary {
+    background-color: var(--color-pastel-yellow); /* Màu vàng pastel cho nút phụ */
+    color: var(--text-primary); /* Màu text đen */
+    border: 1px solid var(--color-border);
+  }
+  
+  .buttonSecondary:hover {
+     background-color: #fafa85; /* Vàng nhạt hơn khi hover */
+     opacity: 1; /* Ghi đè opacity hover mặc định nếu cần */
+  }

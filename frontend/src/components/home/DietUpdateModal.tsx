@@ -2,7 +2,7 @@
 import React, { useState, FormEvent } from 'react';
 import { fetchApi } from '../../lib/api';
 import { DietLog } from '../../types/habit.types';
-import styles from '../../styles/Dashboard.module.css'; // Sử dụng cùng file CSS
+import styles from '../../styles/Home.module.css'; // Sử dụng cùng file CSS
 import LoadingSpinner from '../common/LoadingSpinner';
 
 interface DietUpdateModalProps {
