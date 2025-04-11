@@ -204,11 +204,11 @@ const PersonalInformationSettings = () => {
                         />
                     </div>
                      <div className={styles.formGroup}>
-                        <label>Daily Calories Needed (calculated, kcal):</label>
+                        <label>Daily Calories Needed (kcal):</label>
                         <input type="text" value={profile.daily_calories?.toFixed(0) ?? 'N/A'} disabled className={styles.formInputReadOnly}/>
                     </div>
                      <div className={styles.formGroup}>
-                        <label>Daily Water Needed (calculated, ml):</label>
+                        <label>Daily Water Needed (ml):</label>
                         <input
                             type="text"
                             value={

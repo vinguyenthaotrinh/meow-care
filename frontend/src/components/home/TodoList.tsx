@@ -75,7 +75,7 @@ const TodoList: React.FC<TodoListProps> = ({
                                         <>
                                             <p className={styles.todoText}>Drink up</p>
                                             <p className={styles.todoSubtext}>
-                                                Progress: {formatAmount(item.consumed_water, 'ml')} / {formatAmount(item.water_goal, 'ml')}
+                                                Progress: {item.consumed_water} / {formatAmount(item.water_goal, 'ml')}
                                             </p>
                                         </>
                                     )}
@@ -84,7 +84,7 @@ const TodoList: React.FC<TodoListProps> = ({
                                             <p className={styles.todoText}>Eat well</p>
                                             {/* Progress text now part of the main content */}
                                             <p className={styles.todoSubtext}>
-                                                Progress: {formatAmount(item.consumed_calories, 'kcal')} / {formatAmount(item.calories_goal, 'kcal')}
+                                                Progress: {item.consumed_calories} / {formatAmount(item.calories_goal, 'kcal')}
                                             </p>
                                         </div>
                                     )}

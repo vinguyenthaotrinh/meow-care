@@ -3,10 +3,11 @@
   /* --- Color Palette --- */
   --color-white: #ffffff;
   --color-black: #1a1a1a; /* Hơi ngả xám đen cho đỡ gắt */
-  /* User's specific colors */
-  --color-pastel-yellow: #fada5e; /* Vàng cho Navbar (User specified) */
-  --color-pastel-purple: #967bb6; /* Tím chính (User specified) */
+
+  --color-pastel-yellow: #fada5e; /* Vàng cho Navbar */
+  --color-pastel-purple: #967bb6; /* Tím chính */
   /* Derived or new colors */
+  --color-light-pastel-yellow: #faf2a2; /* Vàng RẤT NHẠT cho nền chính */
   --color-light-pastel-purple: #e8e2ef; /* Tím RẤT NHẠT cho nền chính */
   --color-border: #dcd9e1; /* Màu viền nhẹ nhàng - hơi tím nhẹ */
   --color-error: #e53e3e; /* Màu cho thông báo lỗi */
@@ -19,8 +20,8 @@
   /* --- Backgrounds --- */
   --background-light: var(--color-white); /* Nền trắng cho card */
   --background-alt: #f7f7f9; /* Nền hơi xám nhẹ cho popup tasks */
-  --background-main: var(--color-light-pastel-purple); /* !!! Nền chính mới */
-  --navbar-bg: var(--color-pastel-yellow); /* !!! Nền navbar mới */
+  --background-main: var(--color-light-pastel-purple); /* Nền chính mới */
+  --navbar-bg: var(--color-light-pastel-yellow); /* Nền navbar mới */
 
   /* --- Text --- */
   --text-primary: var(--color-black);
