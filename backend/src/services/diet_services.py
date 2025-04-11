@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from ..utils import supabase, ServiceError, DEBUG
+from .xp_rewards_services import xp_reward_service
 
 class DietService:
     def __init__(self):
@@ -121,6 +122,8 @@ class DietService:
                 "consumed_calories": new_consumed,
                 "completed": completed
             }).eq("id", log_id).execute()
+            
+            xp_reward_service.update_streak(user_id)
 
             return updated_response.data[0]
         except ServiceError:

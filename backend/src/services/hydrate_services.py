@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from ..utils import supabase, ServiceError, DEBUG
+from .xp_rewards_services import xp_reward_service
 
 class HydrateService:
     def __init__(self):
@@ -131,6 +132,8 @@ class HydrateService:
 
             if not updated_response.data:
                 raise ServiceError("Database server error", 500)
+            
+            xp_reward_service.update_streak(user_id)
 
             return updated_response.data[0]
         except ServiceError:

@@ -1,6 +1,5 @@
 from .user_models import UserBase, UserCreate, UserResponse
 from .profile_models import ProfileBase, ProfileCreate, ProfileResponse
-from .xp_reward_models import XPRewardsBase, XPRewardsCreate, XPRewardsResponse
 from .notification_models import NotificationBase, NotificationCreate, NotificationResponse
 
 from .diet_models import DietHabitBase, DietHabitCreate, DietHabitResponse, DietLogBase, DietLogCreate, DietLogResponse
@@ -12,4 +11,4 @@ from .friend_models import FriendBase, FriendCreate, FriendResponse
 from .pet_models import PetBase, PetCreate, PetResponse
 from .item_models import StoreItemBase, StoreItemCreate, StoreItemResponse, UserItemBase, UserItemCreate, UserItemResponse
 
-__all__ = ["UserBase", "UserCreate", "UserResponse", "ProfileBase", "ProfileCreate", "ProfileResponse", "XPRewardsBase", "XPRewardsCreate", "XPRewardsResponse", "NotificationBase", "NotificationCreate", "NotificationResponse", "DietHabitBase", "DietHabitCreate", "DietHabitResponse", "DietLogBase", "DietLogCreate", "DietLogResponse", "SleepHabitBase", "SleepHabitCreate", "SleepHabitResponse", "SleepLogBase", "SleepLogCreate", "SleepLogResponse", "HydrateHabitBase", "HydrateHabitCreate", "HydrateHabitResponse", "HydrateLogBase", "HydrateLogCreate", "HydrateLogResponse", "FocusHabitBase", "FocusHabitCreate", "FocusHabitResponse", "FocusLogBase", "FocusLogCreate", "FocusLogResponse", "FriendBase", "FriendCreate", "FriendResponse", "PetBase", "PetCreate", "PetResponse", "StoreItemBase", "StoreItemCreate", "StoreItemResponse", "UserItemBase", "UserItemCreate", "UserItemResponse"]
+__all__ = ["UserBase", "UserCreate", "UserResponse", "ProfileBase", "ProfileCreate", "ProfileResponse", "NotificationBase", "NotificationCreate", "NotificationResponse", "DietHabitBase", "DietHabitCreate", "DietHabitResponse", "DietLogBase", "DietLogCreate", "DietLogResponse", "SleepHabitBase", "SleepHabitCreate", "SleepHabitResponse", "SleepLogBase", "SleepLogCreate", "SleepLogResponse", "HydrateHabitBase", "HydrateHabitCreate", "HydrateHabitResponse", "HydrateLogBase", "HydrateLogCreate", "HydrateLogResponse", "FocusHabitBase", "FocusHabitCreate", "FocusHabitResponse", "FocusLogBase", "FocusLogCreate", "FocusLogResponse", "FriendBase", "FriendCreate", "FriendResponse", "PetBase", "PetCreate", "PetResponse", "StoreItemBase", "StoreItemCreate", "StoreItemResponse", "UserItemBase", "UserItemCreate", "UserItemResponse"]
