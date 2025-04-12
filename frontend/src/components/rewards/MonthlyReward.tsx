@@ -4,7 +4,6 @@ import styles from '../../styles/Rewards.module.css';
 import { FaGem } from 'react-icons/fa'; // Assuming diamond reward
 
 interface MonthlyRewardProps {
-    // Accept props for progress and reward (mocked for now)
     currentProgress: number;
     targetProgress: number;
     rewardAmount: number;
@@ -20,7 +19,8 @@ const MonthlyReward: React.FC<MonthlyRewardProps> = ({
         : 0;
 
     return (
-        <section className={styles.monthlyRewardSection}>
+         // Changed section to div for grid layout flexibility
+        <div className={styles.monthlyRewardSection}>
             <h3 className={styles.monthlyRewardTitle}>Monthly Reward</h3>
             <div className={styles.monthlyRewardProgressBarContainer}>
                 <div
@@ -36,7 +36,7 @@ const MonthlyReward: React.FC<MonthlyRewardProps> = ({
                 <FaGem className={`${styles.currencyIcon} ${styles.diamondIcon}`} />
                 {rewardAmount}
             </div>
-        </section>
+        </div>
     );
 };
 

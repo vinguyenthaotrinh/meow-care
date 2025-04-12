@@ -1,21 +1,24 @@
 // src/components/rewards/RewardsLayout.tsx
 import React, { useState, ReactNode } from 'react';
 import RewardsSidebar, { RewardsTab } from './RewardsSidebar';
-import styles from '../../styles/Rewards.module.css'; // Use new CSS module
+// *** Use REWARDS styles for the overall layout ***
+import styles from '../../styles/Rewards.module.css';
 
 interface RewardsLayoutProps {
-  children: (activeTab: RewardsTab) => ReactNode; // Function as child
+  children: (activeTab: RewardsTab) => ReactNode;
 }
 
 const RewardsLayout: React.FC<RewardsLayoutProps> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<RewardsTab>('quests'); // Default to 'quests'
+  const [activeTab, setActiveTab] = useState<RewardsTab>('quests');
 
   return (
-    // Use a different class name to avoid conflicts with settings layout
-    <div className={`${styles.rewardsContainer} ${styles.settingsContainer}`}> {/* Reuse some settings styles */}
+    // *** Use REWARDS container class ***
+    <div className={styles.rewardsContainer}>
+      {/* Sidebar still uses Settings styles for its look */}
       <RewardsSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main className={`${styles.rewardsContent} ${styles.settingsContent}`}> {/* Reuse some settings styles */}
-        {children(activeTab)} {/* Render content based on active tab */}
+      {/* *** Use REWARDS content class *** */}
+      <main className={styles.rewardsContent}>
+        {children(activeTab)}
       </main>
     </div>
   );

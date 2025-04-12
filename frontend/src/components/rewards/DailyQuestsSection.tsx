@@ -10,7 +10,8 @@ interface DailyQuestsSectionProps {
 
 const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests }) => {
     return (
-        <section className={styles.questsSection}>
+        // Changed section to div for grid layout flexibility
+        <div className={styles.questsSection}>
             <h3 className={styles.questsTitle}>Daily Quests</h3>
             {quests.length === 0 ? (
                 <p>No daily quests available right now.</p>
@@ -21,7 +22,7 @@ const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests }) => {
                     ))}
                 </div>
             )}
-        </section>
+        </div>
     );
 };
 

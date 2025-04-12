@@ -1,8 +1,8 @@
 // src/components/rewards/RewardsSidebar.tsx
 import React from 'react';
-import styles from '../../styles/Rewards.module.css'; // Use new CSS module
+// *** Use Settings styles directly for visual consistency OF THE SIDEBAR ITSELF ***
+import styles from '../../styles/Settings.module.css'; // Use Settings CSS
 
-// Define the possible tabs for the Rewards page
 export type RewardsTab = 'quests' | 'store';
 
 interface RewardsSidebarProps {
@@ -12,8 +12,8 @@ interface RewardsSidebarProps {
 
 const RewardsSidebar: React.FC<RewardsSidebarProps> = ({ activeTab, setActiveTab }) => {
   return (
-    // Use a different class name to avoid conflicts with settings sidebar if needed
-    <nav className={`${styles.rewardsSidebar} ${styles.settingsSidebar}`}> {/* Reuse some settings styles */}
+    // Use the exact same class name as Settings Sidebar
+    <nav className={styles.settingsSidebar}>
       <ul>
         <li
           className={activeTab === 'quests' ? styles.active : ''}
@@ -27,7 +27,6 @@ const RewardsSidebar: React.FC<RewardsSidebarProps> = ({ activeTab, setActiveTab
         >
           Store
         </li>
-        {/* Add other sections later if needed */}
       </ul>
     </nav>
   );

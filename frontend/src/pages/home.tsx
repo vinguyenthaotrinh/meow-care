@@ -1,19 +1,18 @@
 // src/pages/home.tsx
 import { useState, useEffect, useCallback } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout'; // User's path
-import { fetchApi } from '@/lib/api'; // User's path
-import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, /* UserStats, */ DietDish } from '@/types/habit.types'; // Removed UserStats if unused
-import { XpRewardsData } from '@/types/rewards.types'; // **** IMPORT REWARDS TYPE ****
-import LoadingSpinner from '@/components/common/LoadingSpinner'; // User's path
-import styles from '@/styles/Home.module.css'; // User's path - USE THIS CSS MODULE
-import TodoList from '@/components/home/TodoList'; // User's path
-import DietUpdateModal from '@/components/home/DietUpdateModal'; // User's path
-import HabitProgress from '@/components/home/HabitProgress'; // Import HabitProgress
-import CatRoom from '@/components/home/CatRoom';           // Import CatRoom
-import { IoClose } from "react-icons/io5"; // Close icon
-import { toast } from 'react-toastify'; // Import toast for error handling
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { fetchApi } from '@/lib/api';
+import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, DietDish } from '@/types/habit.types'; // Removed UserStats if unused
+import { XpRewardsData } from '@/types/rewards.types';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
+import styles from '@/styles/Home.module.css';
+import TodoList from '@/components/home/TodoList';
+import DietUpdateModal from '@/components/home/DietUpdateModal';
+import HabitProgress from '@/components/home/HabitProgress';
+import CatRoom from '@/components/home/CatRoom';
+import { IoClose } from "react-icons/io5";
+import { toast } from 'react-toastify';
 
-// --- Helper Functions (Keep as is) ---
 const formatTime = (timeString: string | null | undefined): string => {
     if (!timeString) return "N/A";
     try {
@@ -46,7 +45,7 @@ const calculatePercentage = (consumed: number | undefined, goal: number | undefi
 const DashboardHomePage = () => {
     // State
     const [todos, setTodos] = useState<TodoItem[]>([]);
-    const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null); // **** USE NEW STATE & TYPE ****
+    const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null);
     const [sleepHabit, setSleepHabit] = useState<SleepHabit | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
@@ -72,7 +71,7 @@ const DashboardHomePage = () => {
             let combinedTodos: TodoItem[] = [];
             let apiErrors: string[] = []; // Collect specific errors
 
-            // Process Log/Habit data (keep existing logic)
+            // Process Log/Habit data
             if (sleepLogsRes.data) combinedTodos = combinedTodos.concat(sleepLogsRes.data.map(log => ({ ...log, type: 'sleep' })));
             else if (sleepLogsRes.error && sleepLogsRes.status !== 404) apiErrors.push(`Sleep Logs: ${sleepLogsRes.error}`);
 
@@ -125,7 +124,7 @@ const DashboardHomePage = () => {
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
-    // --- Action Handlers (Keep as is) ---
+    // --- Action Handlers ---
     const setItemLoading = (id: string, loading: boolean) => { setIsUpdating(prev => ({ ...prev, [id]: loading })); };
     const updateTodoInState = (updatedItem: TodoItem) => { setTodos(prevTodos => prevTodos.map(todo => todo.id === updatedItem.id ? updatedItem : todo)); };
     const handleCompleteSleep = async (logId: string) => {
@@ -183,14 +182,15 @@ const DashboardHomePage = () => {
                          </div>
                          <div className={styles.todoListScrollable}>
                              <TodoList
-                                 todos={todos}
-                                 isUpdating={isUpdating}
-                                 handleCompleteSleep={handleCompleteSleep}
-                                 handleUpdateHydrate={handleUpdateHydrate}
-                                 handleUpdateDiet={handleUpdateDiet}
-                                 formatTime={formatTime}
-                                 formatAmount={formatAmount}
-                             />
+                                        todos={todos}
+                                        isUpdating={isUpdating}
+                                        handleCompleteSleep={handleCompleteSleep}
+                                        handleUpdateHydrate={handleUpdateHydrate}
+                                        handleUpdateDiet={handleUpdateDiet}
+                                        formatTime={formatTime}
+                                        formatAmount={formatAmount} updateTodoInState={function (updatedItem: TodoItem): void {
+                                            throw new Error('Function not implemented.');
+                                        } }                             />
                              {/* Display general fetch error inside popup if some todos loaded but other errors occurred */}
                              {error && todos.length > 0 && <p style={{ color: 'red', marginTop: '1rem', fontSize: '0.9rem', padding: '0 0.5rem' }}>{error}</p>}
                          </div>
