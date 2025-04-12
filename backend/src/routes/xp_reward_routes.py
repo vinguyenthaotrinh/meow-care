@@ -5,7 +5,7 @@ from ..utils import ServiceError, DEBUG
 
 xp_bp = Blueprint("xp", __name__)
 
-@xp_bp.route("/", methods=["GET"])
+@xp_bp.route("", methods=["GET"])
 @jwt_required()
 def get_xp_rewards():
     user_id = get_jwt_identity()

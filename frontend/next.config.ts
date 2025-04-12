@@ -10,16 +10,12 @@ const nextConfig: NextConfig = {
         destination: '/dashboard', // File thực tế trong thư mục /pages mà Next.js sẽ render
       },
       {
-         source: '/habits',
-         destination: '/dashboard/habits', 
+         source: '/rewards',
+         destination: '/dashboard/rewards', 
       },
       {
          source: '/focus',
          destination: '/dashboard/focus',
-      },
-      {
-         source: '/profile',
-         destination: '/dashboard/profile',
       },
       {
          source: '/settings',

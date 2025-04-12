@@ -1,0 +1,403 @@
+/* src/styles/Rewards.module.css */
+
+/* --- Reuse or Adapt Settings Layout Styles --- */
+/* Assuming settings styles cover basic flex layout, padding, etc. */
+.rewardsContainer {
+  /* Inherit display: flex, justify-content: center, gap, padding from .settingsContainer if using both classes */
+}
+
+.rewardsSidebar {
+  /* Inherit width, flex-shrink, background, etc. from .settingsSidebar */
+  /* Add specific overrides if needed */
+}
+
+.rewardsContent {
+  /* Inherit flex-grow, background, padding, max-width etc. from .settingsContent */
+  min-height: 600px; /* Adjust min-height for rewards page */
+  max-width: 800px; /* Allow rewards content to be wider if needed */
+  position: relative; /* Needed for absolute positioning of currency */
+}
+
+/* --- User Currency Display --- */
+.userCurrency {
+  position: absolute; /* Position relative to rewardsContent */
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  background-color: rgba(255, 255, 255, 0.8); /* Slight background */
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Ensure it's above other content */
+}
+
+.currencyItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.currencyIcon {
+  font-size: 1.2rem; /* Adjust icon size */
+}
+/* Use colors defined in Home.module.css or globals.css */
+.coinIcon {
+  color: var(--coin-color);
+}
+.diamondIcon {
+  color: var(--diamond-color);
+}
+.streakIcon {
+  color: var(--streak-color);
+}
+
+/* --- Daily Checkin --- */
+.checkinSection {
+  margin-bottom: 2.5rem;
+}
+.checkinTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.checkinGrid {
+  display: flex;
+  gap: 0.8rem; /* Gap between boxes */
+  justify-content: space-between; /* Distribute boxes */
+  align-items: flex-end; /* Align boxes and claim button */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+.checkinBox {
+  border: 2px solid var(--color-border);
+  background-color: #f0f0f0; /* Default greyed out */
+  color: var(--text-secondary);
+  border-radius: var(--border-radius);
+  padding: 0.8rem 0.5rem;
+  width: calc((100% / 7) - 1rem); /* Approx width for 7 items with gaps */
+  min-width: 65px; /* Minimum width */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Space out content vertically */
+  min-height: 90px; /* Minimum height */
+  transition: all 0.3s ease;
+  position: relative; /* For potential absolute elements */
+}
+.checkinBoxContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center reward icon/text */
+  gap: 0.3rem;
+}
+.checkinBox.claimed {
+  background-color: #e9ecef; /* Slightly different grey */
+  border-color: #ced4da;
+  opacity: 0.7;
+}
+.checkinBox.today {
+  background-color: var(--color-white);
+  border-color: var(--color-pastel-purple);
+  color: var(--text-primary);
+  box-shadow: 0 0 8px rgba(195, 177, 225, 0.4);
+}
+.checkinBox.future {
+  background-color: var(--color-white);
+  border-color: var(--color-border);
+  opacity: 0.9;
+}
+.checkinDayLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+}
+.checkinBox.today .checkinDayLabel {
+  color: var(--color-pastel-purple);
+  font-weight: 700;
+}
+.checkinReward {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.checkinClaimButton {
+  /* Reuse button styles if possible */
+  /* *** CORRECTED PATH *** */
+  composes: formButton formButtonPrimary from "./Settings.module.css";
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem; /* Space from 'Today' label */
+  min-width: 80px;
+}
+.checkinClaimButton:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* --- Quests --- */
+.questsSection {
+  margin-bottom: 2.5rem;
+}
+.questsTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.questList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.questItem {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+.questItem:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+.questContent {
+  flex-grow: 1;
+}
+.questTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+.questProgressBarContainer {
+  width: 100%;
+  height: 18px; /* Increased height */
+  background-color: #e9ecef;
+  border-radius: 9px; /* Rounded ends */
+  overflow: hidden;
+  position: relative; /* For text overlay */
+  border: 1px solid var(--color-border);
+}
+.questProgressBarFill {
+  height: 100%;
+  background-color: var(--color-pastel-yellow); /* Default progress color */
+  border-radius: 9px 0 0 9px; /* Keep left end rounded */
+  transition: width 0.5s ease-in-out;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+/* Define specific progress colors */
+.questProgressBarFill.hydrate {
+  background-color: var(--hydrate-progress-color);
+}
+.questProgressBarFill.diet {
+  background-color: var(--diet-progress-color);
+}
+.questProgressBarFill.sleep {
+  background-color: var(--sleep-completed-color);
+}
+.questProgressBarFill.coin {
+  background-color: var(--coin-color);
+}
+.questProgressBarFill.diamond {
+  background-color: var(--diamond-color);
+}
+
+.questProgressText {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7); /* Darker text for better readability */
+  z-index: 1;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5); /* Slight shadow for contrast */
+}
+.questReward {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 60px;
+}
+.questClaimButton {
+  /* *** CORRECTED PATH *** */
+  composes: formButton from "./Settings.module.css";
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  background-color: var(--color-pastel-yellow); /* Yellow claim button */
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+}
+.questClaimButton:hover:not(:disabled) {
+  background-color: #fafa85;
+}
+.questRewardText {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+/* --- Monthly Reward --- */
+.monthlyRewardSection {
+  background-color: var(--color-pastel-yellow); /* Bright yellow background */
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid #fde047; /* Slightly darker yellow border */
+}
+.monthlyRewardTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #713f12; /* Dark brown text */
+}
+.monthlyRewardProgressBarContainer {
+  width: 80%;
+  max-width: 400px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.5); /* Lighter background */
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 auto 1rem auto; /* Center and add bottom margin */
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.monthlyRewardProgressBarFill {
+  height: 100%;
+  background-color: var(--color-pastel-purple); /* Purple fill */
+  border-radius: 10px 0 0 10px;
+  transition: width 0.5s ease-in-out;
+}
+.monthlyRewardProgressText {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-white);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.monthlyRewardInfo {
+  font-size: 0.9rem;
+  color: #713f12;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+/* --- General Loading/Error --- */
+.loadingContainer {
+  /* For loading whole sections */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}
+.errorText {
+  color: var(--color-error);
+  text-align: center;
+  margin: 1rem;
+}
+
+/* --- Responsive Overrides (Add as needed) --- */
+@media (max-width: 900px) {
+  .rewardsContent {
+    max-width: 100%; /* Allow full width on smaller screens */
+  }
+  .checkinGrid {
+    gap: 0.5rem;
+  }
+  .checkinBox {
+    width: calc((100% / 4) - 0.6rem); /* 4 items per row */
+    min-height: 80px;
+    padding: 0.6rem 0.4rem;
+  }
+  .questItem {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items full width */
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+  }
+  .questReward {
+    flex-direction: row; /* Put reward/button side-by-side */
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .userCurrency {
+    position: static; /* Un-stick currency on small screens */
+    margin-bottom: 1.5rem;
+    justify-content: space-around; /* Spread out currency */
+    padding: 0.5rem;
+  }
+  .currencyItem {
+    font-size: 0.9rem;
+  }
+  .currencyIcon {
+    font-size: 1.1rem;
+  }
+
+  .checkinGrid {
+    justify-content: center; /* Center the grid */
+  }
+  .checkinBox {
+    width: calc((100% / 3) - 0.6rem); /* 3 items per row */
+    min-height: 75px;
+  }
+  .checkinClaimButton {
+    width: 100%; /* Full width claim button */
+    margin-top: 1rem;
+  }
+}
+
+/* Ensure Settings styles are also available if composing */
+/* These definitions are just placeholders if the actual classes are missing */
+/* You might not need them if Settings.module.css is implicitly loaded */
+.formButton {
+  /* Example: Ensure some base button style exists if composing fails silently */
+  /* display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer; */
+}
+.formButtonPrimary {
+  /* Example: Ensure some base primary button style exists */
+  /* background-color: purple;
+      color: white; */
+}

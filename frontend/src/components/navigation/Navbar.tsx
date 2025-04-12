@@ -5,10 +5,10 @@ import styles from '../../styles/Navbar.module.css';
 
 const navItems = [
   { name: 'Home', path: '/home' },
-  { name: 'Rewards', path: '/rewards' }, // Sẽ làm sau
+  { name: 'Rewards', path: '/rewards' },
   { name: 'Focus', path: '/focus' },   // Sẽ làm sau
   { name: 'Profile', path: '/profile' }, // Có thể gộp vào Settings hoặc để riêng
-  { name: 'Settings', path: '/settings' }, // <-- Thêm mới
+  { name: 'Settings', path: '/settings' },
 ];
 
 const Navbar = () => {
@@ -20,7 +20,7 @@ const Navbar = () => {
         {navItems.map((item) => {
           // --- CẬP NHẬT LOGIC isActive ---
           // So sánh chính xác đường dẫn hiện tại với đường dẫn của item
-          const isActive = router.pathname === item.path;
+          const isActive = router.pathname === item.path || router.pathname.startsWith(item.path + '/');
 
           return (
             <Link key={item.name} href={item.path} passHref legacyBehavior>

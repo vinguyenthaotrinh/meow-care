@@ -20,7 +20,7 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--background-main);
-} /* Original user bg */
+}
 .mainContent {
   background-color: var(--background-main); /* User's background color */
   flex-grow: 1;
@@ -81,7 +81,7 @@
   align-items: flex-start;
   padding: 2rem 0;
   position: relative;
-  max-width: 950px; /* Adjust max-width if needed */
+  max-width: 800px; /* Adjust max-width if needed */
   margin: 1rem auto;
 }
 
@@ -193,7 +193,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 350px;
+  min-height: 370px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   position: relative; /* <<< MUST HAVE this for absolute positioning inside */
   overflow: hidden;

@@ -1,9 +1,16 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 from ..utils import supabase, ServiceError, DEBUG
 
 class XPRewardService:
     def __init__(self):
         self.client = supabase
+
+    def _format_dates(self, data):
+        """Chuyển đổi các trường date về ISO format string"""
+        for field in ["last_checkin_date", "last_streak_date"]:
+            if isinstance(data.get(field), (datetime, date)):
+                data[field] = data[field].isoformat()
+        return data
 
     def get_rewards(self, user_id):
         try:
@@ -11,16 +18,15 @@ class XPRewardService:
 
             response = self.client.table("xp_rewards").select("*").eq("user_id", user_id).execute()
             if not response.data:
-                # Tạo mới nếu chưa tồn tại
                 new_data = {
                     "user_id": user_id,
-                    "last_checkin_date": datetime(2000, 1, 1).date(),
-                    "last_streak_date": datetime(2000, 1, 1).date(),
+                    "last_checkin_date": datetime(2000, 1, 1).date().isoformat(),
+                    "last_streak_date": datetime(2000, 1, 1).date().isoformat(),
                 }
                 insert_resp = self.client.table("xp_rewards").insert(new_data).execute()
                 if not insert_resp.data:
                     raise ServiceError("Database server error", 500)
-                return insert_resp.data[0]
+                return self._format_dates(insert_resp.data[0])
 
             data = response.data[0]
             last_checkin_date = datetime.fromisoformat(data["last_checkin_date"]).date()
@@ -29,11 +35,10 @@ class XPRewardService:
             # Reset nếu bỏ qua 1 ngày
             if (today - last_checkin_date).days > 1:
                 data["daily_checkin"] = 0
-
             if (today - last_streak_date).days > 1:
                 data["streak"] = 0
 
-            return data
+            return self._format_dates(data)
         except Exception as e:
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
 
@@ -50,7 +55,6 @@ class XPRewardService:
             if last_checkin_date == today:
                 raise ServiceError("Already checked in today", 400)
 
-            # Tính toán logic checkin
             daily_checkin = data["daily_checkin"]
             coins = data["coins"]
             diamonds = data["diamonds"]
@@ -61,7 +65,6 @@ class XPRewardService:
                 daily_checkin = 1
 
             coins += 10
-
             if daily_checkin == 0:
                 diamonds += 1
 
@@ -69,14 +72,14 @@ class XPRewardService:
                 "daily_checkin": daily_checkin,
                 "coins": coins,
                 "diamonds": diamonds,
-                "last_checkin_date": today,
+                "last_checkin_date": today.isoformat(),
             }
 
             updated = self.client.table("xp_rewards").update(update_data).eq("user_id", user_id).execute()
             if not updated.data:
                 raise ServiceError("Database server error", 500)
 
-            return updated.data[0]
+            return self._format_dates(updated.data[0])
         except ServiceError:
             raise
         except Exception as e:
@@ -97,15 +100,16 @@ class XPRewardService:
 
             streak = data["streak"] + 1
 
-            updated = self.client.table("xp_rewards").update({
+            update_data = {
                 "streak": streak,
-                "last_streak_date": today
-            }).eq("user_id", user_id).execute()
+                "last_streak_date": today.isoformat()
+            }
 
+            updated = self.client.table("xp_rewards").update(update_data).eq("user_id", user_id).execute()
             if not updated.data:
                 raise ServiceError("Database server error", 500)
 
-            return updated.data[0]
+            return self._format_dates(updated.data[0])
         except ServiceError:
             raise
         except Exception as e:

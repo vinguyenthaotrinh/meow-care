@@ -2,7 +2,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL; // Make sure this is set in .env.local
 
 interface ApiCallOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD';
   headers?: Record<string, string>;
   body?: any;
   isProtected?: boolean;
