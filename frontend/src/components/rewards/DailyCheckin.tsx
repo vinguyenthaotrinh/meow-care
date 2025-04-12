@@ -62,7 +62,7 @@ const DailyCheckin: React.FC<DailyCheckinProps> = ({ rewardsData, onCheckinCompl
         }
         const canClaimToday = !isAlreadyCheckedInToday;
         const days: CheckinDay[] = [];
-        const rewards = [ { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 100, diamonds: 1 } ];
+        const rewards = [ { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10 }, { coins: 10, diamonds: 1 } ];
         for (let i = 0; i < 7; i++) {
             const isToday = i === currentDayIndex;
             const isClaimed = !canClaimToday ? i <= currentDayIndex : i < currentDayIndex;

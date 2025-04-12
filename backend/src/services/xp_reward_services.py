@@ -95,10 +95,11 @@ class XPRewardService:
             data = response.data[0]
             last_streak_date = datetime.fromisoformat(data["last_streak_date"]).date()
 
-            if last_streak_date == today:
-                raise ServiceError("Streak already updated today", 400)
-
-            streak = data["streak"] + 1
+            if last_streak_date != today:
+                streak = data["streak"] + 1
+            else:
+                streak = data["streak"]
+                # raise ServiceError("Streak already updated today", 400)
 
             update_data = {
                 "streak": streak,
