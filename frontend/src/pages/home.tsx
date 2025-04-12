@@ -2,19 +2,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout'; // User's path
 import { fetchApi } from '@/lib/api'; // User's path
-import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, UserStats, DietDish } from '@/types/habit.types'; // User's path
+import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, /* UserStats, */ DietDish } from '@/types/habit.types'; // Removed UserStats if unused
+import { XpRewardsData } from '@/types/rewards.types'; // **** IMPORT REWARDS TYPE ****
 import LoadingSpinner from '@/components/common/LoadingSpinner'; // User's path
 import styles from '@/styles/Home.module.css'; // User's path - USE THIS CSS MODULE
 import TodoList from '@/components/home/TodoList'; // User's path
 import DietUpdateModal from '@/components/home/DietUpdateModal'; // User's path
 import HabitProgress from '@/components/home/HabitProgress'; // Import HabitProgress
-import CatRoom from '@/components/home/CatRoom';           // **** IMPORT NEW COMPONENT ****
+import CatRoom from '@/components/home/CatRoom';           // Import CatRoom
 import { IoClose } from "react-icons/io5"; // Close icon
+import { toast } from 'react-toastify'; // Import toast for error handling
 
-
-// --- Helper Functions (Can be removed if moved to utils, otherwise keep) ---
+// --- Helper Functions (Keep as is) ---
 const formatTime = (timeString: string | null | undefined): string => {
-    // ... (implementation as before)
     if (!timeString) return "N/A";
     try {
         if (/^\d{2}:\d{2}:\d{2}$/.test(timeString)) {
@@ -31,56 +31,57 @@ const formatTime = (timeString: string | null | undefined): string => {
         return "Error";
     }
 };
-
 const formatAmount = (amount: number | null | undefined, unit: string): string => {
-    // ... (implementation as before)
      if (amount === null || amount === undefined) return `? ${unit}`;
     const roundedAmount = Number.isInteger(amount) ? amount : amount.toFixed(1);
     return `${roundedAmount} ${unit}`;
 };
-
 const calculatePercentage = (consumed: number | undefined, goal: number | undefined): number => {
-    // ... (implementation as before)
     if (goal === null || goal === undefined || consumed === null || consumed === undefined || goal <= 0) return 0;
     const percentage = (consumed / goal) * 100;
-    return Math.min(Math.max(percentage, 0), 100); // Keep within 0-100
+    return Math.min(Math.max(percentage, 0), 100);
 };
 // --- End Helper Functions ---
 
 const DashboardHomePage = () => {
-    // Keep state exactly as provided by user
+    // State
     const [todos, setTodos] = useState<TodoItem[]>([]);
-    const [userStats, setUserStats] = useState<UserStats | null>(null);
+    const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null); // **** USE NEW STATE & TYPE ****
     const [sleepHabit, setSleepHabit] = useState<SleepHabit | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); // General error state
     const [dietModalOpen, setDietModalOpen] = useState<string | null>(null);
     const [isTasksVisible, setIsTasksVisible] = useState(false);
 
-    // Keep fetchData exactly as provided by user
+    // Fetch Data Function
     const fetchData = useCallback(async () => {
         setError(null);
         setIsUpdating({});
-        setIsLoading(true);
+        setIsLoading(true); // Ensure loading starts
         try {
-            const [sleepLogsRes, hydrateLogsRes, dietLogsRes, sleepHabitRes /*, userStatsRes */] = await Promise.all([
+            // **** Fetch all data concurrently ****
+            const [sleepLogsRes, hydrateLogsRes, dietLogsRes, sleepHabitRes, xpRes] = await Promise.all([
                 fetchApi<SleepLog[]>('/sleep/logs/today', { isProtected: true }),
                 fetchApi<HydrateLog[]>('/hydrate/logs/today', { isProtected: true }),
                 fetchApi<DietLog[]>('/diet/logs/today', { isProtected: true }),
                 fetchApi<SleepHabit>('/sleep/habit', { isProtected: true }),
-                Promise.resolve({ data: { xp: 100, level: 1, streak: 10 }, status: 200 }), // Fake data
+                fetchApi<XpRewardsData>('/xp', { isProtected: true }) // **** FETCH XP DATA ****
             ]);
 
             let combinedTodos: TodoItem[] = [];
-            let apiErrors: string[] = [];
+            let apiErrors: string[] = []; // Collect specific errors
 
+            // Process Log/Habit data (keep existing logic)
             if (sleepLogsRes.data) combinedTodos = combinedTodos.concat(sleepLogsRes.data.map(log => ({ ...log, type: 'sleep' })));
             else if (sleepLogsRes.error && sleepLogsRes.status !== 404) apiErrors.push(`Sleep Logs: ${sleepLogsRes.error}`);
+
             if (sleepHabitRes.data) setSleepHabit(sleepHabitRes.data);
             else if (sleepHabitRes.error && sleepHabitRes.status !== 404) apiErrors.push(`Sleep Habit: ${sleepHabitRes.error}`);
+
             if (hydrateLogsRes.data && hydrateLogsRes.data.length > 0) combinedTodos.push({ ...hydrateLogsRes.data[0], type: 'hydrate' });
             else if (hydrateLogsRes.error && hydrateLogsRes.status !== 404) apiErrors.push(`Hydrate Logs: ${hydrateLogsRes.error}`);
+
             if (dietLogsRes.data && dietLogsRes.data.length > 0) {
                  const dietLogData = dietLogsRes.data[0];
                  const dishesArray: DietDish[] = Array.isArray(dietLogData.dishes) ? dietLogData.dishes : [];
@@ -96,23 +97,35 @@ const DashboardHomePage = () => {
              });
             setTodos(combinedTodos);
 
-            const userStatsRes = { data: { xp: 100, level: 1, streak: 10 } };
-            if (userStatsRes.data) setUserStats(userStatsRes.data);
-            if (apiErrors.length > 0) setError(`API Errors: ${apiErrors.join('; ')}`);
+            // **** Process XP Rewards Data ****
+            if (xpRes.data) {
+                setXpRewards(xpRes.data);
+            } else {
+                // Handle error fetching XP data specifically
+                const xpError = xpRes.error || "Failed to load user rewards.";
+                apiErrors.push(`Rewards: ${xpError}`);
+                toast.error(`Could not load rewards: ${xpError}`); // Show toast
+            }
+
+            // Set general error if any API failed
+            if (apiErrors.length > 0) {
+                setError(`Errors loading data: ${apiErrors.join('; ')}`);
+            }
+
         } catch (err: any) {
+            // Catch errors from Promise.all or other unexpected issues
             console.error("Failed to fetch dashboard data:", err);
-            setError(err.message || "Failed to load dashboard data. Please try again.");
+            const generalError = err.message || "Failed to load dashboard data.";
+            setError(generalError);
+            toast.error(generalError); // Show general error toast
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-     // Keep useEffect exactly as provided by user
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+    useEffect(() => { fetchData(); }, [fetchData]);
 
-    // --- Keep Action Handlers exactly as provided by user ---
+    // --- Action Handlers (Keep as is) ---
     const setItemLoading = (id: string, loading: boolean) => { setIsUpdating(prev => ({ ...prev, [id]: loading })); };
     const updateTodoInState = (updatedItem: TodoItem) => { setTodos(prevTodos => prevTodos.map(todo => todo.id === updatedItem.id ? updatedItem : todo)); };
     const handleCompleteSleep = async (logId: string) => {
@@ -120,14 +133,15 @@ const DashboardHomePage = () => {
         const response = await fetchApi<SleepLog>(`/sleep/logs/${logId}/complete`, { method: 'PUT', isProtected: true });
         setItemLoading(logId, false);
         if (response.data) updateTodoInState({ ...response.data, type: 'sleep' });
-        else setError(response.error || 'Failed to complete task.');
+        // Don't reset general error here, use toast for specific action errors
+        else toast.error(response.error || 'Failed to complete task.');
     };
     const handleUpdateHydrate = async (logId: string) => {
         setItemLoading(logId, true); setError(null);
         const response = await fetchApi<HydrateLog>(`/hydrate/logs/${logId}/update`, { method: 'PUT', isProtected: true });
         setItemLoading(logId, false);
         if (response.data) updateTodoInState({ ...response.data, type: 'hydrate' });
-        else setError(response.error || 'Failed to update water intake.');
+        else toast.error(response.error || 'Failed to update water intake.');
     };
     const handleUpdateDiet = (logId: string): Promise<void> => {
         setDietModalOpen(logId);
@@ -136,22 +150,22 @@ const DashboardHomePage = () => {
     const handleCloseDietModal = () => { setDietModalOpen(null); };
     const handleFoodAddedToLog = useCallback((updatedLog: DietLog) => {
         updateTodoInState({ ...updatedLog, type: 'diet' });
-    }, []);
+        // Optionally refetch XP data if adding food gives coins/rewards
+        // fetchRewardsData(); // Uncomment if needed
+    }, [/* fetchRewardsData (add if uncommented) */]); // Add dependencies if used inside
     // --- End Action Handlers ---
-
-    // --- REMOVED renderSingleHabitIcon function ---
 
     // Main component return
     return (
         <DashboardLayout>
              {isLoading ? (
                  <div className={styles.contentLoadingContainer}> <LoadingSpinner /> </div>
-             ) : error && todos.length === 0 ? (
-                 <div className={styles.centered}> <p style={{ color: 'red' }}>Error loading data: {error}</p> </div>
+             ) : error && todos.length === 0 && !xpRewards ? ( // Show error only if essential data failed
+                 <div className={styles.centered}> <p style={{ color: 'red' }}>{error}</p> </div>
              ) : (
                 <div className={styles.mainLayoutGrid}>
 
-                    {/* Column 1: Habit Progress Component */}
+                    {/* Column 1: Habit Progress */}
                     <HabitProgress
                         todos={todos}
                         sleepHabit={sleepHabit}
@@ -159,28 +173,26 @@ const DashboardHomePage = () => {
                         isTasksVisible={isTasksVisible}
                     />
 
-                    {/* Column 2: Cat Room Component */}
-                    <CatRoom userStats={userStats} />
+                    {/* Column 2: Cat Room - Pass fetched xpRewards */}
+                    <CatRoom xpData={xpRewards} /> {/* **** PASS xpRewards **** */}
 
                      {/* Task List Popup */}
                      <div className={`${styles.tasksPopupContainer} ${isTasksVisible ? styles.visible : ''}`}>
                          <div className={styles.tasksPopupHeader}>
-                             {/* <h2 className={styles.sectionTitle} style={{ marginBottom: 0, border: 'none' }}>Daily Tasks</h2> */}
                              <button onClick={() => setIsTasksVisible(false)} className={styles.closeTasksButton} aria-label="Close tasks list"> <IoClose /> </button>
                          </div>
                          <div className={styles.todoListScrollable}>
                              <TodoList
-                                        todos={todos}
-                                        isUpdating={isUpdating}
-                                        handleCompleteSleep={handleCompleteSleep}
-                                        handleUpdateHydrate={handleUpdateHydrate}
-                                        handleUpdateDiet={handleUpdateDiet}
-                                        formatTime={formatTime}
-                                        formatAmount={formatAmount} updateTodoInState={function (updatedItem: TodoItem): void {
-                                            throw new Error('Function not implemented.');
-                                        } }                                        // Removed updateTodoInState prop from here as well
+                                 todos={todos}
+                                 isUpdating={isUpdating}
+                                 handleCompleteSleep={handleCompleteSleep}
+                                 handleUpdateHydrate={handleUpdateHydrate}
+                                 handleUpdateDiet={handleUpdateDiet}
+                                 formatTime={formatTime}
+                                 formatAmount={formatAmount}
                              />
-                              {error && todos.length > 0 && <p style={{ color: 'red', marginTop: '1rem', fontSize: '0.9rem', padding: '0 0.5rem' }}>API Error: {error}</p>}
+                             {/* Display general fetch error inside popup if some todos loaded but other errors occurred */}
+                             {error && todos.length > 0 && <p style={{ color: 'red', marginTop: '1rem', fontSize: '0.9rem', padding: '0 0.5rem' }}>{error}</p>}
                          </div>
                      </div>
                 </div> // End mainLayoutGrid

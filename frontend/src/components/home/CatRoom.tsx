@@ -1,19 +1,19 @@
 // src/components/home/CatRoom.tsx
 import React from 'react';
 import Image from 'next/image';
-import { UserStats } from '@/types/habit.types'; // Import UserStats type
-import styles from '@/styles/Home.module.css'; // Reuse styles
+import { XpRewardsData } from '@/types/rewards.types'; // **** IMPORT CORRECT TYPE ****
+import styles from '@/styles/Home.module.css';
 import catImageSrc from '@/assets/images/default-cat.png';
-import backgroundImageSrc from '@/assets/images/background.png';
-import { FaCoins, FaGem, FaFire } from 'react-icons/fa'; // Import icons
+import backgroundImageSrc from '@/assets/images/background.png'; // *** Corrected filename if it's png ***
+import { FaCoins, FaGem, FaFire } from 'react-icons/fa';
 
 interface CatRoomProps {
-    userStats: UserStats | null; // Accept userStats as a prop
+    xpData: XpRewardsData | null; // **** ACCEPT NEW PROP NAME & TYPE ****
 }
 
-const CatRoom: React.FC<CatRoomProps> = ({ userStats }) => {
+const CatRoom: React.FC<CatRoomProps> = ({ xpData }) => { // **** USE xpData PROP ****
     return (
-        <div className={styles.catRoom}> {/* Main container with position: relative */}
+        <div className={styles.catRoom}>
             {/* Background Image */}
             <Image
                 src={backgroundImageSrc}
@@ -34,30 +34,30 @@ const CatRoom: React.FC<CatRoomProps> = ({ userStats }) => {
                 style={{ objectFit: 'contain' }}
             />
 
-            {/* --- Stats positioned inside the room --- */}
-            <div className={styles.catRoomStats}> {/* New container for stats */}
-                {userStats ? (
-                    // Use the existing stats container structure
+            {/* Stats positioned inside the room */}
+            <div className={styles.catRoomStats}>
+                {xpData ? ( // **** CHECK xpData ****
                     <div className={styles.statsContainer}>
                         <div className={styles.statItem}>
                             <FaCoins className={`${styles.statIcon} ${styles.coinIcon}`} />
-                            <span className={styles.statValue}>{userStats.xp}</span>
+                            {/* **** ACCESS CORRECT FIELDS **** */}
+                            <span className={styles.statValue}>{xpData.coins}</span>
                         </div>
                         <div className={styles.statItem}>
                             <FaGem className={`${styles.statIcon} ${styles.diamondIcon}`} />
-                            <span className={styles.statValue}>{userStats.level}</span>
+                            {/* **** ACCESS CORRECT FIELDS **** */}
+                            <span className={styles.statValue}>{xpData.diamonds}</span>
                         </div>
                         <div className={styles.statItem}>
                             <FaFire className={`${styles.statIcon} ${styles.streakIcon}`} />
-                            <span className={styles.statValue}>{userStats.streak}</span>
+                             {/* **** ACCESS CORRECT FIELDS **** */}
+                            <span className={styles.statValue}>{xpData.streak}</span>
                         </div>
                     </div>
                 ) : (
-                    // Optional: Show something if stats aren't loaded, or just render nothing
                     <span className={styles.noStatsTextSmall}>Stats loading...</span>
                 )}
             </div>
-            {/* --- End Stats --- */}
         </div>
     );
 };

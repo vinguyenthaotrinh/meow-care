@@ -78,11 +78,3 @@ export type TodoItem =
   | ({ type: 'sleep' } & SleepLog)
   | ({ type: 'hydrate' } & HydrateLog)
   | ({ type: 'diet' } & DietLog);
-
-// --- User Stats (Example) ---
-// Sau này bạn sẽ cần API để lấy thông tin này
-export interface UserStats {
-  xp: number;
-  level: number;
-  streak: number;
-}
