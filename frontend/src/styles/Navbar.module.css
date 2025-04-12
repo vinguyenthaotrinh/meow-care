@@ -2,15 +2,15 @@
 .navbar {
   width: 100%;
   padding: 1rem 2rem;
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--navbar-bg); /* !!! Đổi nền Navbar */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Border nhẹ hơn trên nền vàng */
   display: flex;
-  justify-content: center;
+  justify-content: center; /* User specified center */
   align-items: center;
-  position: sticky; /* Giữ navbar ở trên cùng khi cuộn */
+  position: sticky;
   top: 0;
-  z-index: 10; /* Đảm bảo navbar nổi lên trên */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Navbar on top */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05); /* Shadow nhẹ hơn */
 }
 
 .navContainer {
@@ -22,84 +22,67 @@
 .navItem {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-on-yellow-bg); /* Text đen trên nền vàng */
   text-decoration: none;
   padding: 0.5rem 0;
   position: relative;
-  transition: color 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out, opacity 0.2s ease; /* Added opacity transition */
 }
 
 .navItem::after {
   content: "";
   position: absolute;
-  bottom: -1px; /* Đặt gạch chân ngay dưới text */
+  bottom: -1px;
   left: 0;
   width: 100%;
-  height: 2px; /* Độ dày gạch chân */
-  background-color: var(--color-pastel-purple); /* Màu gạch chân */
-  transform: scaleX(0); /* Ban đầu ẩn đi */
+  height: 2px; /* Độ dày gạch chân (User specified) */
+  background-color: var(
+    --color-pastel-purple
+  ); /* Màu gạch chân (User's purple) */
+  transform: scaleX(0);
   transform-origin: bottom left;
   transition: transform 0.3s ease-in-out;
 }
 
 .navItem:hover {
-  color: var(--text-primary);
+  opacity: 0.8; /* Làm mờ nhẹ khi hover thay đổi màu */
 }
 
 .navItem.active {
-  color: var(--color-pastel-purple); /* Màu chữ khi active */
+  color: var(--color-pastel-purple); /* Màu chữ khi active (User's purple) */
   font-weight: 600;
+  opacity: 1; /* Ensure active item is fully opaque */
 }
 
 .navItem.active::after {
   transform: scaleX(1); /* Hiện gạch chân khi active */
 }
 
+/* Keep userActions definition, but it won't display if navbar is centered */
 .userActions {
-  /* Để trống hoặc thêm style nếu bạn có nút logout/avatar ở đây */
-  /* Nếu có userActions, bạn cần quay lại dùng justify-content: space-between trên .navbar
-       và bật flex-grow: 1; trên .navContainer */
-  /* min-width: 50px; Đặt chiều rộng tối thiểu để giữ cân bằng nếu dùng space-between */
-
-  /* Style cho nút logout hoặc avatar sau này */
   display: flex;
   align-items: center;
+  position: absolute; /* Position absolute if navbar uses justify-center */
+  right: 2rem; /* Adjust position */
 }
 
-.logoutButton {
-  /* Kế thừa một số style từ button chung nếu có */
-  background-color: transparent; /* Nền trong suốt */
-  color: var(--text-secondary);
-  border: 1px solid var(--color-border);
-  padding: 0.4rem 0.8rem;
-  font-size: 0.9rem;
-  margin-left: 1rem; /* Khoảng cách với nav items hoặc avatar */
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  transition: background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.logoutButton:hover {
-  background-color: var(--background-alt);
-  color: var(--text-primary);
-  border-color: #ccc;
-  opacity: 1; /* Ghi đè opacity hover mặc định nếu có */
-}
-
-/* Responsive design (ví dụ) */
+/* Responsive design */
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;
+    justify-content: center; /* Keep centered */
   }
   .navContainer {
-    gap: 1.5rem;
+    gap: 1rem; /* Less gap */
+    width: 100%; /* Allow container to take width */
+    justify-content: space-around; /* Space out items on mobile */
+    padding: 0 0.5rem; /* Add some horizontal padding */
   }
   .navItem {
     font-size: 0.9rem;
   }
-  .logoutButton {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
+  .userActions {
+    /* Hide user actions on mobile if centered */
+    display: none;
   }
 }

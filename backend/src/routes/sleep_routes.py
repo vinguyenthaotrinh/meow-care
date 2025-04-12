@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..services import sleep_service
 from ..utils import ServiceError, DEBUG
 from pydantic import ValidationError
+from ..services import xp_reward_service
 
 sleep_bp = Blueprint("sleep", __name__)
 

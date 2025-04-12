@@ -1,0 +1,559 @@
+/* src/styles/Rewards.module.css */
+
+/* --- Base Rewards Layout (Different from Settings) --- */
+.rewardsContainer {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  align-items: flex-start;
+}
+
+.rewardsContent {
+  flex-grow: 1;
+  padding: 1.5rem 2rem;
+  min-height: 600px;
+  position: relative; /* Needed for sticky currency */
+  width: 100%; /* Use available width */
+  background-color: var(--color-white); /* <<< ADDED White Background */
+  border: 1px solid var(--color-border); /* <<< ADDED Border */
+  border-radius: var(--border-radius); /* <<< ADDED Radius */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* <<< ADDED Shadow */
+  max-width: 1100px; /* Increase max-width if needed */
+  margin: 0 auto; /* Center if viewport is wider */
+}
+
+/* --- User Currency Display (STICKY) --- */
+.userCurrency {
+  position: sticky;
+  top: calc(1.5rem); /* Adjust based on desired gap from top of content */
+  align-self: flex-end;
+  margin-left: auto;
+  float: right; /* Helps ensure right alignment */
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+.currencyItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.currencyIcon {
+  font-size: 1.2rem;
+}
+.coinIcon {
+  color: var(--coin-color);
+}
+.diamondIcon {
+  color: var(--diamond-color);
+}
+.streakIcon {
+  color: var(--streak-color);
+}
+
+/* --- Daily Checkin --- */
+.checkinSection {
+  margin-bottom: 2.5rem;
+  margin-top: 1rem;
+  clear: both;
+}
+.checkinTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.checkinGrid {
+  display: flex;
+  gap: 0.5rem; /* <<< REDUCED GAP */
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.checkinBox {
+  border: 2px solid var(--color-border);
+  background-color: #f0f0f0;
+  color: var(--text-secondary);
+  border-radius: var(--border-radius);
+  padding: 0.6rem 0.2rem; /* <<< REDUCED PADDING */
+  /* Adjust width calculation for new gap */
+  width: calc(
+    (100% / 7) - 2rem
+  ); /* Approx width for 7 items with smaller gaps */
+  min-width: 55px; /* <<< REDUCED MIN-WIDTH */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 90px; /* <<< REDUCED MIN-HEIGHT */
+  transition: all 0.3s ease;
+  position: relative;
+}
+.checkinBoxContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem; /* <<< REDUCED GAP */
+  width: 100%;
+}
+.checkinBox.claimed {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+  opacity: 0.7;
+}
+.checkinBox.today {
+  background-color: var(--color-white);
+  border-color: var(--color-pastel-purple);
+  color: var(--text-primary);
+  box-shadow: 0 0 8px rgba(195, 177, 225, 0.4);
+}
+.checkinBox.future {
+  background-color: var(--color-white);
+  border-color: var(--color-border);
+  opacity: 0.9;
+}
+.checkinDayLabel {
+  font-size: 0.8rem; /* <<< REDUCED FONT SIZE */
+  font-weight: 500;
+  margin-top: 0.4rem;
+  color: var(--text-secondary);
+}
+.checkinBox.today .checkinDayLabel {
+  color: var(--color-pastel-purple);
+  font-weight: 700;
+}
+.checkinReward {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem; /* <<< REDUCED GAP */
+  font-size: 1rem; /* <<< REDUCED FONT SIZE */
+  font-weight: 600;
+}
+.checkinReward .currencyIcon {
+  font-size: 1.2rem; /* <<< REDUCED ICON SIZE */
+}
+
+/* Styles for Day 7 Checkin Box */
+.daySevenBox {
+  /* Keep previous styles, maybe slightly larger min-width than others */
+  min-width: 75px; /* Adjust if needed to fit content */
+  min-height: 90px; /* Match reduced height */
+  width: calc((100% / 7) - 0.2rem); /* Keep consistent width calculation */
+  padding: 0.6rem 0.2rem; /* Match reduced padding */
+}
+.daySevenContent {
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 0.4rem !important; /* Slightly more gap for horizontal */
+  flex-wrap: wrap;
+}
+/* Make Day 7 rewards slightly smaller too */
+.daySevenContent .checkinReward {
+  font-size: 1rem;
+}
+.daySevenContent .currencyIcon {
+  font-size: 1.2rem;
+}
+
+.checkinClaimButton {
+  composes: formButton formButtonPrimary from "./Settings.module.css";
+  padding: 0.4rem 1rem; /* Reduce padding (e.g., from 0.5rem 1.2rem) */
+  font-size: 0.85rem; /* Reduce font size (e.g., from 0.9rem) */
+  margin-top: 0.5rem;
+  min-width: 80px;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+.claimedButtonVisual {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  border-color: #ced4da !important;
+  cursor: not-allowed;
+  opacity: 1 !important;
+}
+.checkinClaimButton:disabled:not(.claimedButtonVisual) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* --- Layout Grid for Daily/Monthly Quests --- */
+.questsLayoutGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+  align-items: flex-start;
+}
+
+/* --- Quests Section (Left Column) --- */
+.questsSection {
+  /* Keep */
+}
+.questsTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.questList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.questItem {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+.questItem:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+.questContent {
+  flex-grow: 1;
+}
+.questTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+.questProgressBarContainer {
+  width: 100%;
+  height: 18px;
+  background-color: #e9ecef;
+  border-radius: 9px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--color-border);
+}
+.questProgressBarFill {
+  height: 100%;
+  background-color: var(--color-pastel-yellow);
+  border-radius: 9px 0 0 9px;
+  transition: width 0.5s ease-in-out;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.questProgressBarFill.hydrate {
+  background-color: var(--hydrate-progress-color);
+}
+.questProgressBarFill.diet {
+  background-color: var(--diet-progress-color);
+}
+.questProgressBarFill.sleep {
+  background-color: var(--sleep-completed-color);
+}
+.questProgressBarFill.coin {
+  background-color: var(--coin-color);
+}
+.questProgressBarFill.diamond {
+  background-color: var(--diamond-color);
+}
+.questProgressText {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+.questRewardActionArea {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 130px;
+  justify-content: flex-end;
+}
+.questRewardText {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0;
+}
+.questClaimButton {
+  composes: formButton from "./Settings.module.css";
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  background-color: var(--color-pastel-yellow);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+.questClaimButton:hover:not(:disabled) {
+  background-color: #fafa85;
+}
+.questClaimedButtonVisual {
+  /* Keep existing style */
+  /* This will be used for both daily and monthly claimed/disabled buttons */
+  composes: formButton from "./Settings.module.css"; /* Compose base button */
+  padding: 0.4rem 1rem; /* Match claim button padding */
+  font-size: 0.85rem; /* Match claim button font size */
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  border: 1px solid #ced4da !important; /* Match border */
+  cursor: not-allowed;
+  opacity: 1 !important;
+  font-weight: 500; /* Match claimed font weight if needed */
+}
+.questClaimButton:disabled:not(.questClaimedButtonVisual) {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--color-pastel-yellow);
+  border-color: var(--color-border);
+}
+
+/* --- Monthly Reward Section (Right Column) --- */
+.monthlyRewardOuterTitle {
+  /* Match .questsTitle style */
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.monthlyRewardBox {
+  background-color: var(--color-pastel-yellow);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid #fde047;
+  height: fit-content;
+}
+
+.monthlyRewardTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #713f12;
+}
+
+.monthlyRewardProgressBarContainer {
+  width: 80%;
+  max-width: 400px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 auto 1rem auto;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.monthlyRewardProgressBarFill {
+  height: 100%;
+  background-color: var(--color-pastel-purple);
+  border-radius: 10px 0 0 10px;
+  transition: width 0.5s ease-in-out;
+}
+.monthlyRewardProgressText {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-white);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.monthlyRewardInfoArea {
+  display: flex;
+  justify-content: center; /* Center items */
+  align-items: center;
+  gap: 0.8rem; /* Space between text and button */
+  margin-top: 1rem; /* Space above this area */
+}
+.monthlyRewardInfoText {
+  /* Style for the "Reward: icon amount" part */
+  font-size: 0.9rem;
+  color: #713f12;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+/* --- General Loading/Error --- */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}
+.errorText {
+  color: var(--color-error);
+  text-align: center;
+  margin: 1rem;
+}
+
+/* --- Responsive Overrides --- */
+@media (max-width: 900px) {
+  .rewardsContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .rewardsContent {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+  .questsLayoutGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  } /* Stack */
+
+  .userCurrency {
+    /* Adjust sticky positioning */
+    top: 1rem;
+    right: 1rem;
+    padding: 0.4rem 0.8rem;
+    gap: 0.8rem;
+  }
+  .currencyItem {
+    font-size: 0.9rem;
+  }
+  .currencyIcon {
+    font-size: 1.1rem;
+  }
+
+  /* Adjust checkin for better fit */
+  .checkinGrid {
+    gap: 0.4rem;
+  }
+  .checkinBox {
+    width: calc((100% / 7) - 0.5rem);
+    min-width: 45px;
+    min-height: 75px;
+    padding: 0.5rem 0.2rem;
+  }
+  .checkinReward {
+    font-size: 0.9rem;
+  }
+  .checkinReward .currencyIcon {
+    font-size: 1rem;
+  }
+  .checkinDayLabel {
+    font-size: 0.7rem;
+  }
+  .daySevenBox {
+    min-width: 45px;
+    min-height: 75px;
+    padding: 0.5rem 0.2rem;
+  }
+  .daySevenContent {
+    gap: 0.2rem !important;
+  }
+
+  .questItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+  }
+  .questRewardActionArea {
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .rewardsContent {
+    padding: 1rem;
+  }
+  .userCurrency {
+    /* Static centering */
+    position: static;
+    float: none;
+    margin: 0 auto 1.5rem auto;
+    justify-content: space-around;
+    width: fit-content;
+    max-width: 90%;
+  }
+
+  /* Checkin grid adjustments */
+  .checkinGrid {
+    justify-content: center;
+    gap: 0.3rem;
+  }
+  .checkinBox {
+    width: calc((100% / 4) - 0.4rem);
+    min-height: 70px;
+    padding: 0.4rem 0.2rem;
+  }
+  .daySevenBox {
+    min-width: auto;
+    min-height: 70px;
+    padding: 0.4rem 0.2rem;
+  }
+  .daySevenContent {
+    flex-direction: column !important;
+    gap: 0.1rem !important;
+  }
+  .checkinClaimButton {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  /* Quest item adjustments */
+  .questItem {
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .questRewardActionArea {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+  .questClaimButton,
+  .questClaimedButtonVisual {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Monthly reward button stack */
+  .monthlyRewardInfoArea {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}
+
+/* Placeholder compose definitions */
+.formButton {
+  /* Ensure base styles exist */
+}
+.formButtonPrimary {
+  /* Ensure base styles exist */
+}

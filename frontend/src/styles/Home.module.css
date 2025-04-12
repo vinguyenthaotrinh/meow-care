@@ -1,48 +1,899 @@
 /* src/styles/Home.module.css */
-.main {
-    min-height: 100vh;
-    display: flex;
+
+/* --- Progress Colors --- */
+:root {
+  --hydrate-progress-color: #89cff0;
+  --diet-progress-color: #fdba74;
+  --sleep-completed-color: #c3b1e1;
+  --wakeup-completed-color: #fafa8a;
+  --icon-background-default: #ffffff;
+  --icon-border-color: var(--color-border);
+  /* --- New Icon Colors --- */
+  --coin-color: #facc15; /* Tailwind yellow-400 */
+  --diamond-color: #60a5fa; /* Tailwind blue-400 */
+  --streak-color: #f97316; /* Tailwind orange-500 */
+}
+
+/* --- Base styles --- */
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background-main);
+}
+.mainContent {
+  background-color: var(--background-main); /* User's background color */
+  flex-grow: 1;
+  padding: 0.5rem 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative; /* Needed for absolute positioning of popup */
+}
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+.contentLoadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  width: 100%;
+  padding-top: 4rem;
+}
+.contentDimmed {
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+.spinner {
+  border: 4px solid rgba(150, 123, 182, 0.2);
+  border-left-color: var(--color-pastel-purple);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+} /* Adjusted spinner color based on user's purple */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Section Title (Keep User's style) --- */
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--color-pastel-purple); /* User's purple */
+}
+
+.mainLayoutGrid {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Habits | Cat Room */
+  gap: 2rem;
+  align-items: flex-start;
+  padding: 2rem 0;
+  position: relative;
+  max-width: 800px; /* Adjust max-width if needed */
+  margin: 1rem auto;
+}
+
+/* --- Column 1: Habit Icons Grid --- */
+.habitColumnGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Vertical gap between rows */
+}
+
+.habitRow {
+  display: flex;
+  gap: 1.5rem; /* Horizontal gap between icons in a row */
+  justify-content: flex-start; /* Align icons to the start of the row */
+  align-items: flex-start; /* Align items to the top of the row */
+}
+
+/* --- Habit Icon Styles (Keep MOST User's styles) --- */
+/* Wrapper for icons WITH text */
+.habitIconWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem; /* Gap between circle and text/placeholder */
+  min-width: 85px;
+  flex-shrink: 0;
+}
+/* Base circle style (Applied to divs AND the trigger button) */
+.iconCircle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border: 1px solid var(--icon-border-color);
+  background-color: var(--icon-background-default);
+  overflow: hidden;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease,
+    transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: default;
+}
+.iconCircle.wakeup.completed {
+  background-color: var(--wakeup-completed-color);
+  border-color: #e9e98e;
+} /* Adjusted border */
+.iconCircle.sleep.completed {
+  background-color: var(--sleep-completed-color);
+  border-color: #b1a1ce;
+} /* Adjusted border */
+.iconSymbol {
+  font-size: 1.8rem;
+  z-index: 1;
+  color: var(--text-primary);
+  line-height: 1; /* Prevent extra spacing */
+  display: flex; /* Help centering */
+  align-items: center;
+}
+.habitText {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  /* Removed fixed margin-top, gap on wrapper handles spacing */
+}
+.habitProgressText {
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+.habitTextPlaceholder {
+  /* Define height similar to the combined height of .habitText */
+  /* This is an approximation, adjust if needed based on actual rendered height */
+  height: calc(
+    0.8rem * 1.3 + 0.75rem * 1.3
+  ); /* Approx height of 1 line title + 1 line progress */
+  display: block; /* Ensure it takes up vertical space */
+  visibility: hidden; /* Make it invisible */
+  pointer-events: none; /* Ensure it's not interactive */
+}
+.habitIconWrapper.completed .iconSymbol {
+  /* Optional style */
+}
+
+/* --- Style for the Task Trigger Button (<button>) --- */
+/* Inherits .iconCircle styles */
+.taskTriggerButton {
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+.taskTriggerButton:hover {
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+  transform: scale(1.05);
+}
+.taskTriggerButton:focus-visible {
+  outline: 2px solid var(--color-pastel-purple);
+  outline-offset: 2px;
+}
+
+/* --- Column 2: Cat's Room --- */
+.catRoom {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 370px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative; /* <<< MUST HAVE this for absolute positioning inside */
+  overflow: hidden;
+}
+.catRoomBackground {
+  z-index: 0;
+}
+.catImage {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- NEW/UPDATED: Stats within Cat Room --- */
+.catRoomStats {
+  position: absolute;
+  top: 1rem; /* Adjust as needed */
+  right: 1rem; /* Adjust as needed */
+  z-index: 2; /* Ensure stats are above background/cat */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Optional: Semi-transparent background */
+  padding: 0.5rem 0.8rem; /* Optional: Padding */
+  border-radius: var(--border-radius); /* Optional: Rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Optional: Subtle shadow */
+}
+
+.statsContainer {
+  display: flex;
+  flex-direction: column; /* Stack stats vertically */
+  gap: 0.5rem; /* Space between stat items - Reduced gap */
+  align-items: flex-start; /* Align items to the left */
+}
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between icon and value - Reduced gap */
+  font-size: 0.9rem; /* Slightly smaller font for inside cat room */
+}
+.statValue {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem; /* Slightly smaller */
+}
+.statIcon {
+  font-size: 1.5rem; /* Slightly smaller icon */
+  flex-shrink: 0;
+}
+.coinIcon {
+  color: var(--coin-color);
+}
+.diamondIcon {
+  color: var(--diamond-color);
+}
+.streakIcon {
+  color: var(--streak-color);
+}
+
+/* Style for small text if stats aren't loaded */
+.noStatsTextSmall {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.tasksPopupContainer {
+  position: absolute;
+  top: 2rem;
+
+  /* Left: Position to the right of the 2nd icon in the 3rd row */
+  /* Estimate: Width of 2 icons + 1 gap between them + gap after 2nd icon */
+  left: calc(
+    85px + 1.5rem + 85px + 1rem + 1rem
+  ); /* Approx: width + gap + width + popup_gap */
+
+  width: 90%; /* Responsive width */
+  max-width: 500px; /* Slightly wider max width if desired */
+  max-height: calc(
+    100vh - 4rem - 65px - 2rem
+  ); /* Limit height to viewport minus header/padding */
+  background-color: var(--background-alt);
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+
+  /* --- Animation --- */
+  transform-origin: top left; /* Animate from top-left corner */
+  transform: scale(0.95) translate(-10px, -10px); /* Start smaller and offset */
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 0.25s ease-out;
+
+  /* --- Layout & Overflow --- */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Hide outer overflow */
+}
+
+.tasksPopupContainer.visible {
+  transform: scale(1) translate(0, 0); /* Animate to full size and position */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Header within Popup --- */
+.tasksPopupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.tasksPopupHeader .sectionTitle {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  font-size: 1.2rem;
+}
+
+.closeTasksButton {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0.1rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.closeTasksButton:hover {
+  color: var(--text-primary);
+}
+.todoListScrollable {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 0.5rem;
+  margin-right: -0.5rem; /* Offset scrollbar padding */
+}
+.noTasks {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 1rem;
+  font-style: italic;
+}
+
+/* --- Todo Item Styles (Keep User's extensive styles) --- */
+/* Wrapper */
+.todoItemWrapper {
+  margin-bottom: 0.8rem;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+/* Item main part */
+.todoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  transition: opacity 0.3s ease;
+}
+.todoItem.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+/* Content */
+.todoContentWrapper {
+  flex-grow: 1;
+  margin-right: 1rem;
+  overflow: hidden;
+}
+.todoContent {
+  /* Keep original styles if any */
+}
+.todoText {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+.todoSubtext {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+/* Details Row */
+.detailsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.2rem;
+  cursor: pointer;
+  user-select: none;
+}
+.detailsRow > .todoSubtext {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+}
+.detailsRow:focus-visible {
+  outline: 2px solid var(--color-pastel-purple);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Details Toggle Group */
+.detailsToggle {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+.detailsToggle:hover {
+  background-color: var(--background-alt);
+}
+.detailsText {
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
+  font-weight: 500;
+}
+/* Expand Icon */
+.expandIcon {
+  font-size: 0.8rem;
+  transition: transform 0.2s ease-in-out;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.expandIcon.expanded {
+  transform: rotate(90deg);
+}
+/* Actions */
+.todoActions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+/* Base action button */
+.todoActions button,
+.completedButton {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  min-width: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  vertical-align: middle;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  line-height: 1.2;
+  cursor: default;
+}
+.todoActions button:disabled,
+.completedButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* Update button */
+.updateButton {
+  background-color: var(--color-pastel-yellow);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+.updateButton:hover:not(:disabled) {
+  background-color: #fafa85;
+  opacity: 1;
+}
+.updateButton:disabled {
+  background-color: var(--color-pastel-yellow);
+  border-color: var(--color-border);
+}
+/* Complete button */
+.todoActions button:not(.updateButton):not(.completedButton) {
+  background-color: var(--color-pastel-purple);
+  color: var(--text-on-primary-button);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.todoActions
+  button:not(.updateButton):not(.completedButton):hover:not(:disabled) {
+  opacity: 0.9;
+}
+.todoActions button:not(.updateButton):not(.completedButton):disabled {
+  background-color: var(--color-pastel-purple);
+}
+/* Completed button */
+.completedButton {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+.completedButton:disabled {
+  opacity: 1 !important;
+}
+/* Diet details */
+.dietDetailsContainer {
+  padding: 0.8rem 1rem 1rem 1rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--background-alt);
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.dishListTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+.dishList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.dishItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  padding: 0.3rem 0;
+}
+.dishName {
+  color: var(--text-primary);
+  margin-right: 1rem;
+}
+.dishCalories {
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.noDishes {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* --- Diet Modal Styles (Keep User's style) --- */
+.dietModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+.dietModal {
+  background-color: var(--color-white);
+  padding: 2rem 2.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+.modalLoadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: var(--border-radius);
+}
+.modalLoadingOverlay .spinner {
+  width: 35px;
+  height: 35px;
+}
+.modalTitle {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-pastel-purple);
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+.dietForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.formLabel {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.formInput {
+  padding: 0.7rem 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--background-alt);
+}
+.formInput:focus {
+  outline: none;
+  border-color: var(--color-pastel-purple);
+  box-shadow: 0 0 0 2px rgba(150, 123, 182, 0.3);
+  background-color: var(--color-white);
+}
+.formInput:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+.modalButton,
+.modalButtonSecondary,
+.modalButtonPrimaryYellow {
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.modalButton:disabled,
+.modalButtonSecondary:disabled,
+.modalButtonPrimaryYellow:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.modalButton {
+  background-color: var(--color-pastel-purple);
+  color: var(--text-on-primary-button);
+}
+.modalButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.modalButtonPrimaryYellow {
+  background-color: var(--color-pastel-yellow);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+}
+.modalButtonPrimaryYellow:hover:not(:disabled) {
+  background-color: #fafa85;
+  opacity: 1;
+}
+.modalButtonPrimaryYellow:disabled {
+  background-color: var(--color-pastel-yellow);
+  border-color: var(--color-border);
+}
+.modalButtonSecondary {
+  background-color: var(--color-white);
+  color: var(--text-secondary);
+  border: 1px solid var(--color-border);
+}
+.modalButtonSecondary:hover:not(:disabled) {
+  background-color: var(--background-alt);
+  border-color: #ccc;
+}
+.modalButtonSecondary:disabled {
+  background-color: var(--color-white);
+}
+.modalError {
+  color: var(--color-error);
+  background-color: rgba(229, 62, 62, 0.1);
+  border: 1px solid rgba(229, 62, 62, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .mainLayoutGrid {
+    grid-template-columns: auto 1fr; /* Habits | Cat Room (with stats inside) */
+    grid-template-areas: "habits cat"; /* Define areas */
+    max-width: 95%;
+    gap: 1rem 1.5rem;
+    padding: 1rem 0;
+  }
+  .habitColumnGrid {
+    grid-area: habits; /* Assign to area */
+    gap: 1rem;
+  }
+  .habitRow {
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .catRoom {
+    grid-area: cat; /* Assign to area */
+    min-height: 250px;
+  }
+  .catRoomStats {
+    top: 0.8rem;
+    right: 0.8rem;
+    padding: 0.4rem 0.6rem; /* Smaller padding */
+  }
+  .statsContainer {
+    gap: 0.3rem;
+  }
+  .statItem {
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+  .statValue {
+    font-size: 0.85rem;
+  }
+  .statIcon {
+    font-size: 0.9rem;
+  }
+
+  .tasksPopupContainer {
+    /* Revert to simpler fixed positioning for medium screens */
+    position: fixed;
+    top: auto; /* Remove absolute top */
+    left: auto; /* Remove absolute left */
+    bottom: 1rem; /* Position from bottom */
+    right: 1rem; /* Position from right */
+    width: 90%;
+    max-width: 500px;
+    max-height: 70vh;
+    transform-origin: bottom right; /* Animate from bottom right */
+    transform: scale(0.9) translate(10px, 10px); /* Start small and offset */
+  }
+  .tasksPopupContainer.visible {
+    transform: scale(1) translate(0, 0); /* Animate to full size */
+  }
+}
+
+@media (max-width: 600px) {
+  .mainContent {
+    padding: 0.5rem 1rem;
+  }
+  .mainLayoutGrid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "habits" "cat"; /* Stack areas */
+    gap: 1.5rem;
+    padding: 1rem 0;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .habitColumnGrid {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 0 1rem 0;
+    width: 100%;
+    gap: 1rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    white-space: nowrap;
+    &::-webkit-scrollbar {
+      height: 0.4rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 0.2rem;
+    }
+  }
+  .habitRow {
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem 2rem;
-    text-align: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  } /* Stack icons vertically in scroll */
+
+  .catRoom {
+    min-height: 200px;
+    width: 90%;
+    margin: 0 auto;
   }
-  
-  .title {
-    margin-bottom: 1rem;
-    line-height: 1.15;
-    font-size: 3rem; /* Kích thước lớn hơn cho tiêu đề chính */
-    font-weight: 700;
-    color: var(--color-pastel-purple); /* Sử dụng màu tím pastel */
+  .statsContainer {
+    gap: 0.2rem;
   }
-  
-  .description {
-    margin-bottom: 2.5rem;
-    line-height: 1.5;
+  .statItem {
+    font-size: 0.75rem;
+    gap: 0.3rem;
+  }
+  .statValue {
+    font-size: 0.8rem;
+  }
+  .statIcon {
+    font-size: 0.8rem;
+  }
+
+  .tasksPopupContainer {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    max-height: 65vh;
+    padding: 1rem;
+    transform-origin: bottom center;
+    transform: translateY(100%);
+  }
+  .tasksPopupContainer.visible {
+    transform: translateY(0);
+  }
+
+  /* Keep user's mobile styles for todo items and modal */
+  .sectionTitle {
     font-size: 1.2rem;
-    color: var(--text-secondary);
+    margin-bottom: 1rem;
   }
-  
-  .buttonContainer {
+  .dietModal {
+    padding: 1.5rem;
+  }
+  .modalTitle {
+    font-size: 1.3rem;
+  }
+  .habitIconWrapper {
+    min-width: 70px;
+  }
+  .iconCircle {
+    width: 50px;
+    height: 50px;
+  }
+  .iconSymbol {
+    font-size: 1.5rem;
+  }
+  /* Adjust trigger button size on mobile */
+  .taskTriggerButton {
+    width: 50px;
+    height: 50px;
+  }
+  .taskTriggerButton .iconSymbol {
+    font-size: 1.5rem;
+  }
+
+  .todoItemWrapper {
+    margin-bottom: 1rem;
+  }
+  .todoItem {
+    padding: 0.8rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .todoContentWrapper {
+    margin-right: 0;
+    width: 100%;
+  }
+  .todoActions {
+    width: 100%;
     display: flex;
-    gap: 1rem; /* Khoảng cách giữa 2 nút */
+    justify-content: flex-end;
+    margin-top: 0.5rem;
   }
-  
-  .button {
-    /* Styles cơ bản đã có trong globals.css */
-    padding: 0.8rem 1.8rem;
-    font-size: 1rem;
-    /* Kế thừa màu tím từ globals.css */
+  .todoActions button,
+  .completedButton {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
   }
-  
-  .buttonSecondary {
-    background-color: var(--color-pastel-yellow); /* Màu vàng pastel cho nút phụ */
-    color: var(--text-primary); /* Màu text đen */
-    border: 1px solid var(--color-border);
+  .modalActions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
   }
-  
-  .buttonSecondary:hover {
-     background-color: #fafa85; /* Vàng nhạt hơn khi hover */
-     opacity: 1; /* Ghi đè opacity hover mặc định nếu cần */
+  .modalButton,
+  .modalButtonSecondary,
+  .modalButtonPrimaryYellow {
+    width: 100%;
   }
+  .dietDetailsContainer {
+    padding: 0.8rem;
+  }
+}

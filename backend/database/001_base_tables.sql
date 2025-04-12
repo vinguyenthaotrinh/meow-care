@@ -26,10 +26,12 @@ CREATE TABLE profiles (
 
 CREATE TABLE xp_rewards (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-    xp INT DEFAULT 0,
-    level INT GENERATED ALWAYS AS (xp / 100) STORED,
+    coins INT DEFAULT 0,
+    diamonds INT DEFAULT 0,
     streak INT DEFAULT 0,
-    last_streak_date DATE
+    daily_checkin INT DEFAULT 0,
+    last_checkin_date DATE DEFAULT DATE '2000-01-01',
+    last_streak_date DATE DEFAULT DATE '2000-01-01'
 );
 
 CREATE TABLE notifications (

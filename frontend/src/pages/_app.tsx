@@ -11,7 +11,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <> {/* Use Fragment to wrap multiple elements */}
       <Component {...pageProps} />
-      {/* --- Add ToastContainer here --- */}
       {/* Configure options as needed */}
       <ToastContainer
         position="top-right" // Vị trí hiển thị
