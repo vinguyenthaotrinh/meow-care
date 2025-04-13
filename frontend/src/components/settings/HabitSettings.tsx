@@ -97,7 +97,7 @@ const HabitSettings = () => {
         const setterMap = { sleep: setSleepData, hydrate: setHydrateData, diet: setDietData };
         const setter = setterMap[habitType];
 
-        setter(prev => ({
+        setter((prev: any) => ({
             ...prev,
             [name]: type === 'number' ? (value === '' ? undefined : parseFloat(value)) : value
         }));
