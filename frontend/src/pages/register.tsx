@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'; // Để điều hướng sau khi đăng ký
 import AuthForm from '../components/auth/AuthForm';
 import { fetchApi } from '../lib/api';
+import styles from '../styles/Auth.module.css';
 
 const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +48,6 @@ const RegisterPage = () => {
     }
   };
 
-  // Nếu đang kiểm tra token, hiển thị loading
   if (isCheckingToken) {
     return (
       <div></div> // Thay bằng spinner nếu muốn
@@ -55,8 +55,7 @@ const RegisterPage = () => {
   }
 
   return (
-    <main>
-      {/* Thông báo thành công khi đăng ký */}
+    <div className={styles.pageWrapper}>
       {successMessage && <p style={{ color: 'green', marginBottom: '1rem', textAlign: 'center' }}>{successMessage}</p>}
       <AuthForm
         formType="register"
@@ -64,7 +63,7 @@ const RegisterPage = () => {
         isLoading={isLoading}
         error={error}
       />
-    </main>
+    </div>
   );
 };
 

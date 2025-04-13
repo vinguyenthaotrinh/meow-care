@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'; // Để điều hướng sau khi login thành công
 import AuthForm from '../components/auth/AuthForm';
 import { fetchApi } from '../lib/api'; // Import hàm gọi API
+import styles from '../styles/Auth.module.css';
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +15,6 @@ const LoginPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
-      // Nếu có token, điều hướng người dùng tới trang dashboard/home
       router.push('/home');
     } else {
       setIsCheckingToken(false); // Xong kiểm tra token, có thể hiển thị form login
@@ -37,37 +37,33 @@ const LoginPage = () => {
     } else if (response.data?.token) {
       // Thành công!
       console.log('Login successful, token:', response.data.token);
-      // --- Xử lý token ---
       // 1. Lưu token (ví dụ: vào localStorage)
       localStorage.setItem('authToken', response.data.token);
 
-      // 2. Điều hướng người dùng đến trang chính hoặc dashboard/home
-      // Thay '/dashboard/home' bằng trang bạn muốn người dùng đến sau khi đăng nhập
-      router.push('/home'); // Ví dụ: chuyển đến trang dashboard/home
+      // 2. Điều hướng người dùng đến trang chính hoặc /home
+      router.push('/home');
       // Hoặc có thể là router.push('/'); nếu muốn về trang chủ
     } else {
       // Trường hợp không có lỗi nhưng cũng không có token (bất thường)
-       // --- Thay đổi tiếng Việt sang tiếng Anh ---
        setError('Login failed: Unexpected response from server.');
-       // -----------------------------------------
     }
   };
 
   if (isCheckingToken) {
     return (
-      <div></div> // Bạn có thể thay bằng một spinner hoặc loading animation ở đây
+      <div></div> // có thể thay bằng một spinner hoặc loading animation ở đây
     );
   }
 
   return (
-    <main> {/* Sử dụng thẻ main đã style trong globals.css */}
+    <div className={styles.pageWrapper}>
       <AuthForm
         formType="login"
         onSubmit={handleLogin}
         isLoading={isLoading}
         error={error}
       />
-    </main>
+    </div>
   );
 };
 
