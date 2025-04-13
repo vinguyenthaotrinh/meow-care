@@ -5,12 +5,13 @@ import DailyQuestItem from './DailyQuestItem';
 import styles from '../../styles/Rewards.module.css';
 
 interface DailyQuestsSectionProps {
-    quests: Quest[]; // Accepts the list of quests
+    quests: Quest[];
+    onClaimQuest: (questId: string) => Promise<void>; // Function to claim
+    claimingQuestId: string | null; // ID of the quest currently being claimed
 }
 
-const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests }) => {
+const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests, onClaimQuest, claimingQuestId }) => {
     return (
-        // Changed section to div for grid layout flexibility
         <div className={styles.questsSection}>
             <h3 className={styles.questsTitle}>Daily Quests</h3>
             {quests.length === 0 ? (
@@ -18,7 +19,12 @@ const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests }) => {
             ) : (
                 <div className={styles.questList}>
                     {quests.map(quest => (
-                        <DailyQuestItem key={quest.id} quest={quest} />
+                        <DailyQuestItem
+                            key={quest.id}
+                            quest={quest}
+                            onClaim={onClaimQuest} // Pass the handler down
+                            isClaimingQuest={claimingQuestId === quest.id} // Pass true only if this quest is loading
+                        />
                     ))}
                 </div>
             )}

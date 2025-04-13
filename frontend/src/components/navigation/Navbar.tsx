@@ -7,7 +7,6 @@ const navItems = [
   { name: 'Home', path: '/home' },
   { name: 'Rewards', path: '/rewards' },
   { name: 'Focus', path: '/focus' },   // Sẽ làm sau
-  { name: 'Profile', path: '/profile' }, // Có thể gộp vào Settings hoặc để riêng
   { name: 'Settings', path: '/settings' },
 ];
 

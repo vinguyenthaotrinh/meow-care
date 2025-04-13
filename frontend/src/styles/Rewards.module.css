@@ -1,34 +1,38 @@
 /* src/styles/Rewards.module.css */
 
-/* --- Base Rewards Layout (Different from Settings) --- */
+/* --- Base Rewards Layout --- */
 .rewardsContainer {
   display: flex;
   gap: 2rem;
   padding: 1rem 0;
   align-items: flex-start;
+  /* Center the layout if needed */
+  /* max-width: 1400px; */
+  /* margin: 0 auto; */
 }
 
+/* White background container for the main content area */
 .rewardsContent {
   flex-grow: 1;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 2rem; /* Inner padding */
   min-height: 600px;
-  position: relative; /* Needed for sticky currency */
-  width: 100%; /* Use available width */
-  background-color: var(--color-white); /* <<< ADDED White Background */
-  border: 1px solid var(--color-border); /* <<< ADDED Border */
-  border-radius: var(--border-radius); /* <<< ADDED Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* <<< ADDED Shadow */
-  max-width: 1100px; /* Increase max-width if needed */
-  margin: 0 auto; /* Center if viewport is wider */
+  position: relative; /* For sticky currency */
+  width: 100%; /* Allow it to take space */
+  background-color: var(--color-white); /* White Background */
+  border: 1px solid var(--color-border); /* Border */
+  border-radius: var(--border-radius); /* Radius */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow */
+  max-width: 1100px; /* Max width */
+  margin: 0 auto; /* Center */
 }
 
 /* --- User Currency Display (STICKY) --- */
 .userCurrency {
   position: sticky;
-  top: calc(1.5rem); /* Adjust based on desired gap from top of content */
-  align-self: flex-end;
-  margin-left: auto;
-  float: right; /* Helps ensure right alignment */
+  top: calc(1.5rem); /* Adjust gap from top of .rewardsContent */
+  align-self: flex-end; /* Align to the right of the flex container */
+  margin-left: auto; /* Push to the right */
+  float: right; /* Ensure right alignment */
   margin-bottom: 1rem;
   display: flex;
   gap: 1rem;
@@ -72,7 +76,7 @@
 }
 .checkinGrid {
   display: flex;
-  gap: 0.5rem; /* <<< REDUCED GAP */
+  gap: 0.5rem;
   justify-content: space-between;
   align-items: flex-end;
   flex-wrap: wrap;
@@ -82,18 +86,15 @@
   background-color: #f0f0f0;
   color: var(--text-secondary);
   border-radius: var(--border-radius);
-  padding: 0.6rem 0.2rem; /* <<< REDUCED PADDING */
-  /* Adjust width calculation for new gap */
-  width: calc(
-    (100% / 7) - 2rem
-  ); /* Approx width for 7 items with smaller gaps */
-  min-width: 55px; /* <<< REDUCED MIN-WIDTH */
+  padding: 0.6rem 0.2rem;
+  width: calc((100% / 7) - 0.6rem); /* Adjusted width */
+  min-width: 55px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-height: 90px; /* <<< REDUCED MIN-HEIGHT */
+  min-height: 80px; /* Adjusted height */
   transition: all 0.3s ease;
   position: relative;
 }
@@ -103,7 +104,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem; /* <<< REDUCED GAP */
+  gap: 0.2rem;
   width: 100%;
 }
 .checkinBox.claimed {
@@ -123,7 +124,7 @@
   opacity: 0.9;
 }
 .checkinDayLabel {
-  font-size: 0.8rem; /* <<< REDUCED FONT SIZE */
+  font-size: 0.8rem;
   font-weight: 500;
   margin-top: 0.4rem;
   color: var(--text-secondary);
@@ -135,29 +136,25 @@
 .checkinReward {
   display: flex;
   align-items: center;
-  gap: 0.2rem; /* <<< REDUCED GAP */
-  font-size: 1rem; /* <<< REDUCED FONT SIZE */
+  gap: 0.2rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 .checkinReward .currencyIcon {
-  font-size: 1.2rem; /* <<< REDUCED ICON SIZE */
+  font-size: 1.2rem;
 }
-
-/* Styles for Day 7 Checkin Box */
 .daySevenBox {
-  /* Keep previous styles, maybe slightly larger min-width than others */
-  min-width: 75px; /* Adjust if needed to fit content */
-  min-height: 90px; /* Match reduced height */
-  width: calc((100% / 7) - 0.2rem); /* Keep consistent width calculation */
-  padding: 0.6rem 0.2rem; /* Match reduced padding */
+  min-width: 75px;
+  min-height: 80px;
+  width: calc((100% / 7) - 0.6rem);
+  padding: 0.6rem 0.2rem;
 }
 .daySevenContent {
   flex-direction: row !important;
   justify-content: center !important;
-  gap: 0.4rem !important; /* Slightly more gap for horizontal */
+  gap: 0.4rem !important;
   flex-wrap: wrap;
 }
-/* Make Day 7 rewards slightly smaller too */
 .daySevenContent .checkinReward {
   font-size: 1rem;
 }
@@ -165,25 +162,55 @@
   font-size: 1.2rem;
 }
 
+/* --- Checkin Claim Button (Standalone Style without compose) --- */
 .checkinClaimButton {
-  composes: formButton formButtonPrimary from "./Settings.module.css";
-  padding: 0.4rem 1rem; /* Reduce padding (e.g., from 0.5rem 1.2rem) */
-  font-size: 0.85rem; /* Reduce font size (e.g., from 0.9rem) */
-  margin-top: 0.5rem;
-  min-width: 80px;
+  /* Base styles */
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
   transition: background-color 0.2s ease, border-color 0.2s ease,
     opacity 0.2s ease;
+  /* Specific styles */
+  padding: 0.5rem 1.2rem; /* Adjusted padding back slightly */
+  font-size: 0.9rem; /* Adjusted font size back slightly */
+  margin-top: 0.5rem;
+  min-width: 80px;
+  /* Primary colors */
+  background-color: var(--color-pastel-purple);
+  color: var(--text-on-primary-button);
 }
+.checkinClaimButton:hover:not(:disabled) {
+  background-color: #ae9acb; /* Darker purple */
+  opacity: 1;
+}
+/* Claimed visual style */
 .claimedButtonVisual {
   background-color: #e9ecef !important;
   color: #6c757d !important;
-  border-color: #ced4da !important;
+  border: 1px solid #ced4da !important;
   cursor: not-allowed;
   opacity: 1 !important;
+  /* Ensure consistent padding/font */
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease;
 }
+/* Disabled state WHEN claiming */
 .checkinClaimButton:disabled:not(.claimedButtonVisual) {
   cursor: not-allowed;
   opacity: 0.6;
+  background-color: var(--color-pastel-purple); /* Keep purple */
+  border-color: transparent; /* Keep border */
 }
 
 /* --- Layout Grid for Daily/Monthly Quests --- */
@@ -298,32 +325,47 @@
   gap: 0.3rem;
   margin-top: 0;
 }
+
+/* --- Quest Claim Button (Standalone Style without compose) --- */
 .questClaimButton {
-  composes: formButton from "./Settings.module.css";
+  /* Base styles needed */
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 600; /* Keep font weight */
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease;
+  /* Specific styles */
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
   border: 1px solid var(--color-border);
-  transition: background-color 0.2s ease, border-color 0.2s ease,
-    opacity 0.2s ease;
 }
 .questClaimButton:hover:not(:disabled) {
   background-color: #fafa85;
 }
+/* Use the SAME claimed visual style */
 .questClaimedButtonVisual {
-  /* Keep existing style */
-  /* This will be used for both daily and monthly claimed/disabled buttons */
-  composes: formButton from "./Settings.module.css"; /* Compose base button */
-  padding: 0.4rem 1rem; /* Match claim button padding */
-  font-size: 0.85rem; /* Match claim button font size */
+  /* This class is used by both checkin and daily quest */
   background-color: #e9ecef !important;
   color: #6c757d !important;
-  border: 1px solid #ced4da !important; /* Match border */
+  border: 1px solid #ced4da !important;
   cursor: not-allowed;
   opacity: 1 !important;
-  font-weight: 500; /* Match claimed font weight if needed */
+  padding: 0.4rem 1rem; /* Match claim button padding */
+  font-size: 0.85rem; /* Match claim button font size */
+  border-radius: var(--border-radius); /* Match radius */
+  font-weight: 500; /* Match claimed font weight */
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    opacity 0.2s ease;
 }
+/* Disabled state WHEN claiming */
 .questClaimButton:disabled:not(.questClaimedButtonVisual) {
   cursor: not-allowed;
   opacity: 0.6;
@@ -333,13 +375,11 @@
 
 /* --- Monthly Reward Section (Right Column) --- */
 .monthlyRewardOuterTitle {
-  /* Match .questsTitle style */
   font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: var(--text-primary);
 }
-
 .monthlyRewardBox {
   background-color: var(--color-pastel-yellow);
   border-radius: var(--border-radius);
@@ -348,14 +388,12 @@
   border: 1px solid #fde047;
   height: fit-content;
 }
-
 .monthlyRewardTitle {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.8rem;
   color: #713f12;
 }
-
 .monthlyRewardProgressBarContainer {
   width: 80%;
   max-width: 400px;
@@ -387,16 +425,14 @@
   color: var(--color-white);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
-
 .monthlyRewardInfoArea {
   display: flex;
-  justify-content: center; /* Center items */
+  justify-content: center;
   align-items: center;
-  gap: 0.8rem; /* Space between text and button */
-  margin-top: 1rem; /* Space above this area */
+  gap: 0.8rem;
+  margin-top: 1rem;
 }
 .monthlyRewardInfoText {
-  /* Style for the "Reward: icon amount" part */
   font-size: 0.9rem;
   color: #713f12;
   display: flex;
@@ -431,10 +467,8 @@
   .questsLayoutGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
-  } /* Stack */
-
+  }
   .userCurrency {
-    /* Adjust sticky positioning */
     top: 1rem;
     right: 1rem;
     padding: 0.4rem 0.8rem;
@@ -446,8 +480,6 @@
   .currencyIcon {
     font-size: 1.1rem;
   }
-
-  /* Adjust checkin for better fit */
   .checkinGrid {
     gap: 0.4rem;
   }
@@ -471,10 +503,6 @@
     min-height: 75px;
     padding: 0.5rem 0.2rem;
   }
-  .daySevenContent {
-    gap: 0.2rem !important;
-  }
-
   .questItem {
     flex-direction: column;
     align-items: stretch;
@@ -493,7 +521,6 @@
     padding: 1rem;
   }
   .userCurrency {
-    /* Static centering */
     position: static;
     float: none;
     margin: 0 auto 1.5rem auto;
@@ -501,8 +528,6 @@
     width: fit-content;
     max-width: 90%;
   }
-
-  /* Checkin grid adjustments */
   .checkinGrid {
     justify-content: center;
     gap: 0.3rem;
@@ -525,8 +550,6 @@
     width: 100%;
     margin-top: 1rem;
   }
-
-  /* Quest item adjustments */
   .questItem {
     gap: 1rem;
     padding: 1rem;
@@ -541,19 +564,9 @@
     width: 100%;
     text-align: center;
   }
-
-  /* Monthly reward button stack */
   .monthlyRewardInfoArea {
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
   }
-}
-
-/* Placeholder compose definitions */
-.formButton {
-  /* Ensure base styles exist */
-}
-.formButtonPrimary {
-  /* Ensure base styles exist */
 }

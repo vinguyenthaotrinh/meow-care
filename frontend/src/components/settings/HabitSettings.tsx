@@ -269,7 +269,7 @@ const HabitSettings = () => {
             <form onSubmit={(e) => handleSaveHabit(e, 'diet')} className={styles.subForm}>
                  <h4 className={styles.subFormTitle}>Diet</h4>
                  <div className={styles.formGroup}>
-                     <label htmlFor="calories_goal">Daily Calorie Goal (kcal):</label>
+                     <label htmlFor="calories_goal">Daily Calories Goal (kcal):</label>
                     <input type="number" id="calories_goal" name="calories_goal" min="1" step="1"
                         value={dietData.calories_goal ?? ''}
                         onChange={(e) => handleInputChange(e, 'diet')}

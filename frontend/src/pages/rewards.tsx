@@ -8,103 +8,149 @@ import DailyQuestsSection from '@/components/rewards/DailyQuestsSection';
 import MonthlyReward from '@/components/rewards/MonthlyReward';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { fetchApi } from '@/lib/api';
-import { XpRewardsData, Quest } from '@/types/rewards.types';
+import { XpRewardsData, Quest } from '@/types/rewards.types'; // Use correct Quest type
 import rewardStyles from '@/styles/Rewards.module.css';
 import { toast } from 'react-toastify';
 
-// --- Mock Data (Keep as is or update with more realistic states) ---
-const MOCK_DAILY_QUESTS: Quest[] = [
-    { id: 'dq1', title: 'Drink up 1500ml', currentProgress: 750, targetProgress: 1500, rewardType: 'coins', rewardAmount: 30, isClaimable: false, isCompleted: false, questType: 'hydrate' },
-    { id: 'dq2', title: 'Complete 3 Daily Tasks', currentProgress: 1, targetProgress: 3, rewardType: 'coins', rewardAmount: 50, isClaimable: false, isCompleted: false },
-    { id: 'dq4', title: 'Log Dinner', currentProgress: 1, targetProgress: 1, rewardType: 'diamonds', rewardAmount: 1, isClaimable: true, isCompleted: true, questType: 'diet' },
-    { id: 'dq3', title: 'Check-in Today', currentProgress: 0, targetProgress: 1, rewardType: 'coins', rewardAmount: 10, isClaimable: false, isCompleted: false, questType: 'checkin' },
-];
-const MOCK_MONTHLY_REWARD = { currentProgress: 25, targetProgress: 40, rewardAmount: 40, rewardType: 'diamonds' as const }; // Added rewardType
-// --- End Mock Data ---
-
-
 const RewardsPage = () => {
     const [rewardsData, setRewardsData] = useState<XpRewardsData | null>(null);
-    const [dailyQuests, setDailyQuests] = useState<Quest[]>([]); // Start empty, populate from mock/API
-    const [monthlyReward, setMonthlyReward] = useState(MOCK_MONTHLY_REWARD);
-    const [isLoading, setIsLoading] = useState(true);
+    // State for ALL quests fetched from API
+    const [allQuests, setAllQuests] = useState<Quest[]>([]);
+    // State for loading specific parts
+    const [isLoadingRewards, setIsLoadingRewards] = useState(true);
+    const [isLoadingQuests, setIsLoadingQuests] = useState(true);
+    // State to track which quest is currently being claimed
+    const [claimingQuestId, setClaimingQuestId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchRewardsData = useCallback(async () => {
-        setIsLoading(true);
+    // Combined fetch function
+    const fetchData = useCallback(async () => {
+        setIsLoadingRewards(true);
+        setIsLoadingQuests(true);
         setError(null);
+        let fetchError = null; // Accumulate errors
+
         try {
-            const response = await fetchApi<XpRewardsData>('/xp', { isProtected: true });
-            if (response.data) {
-                setRewardsData(response.data);
+            // Fetch rewards and quests in parallel
+            const [rewardsRes, questsRes] = await Promise.all([
+                fetchApi<XpRewardsData>('/xp', { isProtected: true }),
+                fetchApi<Quest[]>('/quest', { isProtected: true }) // Fetch from /quest endpoint
+            ]);
 
-                // --- Update Quest Status based on fetched data ---
-                // Use MOCK_DAILY_QUESTS as base, update status
-                const updatedQuests = MOCK_DAILY_QUESTS.map(q => {
-                    if (q.questType === 'checkin') {
-                        const today = new Date(); today.setHours(0, 0, 0, 0);
-                        const lastCheckin = new Date((response.data?.last_checkin_date || new Date().toISOString().split('T')[0]) + 'T00:00:00'); lastCheckin.setHours(0,0,0,0);
-                        const isCheckedIn = lastCheckin.getTime() === today.getTime();
-                        // Quest is completed if checked-in, claimable if completed (assuming checkin reward is instant)
-                        return { ...q, currentProgress: isCheckedIn ? 1 : 0, isCompleted: isCheckedIn, isClaimable: isCheckedIn };
-                    }
-                    // TODO: Update other quests based on real data later
-                    // For now, keep mock status for others
-                    return q;
-                });
-                setDailyQuests(updatedQuests);
-                // --- End Quest Update ---
-
+            // Process Rewards Data
+            if (rewardsRes.data) {
+                setRewardsData(rewardsRes.data);
             } else {
-                setError(response.error || "Failed to load rewards data.");
-                toast.error(response.error || "Failed to load rewards data.");
-                setDailyQuests(MOCK_DAILY_QUESTS); // Fallback to default mock on error
+                fetchError = rewardsRes.error || "Failed to load rewards data.";
+                setRewardsData(null); // Clear old data on error
             }
+
+            // Process Quests Data
+            if (questsRes.data) {
+                setAllQuests(questsRes.data);
+            } else {
+                fetchError = fetchError ? `${fetchError}; ${questsRes.error || "Failed to load quests."}` : (questsRes.error || "Failed to load quests.");
+                setAllQuests([]); // Clear old quests on error
+            }
+
+            if(fetchError) {
+                setError(fetchError);
+                toast.error(`Error loading data: ${fetchError}`);
+            }
+
         } catch (err: any) {
-            console.error("Error fetching rewards:", err);
-            setError("An unexpected error occurred.");
-            toast.error("An unexpected error occurred loading rewards.");
-            setDailyQuests(MOCK_DAILY_QUESTS); // Fallback to default mock on error
+            console.error("Error fetching rewards page data:", err);
+            const errorMsg = "An unexpected error occurred loading data.";
+            setError(errorMsg);
+            toast.error(errorMsg);
+            setRewardsData(null);
+            setAllQuests([]);
         } finally {
-             setIsLoading(false);
+             setIsLoadingRewards(false);
+             setIsLoadingQuests(false);
         }
     }, []);
 
-    useEffect(() => { fetchRewardsData(); }, [fetchRewardsData]);
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
-    const handleCheckinComplete = () => { fetchRewardsData(); };
+    // Handler for claiming a daily quest reward
+    const handleClaimQuest = useCallback(async (questId: string) => {
+        if (claimingQuestId) return; // Prevent multiple claims at once
+
+        setClaimingQuestId(questId); // Set loading state for this specific quest
+        let claimError = null;
+
+        try {
+            const response = await fetchApi<{ message: string, rewards: XpRewardsData }>(
+                `/quest/${questId}/claim`,
+                { method: 'POST', isProtected: true }
+            );
+
+            if (response.data) {
+                toast.success(response.data.message || "Reward claimed!");
+                // OPTION 1: Refetch everything to ensure consistency
+                // fetchData();
+                // OPTION 2: Update state locally for faster feedback
+                setRewardsData(response.data.rewards); // Update currency display
+                setAllQuests(prevQuests => prevQuests.map(q =>
+                    q.id === questId ? { ...q, is_claimable: false, user_progress: { ...q.user_progress!, claimed_at: new Date().toISOString() } } : q
+                ));
+
+            } else {
+                claimError = response.error || "Failed to claim reward.";
+            }
+        } catch (err) {
+            console.error(`Error claiming quest ${questId}:`, err);
+            claimError = "An unexpected error occurred while claiming.";
+        } finally {
+            setClaimingQuestId(null); // Clear loading state for this quest
+            if (claimError) {
+                toast.error(claimError);
+            }
+        }
+    }, [claimingQuestId]); // Include claimingQuestId dependency
+
+    // Handler for check-in completion
+    const handleCheckinComplete = () => {
+        // Refetch all data after check-in as it affects rewards and potentially quests
+        fetchData();
+    };
+
+    // Filter quests for rendering
+    const dailyQuests = allQuests.filter(q => q.type === 'daily');
+    const monthlyQuest = allQuests.find(q => q.type === 'monthly') || null; // Assume only one monthly quest
+
+    // Combined loading state
+    const isLoading = isLoadingRewards || isLoadingQuests;
 
     const renderQuestsTab = () => (
         <div className={rewardStyles.questsTabContent}>
-             {/* Render Currency Display first, it will stick */}
-             <UserCurrencyDisplay rewardsData={rewardsData} />
+            {/* Render Currency Display first - it sticks */}
+            <UserCurrencyDisplay rewardsData={rewardsData} />
 
-             {isLoading ? (
-                 <div className={rewardStyles.loadingContainer}><LoadingSpinner /></div>
+            {isLoading ? (
+                <div className={rewardStyles.loadingContainer}><LoadingSpinner /></div>
             ) : error ? (
                 <p className={rewardStyles.errorText}>{error}</p>
             ) : (
                 <>
-                    {/* Wrap Checkin in a div to ensure it's below sticky currency */}
+                    {/* Wrap Checkin */}
                     <div>
                         <h3 className={rewardStyles.checkinTitle}>Daily Check-in</h3>
                         <DailyCheckin rewardsData={rewardsData} onCheckinComplete={handleCheckinComplete} />
                     </div>
 
-                    {/* Layout Grid for Daily/Monthly */}
+                    {/* Layout Grid */}
                     <div className={rewardStyles.questsLayoutGrid}>
-                        {/* Daily Quests Section takes the first grid column */}
-                        <DailyQuestsSection quests={dailyQuests} />
-
-                        {/* Monthly Reward Section takes the second grid column */}
-                        {/* Wrap MonthlyReward component call inside a div or fragment if needed by grid */}
-                        <div>
-                            <MonthlyReward
-                                currentProgress={monthlyReward.currentProgress}
-                                targetProgress={monthlyReward.targetProgress}
-                                rewardAmount={monthlyReward.rewardAmount}
-                                rewardType={monthlyReward.rewardType} // Pass type
-                            />
+                        <DailyQuestsSection
+                            quests={dailyQuests}
+                            onClaimQuest={handleClaimQuest} // Pass claim handler
+                            claimingQuestId={claimingQuestId} // Pass ID of quest being claimed
+                        />
+                        <div> {/* Wrapper for Monthly Reward */}
+                            <MonthlyReward quest={monthlyQuest} />
                         </div>
                     </div>
                 </>
@@ -115,10 +161,9 @@ const RewardsPage = () => {
     const renderStoreTab = () => (
         <div>
             <h3 className={rewardStyles.questsTitle}>Store</h3>
-            <p>Store coming soon!</p>
+            <p>Coming soon!</p>
         </div>
     );
-
 
     return (
         <DashboardLayout>

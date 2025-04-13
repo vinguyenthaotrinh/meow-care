@@ -113,13 +113,13 @@ const HabitProgress: React.FC<HabitProgressProps> = ({
                 break;
             case 'hydrate':
                 icon = <FaGlassWater />; textLine1 = 'Hydration';
-                textLine2 = `${todayHydrateLog?.consumed_water} / ${formatAmount(todayHydrateLog?.water_goal, 'ml')}`;
+                textLine2 = `${todayHydrateLog ? todayHydrateLog.consumed_water : 0} / ${formatAmount(todayHydrateLog?.water_goal, 'ml')}`;
                 circleStyle = getIconBackgroundStyle(todayHydrateLog, 'hydrate');
                 wrapperClasses += ` ${completedClass(todayHydrateLog)}`;
                 break;
             case 'diet':
                 icon = <FaUtensils />; textLine1 = 'Diet';
-                textLine2 = `${todayDietLog?.consumed_calories} / ${formatAmount(todayDietLog?.calories_goal, 'kcal')}`;
+                textLine2 = `${todayDietLog? todayDietLog.consumed_calories : 0} / ${formatAmount(todayDietLog?.calories_goal, 'kcal')}`;
                 circleStyle = getIconBackgroundStyle(todayDietLog, 'diet');
                 wrapperClasses += ` ${completedClass(todayDietLog)}`;
                 break;

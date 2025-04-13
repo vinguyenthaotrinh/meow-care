@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone, date
 from ..utils import supabase, ServiceError, DEBUG
+# from .quest_services import quest_service
 
 class XPRewardService:
     def __init__(self):
@@ -78,6 +79,7 @@ class XPRewardService:
             updated = self.client.table("xp_rewards").update(update_data).eq("user_id", user_id).execute()
             if not updated.data:
                 raise ServiceError("Database server error", 500)
+            # quest_service.update_quest_progress(user_id, 'checkin', value=1)
 
             return self._format_dates(updated.data[0])
         except ServiceError:
