@@ -99,17 +99,36 @@
   align-items: flex-start; /* Align items to the top of the row */
 }
 
+/* Center the last row if it only contains one item */
+.centerLastRow {
+  justify-content: center;
+  /* Optional: Add padding to only this row if centering looks odd */
+  /* padding-left: calc(85px / 2 + 1.5rem / 2); /* Adjust based on icon width and gap */
+}
+
 /* --- Habit Icon Styles (Keep MOST User's styles) --- */
-/* Wrapper for icons WITH text */
+/* Wrapper - Make it behave like a button if clickable */
 .habitIconWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.6rem; /* Gap between circle and text/placeholder */
+  gap: 0.6rem;
   min-width: 85px;
   flex-shrink: 0;
+  /* Reset button styles if using <button> */
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: default; /* Default cursor */
 }
+/* Add pointer cursor only when NOT disabled */
+.habitIconWrapper:not(:disabled) {
+  cursor: pointer;
+}
+
 /* Base circle style (Applied to divs AND the trigger button) */
 .iconCircle {
   width: 60px;
@@ -157,34 +176,34 @@
   font-size: 0.75rem;
   color: var(--text-primary);
 }
-.habitTextPlaceholder {
-  /* Define height similar to the combined height of .habitText */
-  /* This is an approximation, adjust if needed based on actual rendered height */
-  height: calc(
-    0.8rem * 1.3 + 0.75rem * 1.3
-  ); /* Approx height of 1 line title + 1 line progress */
-  display: block; /* Ensure it takes up vertical space */
-  visibility: hidden; /* Make it invisible */
-  pointer-events: none; /* Ensure it's not interactive */
-}
+
 .habitIconWrapper.completed .iconSymbol {
   /* Optional style */
 }
 
-/* --- Style for the Task Trigger Button (<button>) --- */
-/* Inherits .iconCircle styles */
-.taskTriggerButton {
-  cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+/* Style for disabled/completed habits (non-interactive) */
+.disabledHabit {
+  cursor: default !important; /* Override pointer */
+  opacity: 0.7; /* Optional: fade slightly */
 }
-.taskTriggerButton:hover {
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
-  transform: scale(1.05);
+/* Style for when an icon's action is loading */
+.loadingHabit {
+  cursor: wait;
+  opacity: 0.5;
 }
-.taskTriggerButton:focus-visible {
-  outline: 2px solid var(--color-pastel-purple);
-  outline-offset: 2px;
-}
+/* Optional: Add spinner overlay to icon when loading */
+/* .loadingHabit .iconCircle::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 24px; height: 24px;
+  margin-top: -12px; margin-left: -12px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--color-pastel-purple);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 2;
+} */
 
 /* --- Column 2: Cat's Room --- */
 .catRoom {
@@ -261,248 +280,6 @@
   font-style: italic;
 }
 
-.tasksPopupContainer {
-  position: absolute;
-  top: 2rem;
-
-  /* Left: Position to the right of the 2nd icon in the 3rd row */
-  /* Estimate: Width of 2 icons + 1 gap between them + gap after 2nd icon */
-  left: calc(
-    85px + 1.5rem + 85px + 1rem + 1rem
-  ); /* Approx: width + gap + width + popup_gap */
-
-  width: 90%; /* Responsive width */
-  max-width: 500px; /* Slightly wider max width if desired */
-  max-height: calc(
-    100vh - 4rem - 65px - 2rem
-  ); /* Limit height to viewport minus header/padding */
-  background-color: var(--background-alt);
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-
-  /* --- Animation --- */
-  transform-origin: top left; /* Animate from top-left corner */
-  transform: scale(0.95) translate(-10px, -10px); /* Start smaller and offset */
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
-    opacity 0.25s ease-out;
-
-  /* --- Layout & Overflow --- */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Hide outer overflow */
-}
-
-.tasksPopupContainer.visible {
-  transform: scale(1) translate(0, 0); /* Animate to full size and position */
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* --- Header within Popup --- */
-.tasksPopupHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-shrink: 0; /* Prevent header from shrinking */
-}
-
-.tasksPopupHeader .sectionTitle {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-  font-size: 1.2rem;
-}
-
-.closeTasksButton {
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 0.1rem;
-  line-height: 1;
-  transition: color 0.2s ease;
-}
-
-.closeTasksButton:hover {
-  color: var(--text-primary);
-}
-.todoListScrollable {
-  overflow-y: auto;
-  flex-grow: 1;
-  padding-right: 0.5rem;
-  margin-right: -0.5rem; /* Offset scrollbar padding */
-}
-.noTasks {
-  text-align: center;
-  color: var(--text-secondary);
-  padding: 2rem 1rem;
-  font-style: italic;
-}
-
-/* --- Todo Item Styles (Keep User's extensive styles) --- */
-/* Wrapper */
-.todoItemWrapper {
-  margin-bottom: 0.8rem;
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  transition: box-shadow 0.2s ease;
-}
-/* Item main part */
-.todoItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  transition: opacity 0.3s ease;
-}
-.todoItem.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-/* Content */
-.todoContentWrapper {
-  flex-grow: 1;
-  margin-right: 1rem;
-  overflow: hidden;
-}
-.todoContent {
-  /* Keep original styles if any */
-}
-.todoText {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  font-weight: 500;
-  margin-bottom: 0.2rem;
-}
-.todoSubtext {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-/* Details Row */
-.detailsRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.2rem;
-  cursor: pointer;
-  user-select: none;
-}
-.detailsRow > .todoSubtext {
-  flex-grow: 1;
-  margin-right: 0.5rem;
-}
-.detailsRow:focus-visible {
-  outline: 2px solid var(--color-pastel-purple);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-/* Details Toggle Group */
-.detailsToggle {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  color: var(--text-secondary);
-  padding: 0.3rem 0.5rem;
-  border-radius: var(--border-radius);
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-}
-.detailsToggle:hover {
-  background-color: var(--background-alt);
-}
-.detailsText {
-  font-size: 0.8rem;
-  margin-right: 0.3rem;
-  font-weight: 500;
-}
-/* Expand Icon */
-.expandIcon {
-  font-size: 0.8rem;
-  transition: transform 0.2s ease-in-out;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.expandIcon.expanded {
-  transform: rotate(90deg);
-}
-/* Actions */
-.todoActions {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-/* Base action button */
-.todoActions button,
-.completedButton {
-  padding: 0.5rem 0.8rem;
-  font-size: 0.85rem;
-  margin-left: 0.5rem;
-  min-width: 35px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  vertical-align: middle;
-  border-radius: var(--border-radius);
-  border: 1px solid transparent;
-  line-height: 1.2;
-  cursor: default;
-}
-.todoActions button:disabled,
-.completedButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-/* Update button */
-.updateButton {
-  background-color: var(--color-pastel-yellow);
-  color: var(--text-primary);
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-}
-.updateButton:hover:not(:disabled) {
-  background-color: #fafa85;
-  opacity: 1;
-}
-.updateButton:disabled {
-  background-color: var(--color-pastel-yellow);
-  border-color: var(--color-border);
-}
-/* Complete button */
-.todoActions button:not(.updateButton):not(.completedButton) {
-  background-color: var(--color-pastel-purple);
-  color: var(--text-on-primary-button);
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-.todoActions
-  button:not(.updateButton):not(.completedButton):hover:not(:disabled) {
-  opacity: 0.9;
-}
-.todoActions button:not(.updateButton):not(.completedButton):disabled {
-  background-color: var(--color-pastel-purple);
-}
-/* Completed button */
-.completedButton {
-  background-color: #e9ecef;
-  color: #6c757d;
-  border: 1px solid #ced4da;
-  cursor: not-allowed;
-  font-weight: 500;
-}
-.completedButton:disabled {
-  opacity: 1 !important;
-}
 /* Diet details */
 .dietDetailsContainer {
   padding: 0.8rem 1rem 1rem 1rem;
@@ -741,23 +518,6 @@
   .statIcon {
     font-size: 0.9rem;
   }
-
-  .tasksPopupContainer {
-    /* Revert to simpler fixed positioning for medium screens */
-    position: fixed;
-    top: auto; /* Remove absolute top */
-    left: auto; /* Remove absolute left */
-    bottom: 1rem; /* Position from bottom */
-    right: 1rem; /* Position from right */
-    width: 90%;
-    max-width: 500px;
-    max-height: 70vh;
-    transform-origin: bottom right; /* Animate from bottom right */
-    transform: scale(0.9) translate(10px, 10px); /* Start small and offset */
-  }
-  .tasksPopupContainer.visible {
-    transform: scale(1) translate(0, 0); /* Animate to full size */
-  }
 }
 
 @media (max-width: 600px) {
@@ -795,6 +555,10 @@
     flex-shrink: 0;
   } /* Stack icons vertically in scroll */
 
+  .centerLastRow {
+    align-items: center; /* Center single item vertically */
+  } /* Adjust centering */
+
   .catRoom {
     min-height: 200px;
     width: 90%;
@@ -812,22 +576,6 @@
   }
   .statIcon {
     font-size: 0.8rem;
-  }
-
-  .tasksPopupContainer {
-    bottom: 0;
-    right: 0;
-    left: 0;
-    width: 100%;
-    max-width: 100%;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    max-height: 65vh;
-    padding: 1rem;
-    transform-origin: bottom center;
-    transform: translateY(100%);
-  }
-  .tasksPopupContainer.visible {
-    transform: translateY(0);
   }
 
   /* Keep user's mobile styles for todo items and modal */
@@ -850,39 +598,6 @@
   }
   .iconSymbol {
     font-size: 1.5rem;
-  }
-  /* Adjust trigger button size on mobile */
-  .taskTriggerButton {
-    width: 50px;
-    height: 50px;
-  }
-  .taskTriggerButton .iconSymbol {
-    font-size: 1.5rem;
-  }
-
-  .todoItemWrapper {
-    margin-bottom: 1rem;
-  }
-  .todoItem {
-    padding: 0.8rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  .todoContentWrapper {
-    margin-right: 0;
-    width: 100%;
-  }
-  .todoActions {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-  }
-  .todoActions button,
-  .completedButton {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
   }
   .modalActions {
     flex-direction: column-reverse;

@@ -2,17 +2,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { fetchApi } from '@/lib/api';
-import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, DietDish } from '@/types/habit.types'; // Removed UserStats if unused
-import { XpRewardsData } from '@/types/rewards.types';
+import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, DietDish } from '@/types/habit.types';
+import { XpRewardsData } from '@/types/rewards.types'; // Import reward type
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import styles from '@/styles/Home.module.css';
-import TodoList from '@/components/home/TodoList';
+// Removed TodoList import
 import DietUpdateModal from '@/components/home/DietUpdateModal';
 import HabitProgress from '@/components/home/HabitProgress';
 import CatRoom from '@/components/home/CatRoom';
-import { IoClose } from "react-icons/io5";
+// Removed IoClose import
 import { toast } from 'react-toastify';
 
+// --- Helper Functions ---
 const formatTime = (timeString: string | null | undefined): string => {
     if (!timeString) return "N/A";
     try {
@@ -44,32 +45,31 @@ const calculatePercentage = (consumed: number | undefined, goal: number | undefi
 
 const DashboardHomePage = () => {
     // State
-    const [todos, setTodos] = useState<TodoItem[]>([]);
-    const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null);
-    const [sleepHabit, setSleepHabit] = useState<SleepHabit | null>(null);
+    const [todos, setTodos] = useState<TodoItem[]>([]); // Keep todos to pass data to HabitProgress
+    const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null); // Keep for CatRoom stats
+    const [sleepHabit, setSleepHabit] = useState<SleepHabit | null>(null); // Keep for HabitProgress
     const [isLoading, setIsLoading] = useState(true);
-    const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({});
+    const [isUpdating, setIsUpdating] = useState<Record<string, boolean>>({}); // Keep for icon loading state
     const [error, setError] = useState<string | null>(null); // General error state
-    const [dietModalOpen, setDietModalOpen] = useState<string | null>(null);
-    const [isTasksVisible, setIsTasksVisible] = useState(false);
+    const [dietModalOpen, setDietModalOpen] = useState<string | null>(null); // Keep for Diet modal
+    // Removed isTasksVisible state
 
     // Fetch Data Function
     const fetchData = useCallback(async () => {
         setError(null);
         setIsUpdating({});
-        setIsLoading(true); // Ensure loading starts
+        setIsLoading(true);
         try {
-            // **** Fetch all data concurrently ****
             const [sleepLogsRes, hydrateLogsRes, dietLogsRes, sleepHabitRes, xpRes] = await Promise.all([
                 fetchApi<SleepLog[]>('/sleep/logs/today', { isProtected: true }),
                 fetchApi<HydrateLog[]>('/hydrate/logs/today', { isProtected: true }),
                 fetchApi<DietLog[]>('/diet/logs/today', { isProtected: true }),
                 fetchApi<SleepHabit>('/sleep/habit', { isProtected: true }),
-                fetchApi<XpRewardsData>('/xp', { isProtected: true }) // **** FETCH XP DATA ****
+                fetchApi<XpRewardsData>('/xp', { isProtected: true })
             ]);
 
             let combinedTodos: TodoItem[] = [];
-            let apiErrors: string[] = []; // Collect specific errors
+            let apiErrors: string[] = [];
 
             // Process Log/Habit data
             if (sleepLogsRes.data) combinedTodos = combinedTodos.concat(sleepLogsRes.data.map(log => ({ ...log, type: 'sleep' })));
@@ -87,36 +87,25 @@ const DashboardHomePage = () => {
                  combinedTodos.push({ ...dietLogData, dishes: dishesArray, type: 'diet' });
             } else if (dietLogsRes.error && dietLogsRes.status !== 404) apiErrors.push(`Diet Logs: ${dietLogsRes.error}`);
 
-             combinedTodos.sort((a, b) => {
-                 const getTime = (item: TodoItem) => item.type === 'sleep' && item.scheduled_time ? new Date(item.scheduled_time).getTime() : Infinity;
-                 const timeA = getTime(a); const timeB = getTime(b);
-                 if (timeA !== Infinity || timeB !== Infinity) return timeA - timeB;
-                 const typeOrder = { 'sleep': 1, 'hydrate': 2, 'diet': 3 };
-                 return (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
-             });
+            // Sort combinedTodos if needed (optional based on HabitProgress need)
+            combinedTodos.sort((a, b) => { /* ... sort logic if needed ... */ });
             setTodos(combinedTodos);
 
-            // **** Process XP Rewards Data ****
-            if (xpRes.data) {
-                setXpRewards(xpRes.data);
-            } else {
-                // Handle error fetching XP data specifically
+            // Process XP Rewards Data
+            if (xpRes.data) { setXpRewards(xpRes.data); }
+            else {
                 const xpError = xpRes.error || "Failed to load user rewards.";
                 apiErrors.push(`Rewards: ${xpError}`);
-                toast.error(`Could not load rewards: ${xpError}`); // Show toast
+                toast.error(`Could not load rewards: ${xpError}`);
             }
 
-            // Set general error if any API failed
-            if (apiErrors.length > 0) {
-                setError(`Errors loading data: ${apiErrors.join('; ')}`);
-            }
+            if (apiErrors.length > 0) { setError(`Errors loading data: ${apiErrors.join('; ')}`); }
 
         } catch (err: any) {
-            // Catch errors from Promise.all or other unexpected issues
             console.error("Failed to fetch dashboard data:", err);
             const generalError = err.message || "Failed to load dashboard data.";
             setError(generalError);
-            toast.error(generalError); // Show general error toast
+            toast.error(generalError);
         } finally {
             setIsLoading(false);
         }
@@ -126,32 +115,68 @@ const DashboardHomePage = () => {
 
     // --- Action Handlers ---
     const setItemLoading = (id: string, loading: boolean) => { setIsUpdating(prev => ({ ...prev, [id]: loading })); };
-    const updateTodoInState = (updatedItem: TodoItem) => { setTodos(prevTodos => prevTodos.map(todo => todo.id === updatedItem.id ? updatedItem : todo)); };
-    const handleCompleteSleep = async (logId: string) => {
-        setItemLoading(logId, true); setError(null);
+
+    // Modified to handle state update AND potentially refetch rewards
+    const updateStateAndRefetchRewards = useCallback(async (updatedItem: TodoItem, actionType: 'sleep' | 'hydrate' | 'diet') => {
+        // Update the 'todos' state first for immediate UI feedback
+        setTodos(prevTodos => prevTodos.map(todo => {
+            if (todo.type === 'sleep' && updatedItem.type === 'sleep' && todo.id === updatedItem.id) { return updatedItem; }
+            if (todo.type === updatedItem.type && todo.type !== 'sleep') { return updatedItem; }
+            return todo;
+        }));
+
+        // Optionally, refetch rewards data if the action might have granted coins/diamonds
+        // Example: Only refetch after completing sleep/hydrate tasks
+        if (actionType === 'sleep' || actionType === 'hydrate') {
+            try {
+                console.log(`Refetching rewards after ${actionType} update...`);
+                const xpRes = await fetchApi<XpRewardsData>('/xp', { isProtected: true });
+                if (xpRes.data) {
+                    setXpRewards(xpRes.data);
+                } else {
+                    toast.warn("Could not refresh rewards data after action.");
+                }
+            } catch (e) {
+                 toast.warn("Error refreshing rewards data.");
+                 console.error("Error refetching rewards:", e);
+            }
+        }
+    }, []); // No dependencies needed if fetchApi is stable
+
+    const handleCompleteSleep = useCallback(async (logId: string) => {
+        setItemLoading(logId, true);
+        // Don't reset general error here
         const response = await fetchApi<SleepLog>(`/sleep/logs/${logId}/complete`, { method: 'PUT', isProtected: true });
         setItemLoading(logId, false);
-        if (response.data) updateTodoInState({ ...response.data, type: 'sleep' });
-        // Don't reset general error here, use toast for specific action errors
-        else toast.error(response.error || 'Failed to complete task.');
-    };
-    const handleUpdateHydrate = async (logId: string) => {
-        setItemLoading(logId, true); setError(null);
+        if (response.data) {
+            updateStateAndRefetchRewards({ ...response.data, type: 'sleep' }, 'sleep'); // Update state & refetch rewards
+        } else {
+            toast.error(response.error || 'Failed to complete sleep task.');
+        }
+    }, [updateStateAndRefetchRewards]); // Add dependency
+
+    const handleUpdateHydrate = useCallback(async (logId: string) => {
+        setItemLoading(logId, true);
         const response = await fetchApi<HydrateLog>(`/hydrate/logs/${logId}/update`, { method: 'PUT', isProtected: true });
         setItemLoading(logId, false);
-        if (response.data) updateTodoInState({ ...response.data, type: 'hydrate' });
-        else toast.error(response.error || 'Failed to update water intake.');
-    };
-    const handleUpdateDiet = (logId: string): Promise<void> => {
+        if (response.data) {
+            updateStateAndRefetchRewards({ ...response.data, type: 'hydrate' }, 'hydrate'); // Update state & refetch rewards
+        } else {
+            toast.error(response.error || 'Failed to update water intake.');
+        }
+    }, [updateStateAndRefetchRewards]); // Add dependency
+
+    // Opens the modal
+    const handleOpenDietModal = useCallback((logId: string) => {
         setDietModalOpen(logId);
-        return Promise.resolve();
-    };
+    }, []);
+
     const handleCloseDietModal = () => { setDietModalOpen(null); };
+
+    // Updates state after food is added via modal
     const handleFoodAddedToLog = useCallback((updatedLog: DietLog) => {
-        updateTodoInState({ ...updatedLog, type: 'diet' });
-        // Optionally refetch XP data if adding food gives coins/rewards
-        // fetchRewardsData(); // Uncomment if needed
-    }, [/* fetchRewardsData (add if uncommented) */]); // Add dependencies if used inside
+         updateStateAndRefetchRewards({ ...updatedLog, type: 'diet' }, 'diet'); // Update state, maybe refetch rewards if logging food gives xp
+    }, [updateStateAndRefetchRewards]); // Add dependency
     // --- End Action Handlers ---
 
     // Main component return
@@ -159,7 +184,7 @@ const DashboardHomePage = () => {
         <DashboardLayout>
              {isLoading ? (
                  <div className={styles.contentLoadingContainer}> <LoadingSpinner /> </div>
-             ) : error && todos.length === 0 && !xpRewards ? ( // Show error only if essential data failed
+             ) : error && todos.length === 0 && !xpRewards ? ( // Check essential data
                  <div className={styles.centered}> <p style={{ color: 'red' }}>{error}</p> </div>
              ) : (
                 <div className={styles.mainLayoutGrid}>
@@ -168,39 +193,31 @@ const DashboardHomePage = () => {
                     <HabitProgress
                         todos={todos}
                         sleepHabit={sleepHabit}
-                        onTriggerClick={() => setIsTasksVisible(v => !v)}
-                        isTasksVisible={isTasksVisible}
+                        isUpdating={isUpdating}
+                        onCompleteSleep={handleCompleteSleep}
+                        onUpdateHydrate={handleUpdateHydrate}
+                        onUpdateDiet={handleOpenDietModal} // Pass the function to open modal
+                        // Removed onTriggerClick and isTasksVisible
                     />
 
-                    {/* Column 2: Cat Room - Pass fetched xpRewards */}
-                    <CatRoom xpData={xpRewards} /> {/* **** PASS xpRewards **** */}
+                    {/* Column 2: Cat Room */}
+                    <CatRoom xpData={xpRewards} /> {/* Pass xpRewards */}
 
-                     {/* Task List Popup */}
-                     <div className={`${styles.tasksPopupContainer} ${isTasksVisible ? styles.visible : ''}`}>
-                         <div className={styles.tasksPopupHeader}>
-                             <button onClick={() => setIsTasksVisible(false)} className={styles.closeTasksButton} aria-label="Close tasks list"> <IoClose /> </button>
-                         </div>
-                         <div className={styles.todoListScrollable}>
-                             <TodoList
-                                        todos={todos}
-                                        isUpdating={isUpdating}
-                                        handleCompleteSleep={handleCompleteSleep}
-                                        handleUpdateHydrate={handleUpdateHydrate}
-                                        handleUpdateDiet={handleUpdateDiet}
-                                        formatTime={formatTime}
-                                        formatAmount={formatAmount} updateTodoInState={function (updatedItem: TodoItem): void {
-                                            throw new Error('Function not implemented.');
-                                        } }                             />
-                             {/* Display general fetch error inside popup if some todos loaded but other errors occurred */}
-                             {error && todos.length > 0 && <p style={{ color: 'red', marginTop: '1rem', fontSize: '0.9rem', padding: '0 0.5rem' }}>{error}</p>}
-                         </div>
-                     </div>
+                    {/* Column 3: REMOVED Progress Info */}
+
+                     {/* REMOVED Task List Popup */}
+
                 </div> // End mainLayoutGrid
             )}
 
             {/* Diet Modal */}
             {dietModalOpen && (
-                <DietUpdateModal logId={dietModalOpen} isOpen={!!dietModalOpen} onClose={handleCloseDietModal} onFoodAdded={handleFoodAddedToLog} />
+                <DietUpdateModal
+                    logId={dietModalOpen}
+                    isOpen={!!dietModalOpen}
+                    onClose={handleCloseDietModal}
+                    onFoodAdded={handleFoodAddedToLog}
+                />
             )}
         </DashboardLayout>
     );
