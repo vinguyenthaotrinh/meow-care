@@ -1,24 +1,39 @@
 CREATE OR REPLACE FUNCTION generate_daily_sleep_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE;
 BEGIN
-    -- Xóa sleep logs cũ của hôm nay để tránh trùng lặp
-    DELETE FROM sleep_logs WHERE DATE(scheduled_time) = today;
+    -- Xóa sleep logs của các ngày trước hôm nay
+    DELETE FROM sleep_logs
+    WHERE scheduled_time::date < today;
 
-    -- Chèn sleep logs mới từ sleep habits
+    -- Chèn log ngủ nếu hôm nay chưa có log 'sleep'
     INSERT INTO sleep_logs (user_id, task_type, scheduled_time)
     SELECT
-        user_id,
+        sh.user_id,
         'sleep',
-        (today || ' ' || sleep_time)::timestamp
-    FROM sleep_habits
-    UNION ALL
+        (today || ' ' || sh.sleep_time)::timestamp
+    FROM sleep_habits sh
+    WHERE NOT EXISTS (
+        SELECT 1 FROM sleep_logs sl
+        WHERE sl.user_id = sh.user_id
+          AND sl.task_type = 'sleep'
+          AND sl.scheduled_time::date = today
+    );
+
+    -- Chèn log thức dậy nếu hôm nay chưa có log 'wakeup'
+    INSERT INTO sleep_logs (user_id, task_type, scheduled_time)
     SELECT
-        user_id,
+        sh.user_id,
         'wakeup',
-        (today || ' ' || wakeup_time)::timestamp
-    FROM sleep_habits;
+        (today || ' ' || sh.wakeup_time)::timestamp
+    FROM sleep_habits sh
+    WHERE NOT EXISTS (
+        SELECT 1 FROM sleep_logs sl
+        WHERE sl.user_id = sh.user_id
+          AND sl.task_type = 'wakeup'
+          AND sl.scheduled_time::date = today
+    );
 END;
 $$ LANGUAGE plpgsql;
 

@@ -1,22 +1,26 @@
--- Tạo hoặc thay thế function để generate hydrate logs hàng ngày
 CREATE OR REPLACE FUNCTION generate_daily_hydrate_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE;
 BEGIN
-    -- Xóa hydrate logs cũ của hôm nay để tránh trùng lặp
-    DELETE FROM hydrate_logs WHERE date = today;
+    -- Xóa hydrate logs của các ngày trước hôm nay
+    DELETE FROM hydrate_logs WHERE date < today;
 
-    -- Chèn hydrate logs mới từ hydrate_habits
+    -- Chèn hydrate log mới nếu hôm nay chưa có
     INSERT INTO hydrate_logs (user_id, water_goal, cup_size, consumed_water, date, completed)
     SELECT
-        user_id,
-        water_goal,
-        cup_size,
-        0,  -- Chưa uống nước nên consumed_water = 0
+        hh.user_id,
+        hh.water_goal,
+        hh.cup_size,
+        0,
         today,
-        FALSE  -- Chưa hoàn thành
-    FROM hydrate_habits;
+        FALSE
+    FROM hydrate_habits hh
+    WHERE NOT EXISTS (
+        SELECT 1 FROM hydrate_logs hl
+        WHERE hl.user_id = hh.user_id
+          AND hl.date = today
+    );
 END;
 $$ LANGUAGE plpgsql;
 
