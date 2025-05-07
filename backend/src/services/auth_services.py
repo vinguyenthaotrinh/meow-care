@@ -20,18 +20,90 @@ class AuthService:
         user_data.id = str(uuid.uuid4())
         salt = generate_salt()
         user_data.password = hash_password(user_data.password, salt)
-        
+
+        today = datetime.now(timezone(timedelta(hours=7))).date()
+
         try:
+            # Tạo user
             response = self.client.table("users").insert(user_data.model_dump()).execute()
             if not response.data:
                 raise ServiceError("Database server error", 500)
 
-            # Chèn user_profile với user_id mới tạo
+            # Tạo profile
             profile_data = ProfileCreate(user_id=user_data.id)
             response_profile = self.client.table("profiles").insert(profile_data.model_dump()).execute()
             if not response_profile.data:
                 raise ServiceError("Database server error", 500)
-            
+
+            # Tạo các habit mặc định
+            default_sleep = {
+                "user_id": user_data.id,
+                "sleep_time": "23:00:00",
+                "wakeup_time": "07:00:00"
+            }
+            default_hydrate = {
+                "user_id": user_data.id,
+                "water_goal": 2000.0,
+                "cup_size": 250.0,
+                "reminder_time": []
+            }
+            default_diet = {
+                "user_id": user_data.id,
+                "calories_goal": 2000.0,
+                "reminder_time": []
+            }
+            default_focus = {
+                "user_id": user_data.id,
+                "focus_goal": 120  # 2h
+            }
+
+            self.client.table("sleep_habits").insert(default_sleep).execute()
+            self.client.table("hydrate_habits").insert(default_hydrate).execute()
+            self.client.table("diet_habits").insert(default_diet).execute()
+            self.client.table("focus_habits").insert(default_focus).execute()
+
+            # Tạo các log tương ứng cho hôm nay
+            sleep_logs = [
+                {
+                    "user_id": user_data.id,
+                    "task_type": "sleep",
+                    "scheduled_time": f"{today}T23:00:00+07:00"
+                },
+                {
+                    "user_id": user_data.id,
+                    "task_type": "wakeup",
+                    "scheduled_time": f"{(today + timedelta(days=1))}T07:00:00+07:00"
+                }
+            ]
+            hydrate_log = {
+                "user_id": user_data.id,
+                "water_goal": 2000.0,
+                "cup_size": 250.0,
+                "consumed_water": 0.0,
+                "date": str(today),
+                "completed": False
+            }
+            diet_log = {
+                "user_id": user_data.id,
+                "calories_goal": 2000.0,
+                "dishes": [],
+                "consumed_calories": 0.0,
+                "date": str(today),
+                "completed": False
+            }
+            focus_log = {
+                "user_id": user_data.id,
+                "focus_done": 0,
+                "date": str(today),
+                "completed": False
+            }
+
+            self.client.table("sleep_logs").insert(sleep_logs).execute()
+            self.client.table("hydrate_logs").insert(hydrate_log).execute()
+            self.client.table("diet_logs").insert(diet_log).execute()
+            self.client.table("focus_logs").insert(focus_log).execute()
+
+            # Tạo user_quest_progress mặc định
             quests_response = self.client.table("quests").select("id, type").eq("is_active", True).execute()
             if not quests_response.data:
                 raise ServiceError("No quests available", 500)
@@ -45,12 +117,10 @@ class AuthService:
                 }
                 for quest in quests_response.data
             ]
+            self.client.table("user_quest_progress").insert(quest_progress_data).execute()
 
-            insert_response = self.client.table("user_quest_progress").insert(quest_progress_data).execute()
-            if not insert_response.data:
-                raise ServiceError("Database server error", 500)
-            
             return UserResponse(**response.data[0]).model_dump()
+
         except ServiceError:
             raise
         except Exception as e:
@@ -60,6 +130,7 @@ class AuthService:
             if "already exists" in error_message:
                 raise ServiceError("Email already registered", 409)
             raise ServiceError(str(e) if DEBUG else "Database server error", 500)
+
 
     def login_user(self, email: str, password: str):        
         try:
