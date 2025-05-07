@@ -125,9 +125,6 @@ class DietService:
             }).eq("id", log_id).execute()
             
             xp_reward_service.update_streak(user_id)
-            increment_value = len(new_dishes_to_add) # Increment by number of valid dishes added
-            if increment_value > 0:
-                quest_service.update_quest_progress(user_id, 'log_meal', increment=increment_value)
 
             return updated_response.data[0]
         except ServiceError:

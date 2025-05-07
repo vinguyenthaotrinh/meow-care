@@ -79,7 +79,6 @@ class XPRewardService:
             updated = self.client.table("xp_rewards").update(update_data).eq("user_id", user_id).execute()
             if not updated.data:
                 raise ServiceError("Database server error", 500)
-            # quest_service.update_quest_progress(user_id, 'checkin', value=1)
 
             return self._format_dates(updated.data[0])
         except ServiceError:
@@ -97,11 +96,12 @@ class XPRewardService:
             data = response.data[0]
             last_streak_date = datetime.fromisoformat(data["last_streak_date"]).date()
 
+            if (today - last_streak_date).days > 1:
+                data["streak"] = 0
             if last_streak_date != today:
                 streak = data["streak"] + 1
             else:
                 streak = data["streak"]
-                # raise ServiceError("Streak already updated today", 400)
 
             update_data = {
                 "streak": streak,

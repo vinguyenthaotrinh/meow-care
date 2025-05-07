@@ -135,7 +135,6 @@ class HydrateService:
                 raise ServiceError("Database server error", 500)
             
             xp_reward_service.update_streak(user_id)
-            quest_service.update_quest_progress(user_id, trigger_type='hydrate_goal', value=new_consumed)
 
             return updated_response.data[0]
         except ServiceError:

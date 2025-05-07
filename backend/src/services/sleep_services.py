@@ -132,12 +132,6 @@ class SleepService:
                 raise ServiceError("Database server error", 500)
             
             xp_reward_service.update_streak(user_id)
-            
-            quest_service.update_quest_progress(
-                user_id=user_id,
-                trigger_type='tasks_completed',
-                increment=1 # Use value to set the progress to the recalculated total
-            )
 
             return updated_response.data[0]
         except ServiceError:
