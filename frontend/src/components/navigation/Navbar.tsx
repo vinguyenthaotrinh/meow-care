@@ -6,7 +6,6 @@ import styles from '../../styles/Navbar.module.css';
 const navItems = [
   { name: 'Home', path: '/home' },
   { name: 'Rewards', path: '/rewards' },
-  { name: 'Focus', path: '/focus' },   // Sẽ làm sau
   { name: 'Settings', path: '/settings' },
 ];
 

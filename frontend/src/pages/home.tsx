@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { fetchApi } from '@/lib/api';
-import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, DietDish } from '@/types/habit.types';
+import { SleepHabit, SleepLog, HydrateLog, DietLog, TodoItem, DietDish, FocusHabit, FocusLog } from '@/types/habit.types';
 import { XpRewardsData } from '@/types/rewards.types'; // Import reward type
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import styles from '@/styles/Home.module.css';
@@ -10,6 +10,7 @@ import styles from '@/styles/Home.module.css';
 import DietUpdateModal from '@/components/home/DietUpdateModal';
 import HabitProgress from '@/components/home/HabitProgress';
 import CatRoom from '@/components/home/CatRoom';
+import FocusTimer from '@/components/home/FocusTimer'; // **** IMPORT FOCUS TIMER ****
 // Removed IoClose import
 import { toast } from 'react-toastify';
 
@@ -45,6 +46,8 @@ const calculatePercentage = (consumed: number | undefined, goal: number | undefi
 
 const DashboardHomePage = () => {
     // State
+
+    // State
     const [todos, setTodos] = useState<TodoItem[]>([]); // Keep todos to pass data to HabitProgress
     const [xpRewards, setXpRewards] = useState<XpRewardsData | null>(null); // Keep for CatRoom stats
     const [sleepHabit, setSleepHabit] = useState<SleepHabit | null>(null); // Keep for HabitProgress
@@ -53,6 +56,13 @@ const DashboardHomePage = () => {
     const [error, setError] = useState<string | null>(null); // General error state
     const [dietModalOpen, setDietModalOpen] = useState<string | null>(null); // Keep for Diet modal
     // Removed isTasksVisible state
+    const [focusHabit, setFocusHabit] = useState<FocusHabit | null>(null); // **** NEW STATE ****
+    const [todayFocusLog, setTodayFocusLog] = useState<FocusLog | null>(null); // **** NEW STATE ****
+    // Removed isTasksVisible
+
+    // --- State to toggle between CatRoom and FocusTimer ---
+    const [showFocusTimer, setShowFocusTimer] = useState(false);
+    // ---
 
     // Fetch Data Function
     const fetchData = useCallback(async () => {
@@ -60,11 +70,13 @@ const DashboardHomePage = () => {
         setIsUpdating({});
         setIsLoading(true);
         try {
-            const [sleepLogsRes, hydrateLogsRes, dietLogsRes, sleepHabitRes, xpRes] = await Promise.all([
+            const [sleepLogsRes, hydrateLogsRes, dietLogsRes, sleepHabitRes, focusHabitRes, todayFocusLogRes, xpRes] = await Promise.all([
                 fetchApi<SleepLog[]>('/sleep/logs/today', { isProtected: true }),
                 fetchApi<HydrateLog[]>('/hydrate/logs/today', { isProtected: true }),
                 fetchApi<DietLog[]>('/diet/logs/today', { isProtected: true }),
                 fetchApi<SleepHabit>('/sleep/habit', { isProtected: true }),
+                fetchApi<FocusHabit>('/focus/habit', { isProtected: true }),      // **** FETCH FOCUS HABIT ****
+                fetchApi<FocusLog[]>('/focus/logs/today', { isProtected: true }), // **** FETCH TODAY'S FOCUS LOG ****
                 fetchApi<XpRewardsData>('/xp', { isProtected: true })
             ]);
 
@@ -87,8 +99,14 @@ const DashboardHomePage = () => {
                  combinedTodos.push({ ...dietLogData, dishes: dishesArray, type: 'diet' });
             } else if (dietLogsRes.error && dietLogsRes.status !== 404) apiErrors.push(`Diet Logs: ${dietLogsRes.error}`);
 
+            // Set Focus Data
+            if (focusHabitRes.data) setFocusHabit(focusHabitRes.data);
+            else if (focusHabitRes.error && focusHabitRes.status !== 404) apiErrors.push(`Focus Habit: ${focusHabitRes.error}`);
+            if (todayFocusLogRes.data && todayFocusLogRes.data.length > 0) setTodayFocusLog(todayFocusLogRes.data[0]);
+            else if (todayFocusLogRes.error && todayFocusLogRes.status !== 404) { /* No log today is fine */ }
+
             // Sort combinedTodos if needed (optional based on HabitProgress need)
-            combinedTodos.sort((a, b) => { /* ... sort logic if needed ... */ });
+            combinedTodos.sort((a, b) => { /* ... sort logic ... */});
             setTodos(combinedTodos);
 
             // Process XP Rewards Data
@@ -167,8 +185,9 @@ const DashboardHomePage = () => {
     }, [updateStateAndRefetchRewards]); // Add dependency
 
     // Opens the modal
-    const handleOpenDietModal = useCallback((logId: string) => {
+    const handleOpenDietModal = useCallback(async (logId: string) => {
         setDietModalOpen(logId);
+        return Promise.resolve();
     }, []);
 
     const handleCloseDietModal = () => { setDietModalOpen(null); };
@@ -177,6 +196,35 @@ const DashboardHomePage = () => {
     const handleFoodAddedToLog = useCallback((updatedLog: DietLog) => {
          updateStateAndRefetchRewards({ ...updatedLog, type: 'diet' }, 'diet'); // Update state, maybe refetch rewards if logging food gives xp
     }, [updateStateAndRefetchRewards]); // Add dependency
+
+    // --- NEW: Handler for Focus Session Completion ---
+    const handleFocusSessionComplete = async (minutesCompleted: number, logId: string) => {
+        if (!logId) {
+            toast.error("Focus session log ID is missing.");
+            return;
+        }
+        setItemLoading(logId, true); // Use logId for loading state if needed
+        try {
+            const response = await fetchApi<FocusLog>(`/focus/logs/${logId}/update`, {
+                method: 'PUT',
+                isProtected: true,
+                body: { minutes: minutesCompleted },
+            });
+            if (response.data) {
+                toast.success(`Focus session of ${minutesCompleted} min saved!`);
+                setTodayFocusLog(response.data); // Update today's focus log
+                // Optionally refetch all data or just userStats if rewards change
+                fetchData(); // Or a more targeted fetch if preferred
+            } else {
+                toast.error(response.error || "Failed to save focus session.");
+            }
+        } catch (err) {
+            toast.error("An error occurred while saving the focus session.");
+            console.error("Error saving focus session:", err);
+        } finally {
+            setItemLoading(logId, false);
+        }
+    };
     // --- End Action Handlers ---
 
     // Main component return
@@ -193,19 +241,29 @@ const DashboardHomePage = () => {
                     <HabitProgress
                         todos={todos}
                         sleepHabit={sleepHabit}
+                        focusHabit={focusHabit}     // **** PASS FOCUS HABIT ****
+                        todayFocusLog={todayFocusLog} // **** PASS TODAY'S FOCUS LOG ****
                         isUpdating={isUpdating}
                         onCompleteSleep={handleCompleteSleep}
                         onUpdateHydrate={handleUpdateHydrate}
                         onUpdateDiet={handleOpenDietModal} // Pass the function to open modal
-                        // Removed onTriggerClick and isTasksVisible
+                        onToggleFocusView={() => setShowFocusTimer(prev => !prev)} // **** PASS TOGGLE HANDLER ****
                     />
 
                     {/* Column 2: Cat Room */}
-                    <CatRoom xpData={xpRewards} /> {/* Pass xpRewards */}
-
-                    {/* Column 3: REMOVED Progress Info */}
-
-                     {/* REMOVED Task List Popup */}
+                    {/* **** Conditional Rendering for CatRoom / FocusTimer **** */}
+                    {showFocusTimer ? (
+                        <FocusTimer
+                            focusHabit={focusHabit}
+                            todayFocusLog={todayFocusLog}
+                            onFocusSessionComplete={handleFocusSessionComplete}
+                            // You can set initialFocusDuration from focusHabit?.focus_goal if needed,
+                            // or let FocusTimer handle its default.
+                        />
+                    ) : (
+                        <CatRoom xpData={xpRewards} />
+                    )}
+                    {/* **** End Conditional Rendering **** */}
 
                 </div> // End mainLayoutGrid
             )}
@@ -224,3 +282,7 @@ const DashboardHomePage = () => {
 };
 
 export default DashboardHomePage;
+
+function setXpRewards(data: XpRewardsData) {
+    throw new Error('Function not implemented.');
+}

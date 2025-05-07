@@ -324,6 +324,7 @@ button.iconCircle:not(:disabled):active {
   background-color: var(--background-alt);
   animation: fadeIn 0.3s ease-out;
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -516,6 +517,118 @@ button.iconCircle:not(:disabled):active {
   text-align: center;
 }
 
+/* --- NEW: Focus Timer Styles --- */
+.focusTimerContainer {
+  background-color: var(--color-white);
+  padding: 2.5rem 2rem; /* More padding */
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8rem; /* Increased gap */
+  min-height: 350px; /* Match cat room height */
+  justify-content: center; /* Center content vertically */
+  width: 100%; /* Take full width of its grid cell */
+}
+
+.focusTimeDisplayControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.focusTimeDisplay {
+  font-size: 2.8rem; /* Larger time display */
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 200px; /* Ensure space for "XX:XX min" */
+  text-align: center;
+}
+
+.focusDurationButton {
+  background: none;
+  border: none;
+  color: var(--color-pastel-purple);
+  font-size: 1.8rem; /* Larger arrows */
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+.focusDurationButton:hover:not(:disabled) {
+  color: #9a82b8; /* Darker purple */
+}
+.focusDurationButton:active:not(:disabled) {
+  transform: scale(0.9);
+}
+.focusDurationButton:disabled {
+  color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.focusTimerActions {
+  /* Container for Start/Pause/Resume/Done button */
+}
+
+.focusActionButton {
+  /* Base style for action buttons */
+  composes: formButton from "./Settings.module.css"; /* Reuse button style if settings has one */
+  padding: 0.8rem 2.5rem; /* Larger button */
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px; /* Min width for buttons */
+}
+
+.focusStartButton,
+.focusResumeButton {
+  background-color: var(--color-pastel-purple);
+  color: var(--text-on-primary-button);
+}
+.focusStartButton:hover:not(:disabled),
+.focusResumeButton:hover:not(:disabled) {
+  background-color: #ae9acb;
+}
+
+.focusPauseButton {
+  background-color: var(--color-pastel-yellow);
+  color: var(--text-primary);
+  border: 1px solid var(--color-border);
+}
+.focusPauseButton:hover:not(:disabled) {
+  background-color: #fafa85;
+}
+
+.focusDoneButton {
+  background-color: #4caf50; /* Green for done */
+  color: var(--color-white);
+}
+.focusDoneButton:hover:not(:disabled) {
+  background-color: #388e3c;
+}
+
+.focusNote {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.focusTotalToday {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+/* --- End Focus Timer Styles --- */
+
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .mainLayoutGrid {
@@ -554,6 +667,22 @@ button.iconCircle:not(:disabled):active {
   }
   .statIcon {
     font-size: 0.9rem;
+  }
+  .focusTimerContainer {
+    padding: 2rem 1.5rem;
+    min-height: 300px;
+  }
+  .focusTimeDisplay {
+    font-size: 2.2rem;
+    min-width: 160px;
+  }
+  .focusDurationButton {
+    font-size: 1.5rem;
+  }
+  .focusActionButton {
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    min-width: 130px;
   }
 }
 
@@ -647,5 +776,27 @@ button.iconCircle:not(:disabled):active {
   }
   .dietDetailsContainer {
     padding: 0.8rem;
+  }
+
+  .focusTimerContainer {
+    padding: 1.5rem 1rem;
+    min-height: auto; /* Allow it to shrink */
+    gap: 1.5rem;
+  }
+  .focusTimeDisplay {
+    font-size: 2rem;
+    min-width: auto;
+  }
+  .focusDurationButton {
+    font-size: 1.3rem;
+  }
+  .focusActionButton {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 200px;
+  }
+  .focusNote {
+    font-size: 0.8rem;
   }
 }

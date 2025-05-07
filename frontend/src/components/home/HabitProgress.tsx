@@ -1,112 +1,102 @@
 // src/components/home/HabitProgress.tsx
 import React from 'react';
-import { TodoItem, SleepLog, HydrateLog, DietLog, SleepHabit } from '@/types/habit.types';
+import { TodoItem, SleepLog, HydrateLog, DietLog, SleepHabit, FocusLog, FocusHabit } from '@/types/habit.types';
 import styles from '@/styles/Home.module.css'; // Assuming styles are in Home.module.css
 import { FaBed, FaSun, FaUtensils, FaBrain } from 'react-icons/fa';
 import { FaGlassWater } from 'react-icons/fa6';
 
-// --- Helper Functions (Copied from home.tsx or move to shared utils) ---
-// It's generally better to move these to a separate utils file and import them.
+// --- Helper Functions (Keep as is or move to utils) ---
 const formatTime = (timeString: string | null | undefined): string => {
     if (!timeString) return "N/A";
     try {
-        // Check if format is HH:MM:SS
         if (/^\d{2}:\d{2}:\d{2}$/.test(timeString)) {
             const [hours, minutes] = timeString.split(':');
-            // Create a dummy date to use toLocaleTimeString for formatting
             const date = new Date();
             date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
             return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         }
-        // Assume ISO string otherwise
         const date = new Date(timeString);
-        if (isNaN(date.getTime())) return "Invalid Time"; // Check if date is valid
+        if (isNaN(date.getTime())) return "Invalid Time";
         return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    } catch (e) {
-        console.error("Error formatting time:", timeString, e);
-        return "Error";
-    }
+    } catch (e) { console.error("Error formatting time:", timeString, e); return "Error"; }
 };
-
-const formatAmount = (
-    amount: number | null | undefined,
-    unit: string,
-    showUnit: boolean = true // Add flag to control unit display
-): string => {
-    if (amount === null || amount === undefined) return `?${showUnit ? ' ' + unit : ''}`; // Handle null/undefined, optionally show unit with '?'
-    const roundedAmount = Number.isInteger(amount) ? amount : amount.toFixed(1); // Round floats to 1 decimal
-    return `${roundedAmount}${showUnit ? ' ' + unit : ''}`; // Conditionally add unit
+const formatAmount = (amount: number | null | undefined, unit: string, showUnit: boolean = true): string => {
+    if (amount === null || amount === undefined) return `?${showUnit ? ' ' + unit : ''}`;
+    const roundedAmount = Number.isInteger(amount) ? amount : amount.toFixed(1);
+    return `${roundedAmount}${showUnit ? ' ' + unit : ''}`;
 };
-
 const calculatePercentage = (consumed: number | undefined, goal: number | undefined): number => {
     if (goal === null || goal === undefined || consumed === null || consumed === undefined || goal <= 0) return 0;
     const percentage = (consumed / goal) * 100;
-    return Math.min(Math.max(percentage, 0), 100); // Clamp between 0 and 100
+    return Math.min(Math.max(percentage, 0), 100);
 };
 // --- End Helper Functions ---
 
-// Props interface for the component
 interface HabitProgressProps {
-    todos: TodoItem[]; // Array of current logs/todos
-    sleepHabit: SleepHabit | null; // Sleep goal times
-    isUpdating: Record<string, boolean>; // Map of logId to loading state
-    // Callback functions for actions
+    todos: TodoItem[];
+    sleepHabit: SleepHabit | null;
+    focusHabit: FocusHabit | null;
+    todayFocusLog: FocusLog | null;
+    isUpdating: Record<string, boolean>;
     onCompleteSleep: (logId: string) => Promise<void>;
     onUpdateHydrate: (logId: string) => Promise<void>;
-    onUpdateDiet: (logId: string) => Promise<void>; // Opens the diet modal
+    onUpdateDiet: (logId: string) => Promise<void>;
+    onToggleFocusView: () => void;
 }
 
 const HabitProgress: React.FC<HabitProgressProps> = ({
     todos,
     sleepHabit,
+    focusHabit,
+    todayFocusLog,
     isUpdating,
     onCompleteSleep,
     onUpdateHydrate,
-    onUpdateDiet
+    onUpdateDiet,
+    onToggleFocusView
 }) => {
 
-    // --- Internal Render Logic for Individual Habit Icons ---
     const renderSingleHabitIcon = (type: 'wakeup' | 'sleep' | 'hydrate' | 'diet' | 'focus') => {
-        // Find relevant logs from the todos array
         const todaySleepLogs = todos.filter(t => t.type === 'sleep') as SleepLog[];
         const todayHydrateLog = todos.find(t => t.type === 'hydrate') as HydrateLog | undefined;
         const todayDietLog = todos.find(t => t.type === 'diet') as DietLog | undefined;
         const wakeUpLog = todaySleepLogs.find(log => log.task_type === 'wakeup');
         const sleepLog = todaySleepLogs.find(log => log.task_type === 'sleep');
 
-        // Helper to get background style for progress circles
-        const getIconBackgroundStyle = (item: HydrateLog | DietLog | undefined, habitType: 'hydrate' | 'diet'): React.CSSProperties => {
-            if (!item) return {};
-            const consumed = habitType === 'hydrate' ? item.consumed_water : item.consumed_calories;
-            const goal = habitType === 'hydrate' ? item.water_goal : item.calories_goal;
+        const getIconBackgroundStyle = (item: HydrateLog | DietLog | FocusLog | undefined, habitType: 'hydrate' | 'diet' | 'focus'): React.CSSProperties => {
+            if (!item && habitType !== 'focus') return {};
+            let consumed, goal;
+            if (habitType === 'hydrate' && item?.type === 'hydrate') { consumed = (item as HydrateLog).consumed_water; goal = (item as HydrateLog).water_goal; }
+            else if (habitType === 'diet' && item?.type === 'diet') { consumed = (item as DietLog).consumed_calories; goal = (item as DietLog).calories_goal; }
+            else if (habitType === 'focus' && todayFocusLog) { consumed = todayFocusLog.focus_done; goal = focusHabit?.focus_goal; }
+            else { return {}; }
             const percentage = calculatePercentage(consumed, goal);
-            const progressColor = habitType === 'hydrate' ? 'var(--hydrate-progress-color)' : 'var(--diet-progress-color)';
+            let progressColor = 'var(--icon-background-default)';
+            if (habitType === 'hydrate') progressColor = 'var(--hydrate-progress-color)';
+            else if (habitType === 'diet') progressColor = 'var(--diet-progress-color)';
+            else if (habitType === 'focus') progressColor = 'var(--color-pastel-purple)';
             return { background: `linear-gradient(to top, ${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)` };
         };
 
-        // Helper to get completed class (mostly for sleep/wake color change)
-        const completedClass = (log: SleepLog | HydrateLog | DietLog | undefined): string => log?.completed ? styles.completed : '';
+        const completedClass = (log: SleepLog | HydrateLog | DietLog | FocusLog | undefined): string => log?.completed ? styles.completed : '';
 
-        // --- Determine Icon Data based on type ---
         let icon: React.ReactNode;
         let textLine1: string = '';
         let textLine2: string = '';
         let circleStyle: React.CSSProperties = {};
-        let circleClasses = `${styles.iconCircle}`;
-        let wrapperClasses = `${styles.habitIconWrapper}`;
+        let baseCircleClasses = `${styles.iconCircle}`; // Base class for the circle visual
         let logId: string | undefined = undefined;
         let isCompleted = false;
-        let clickHandler: (() => Promise<void>) | undefined = undefined;
+        let clickHandler: (() => Promise<void> | void) | undefined = undefined;
         let ariaLabel = '';
-        let isInteractive = false; // Flag to determine if it should be a button
+        let isInteractive = false;
 
         switch (type) {
             case 'wakeup':
                 icon = <FaSun />; textLine1 = 'Wake-up';
                 textLine2 = sleepHabit ? formatTime(sleepHabit.wakeup_time) : 'N/A';
                 logId = wakeUpLog?.id; isCompleted = !!wakeUpLog?.completed;
-                if (isCompleted) { circleClasses += ` ${styles.wakeup} ${styles.completed}`; }
-                else { circleClasses += ` ${styles.wakeup}`; }
+                baseCircleClasses += ` ${styles.wakeup} ${isCompleted ? styles.completed : ''}`;
                 if (logId && !isCompleted) { clickHandler = () => onCompleteSleep(logId as string); isInteractive = true; }
                 ariaLabel = isCompleted ? `Wake up completed at ${textLine2}` : `Mark wake up at ${textLine2} as complete`;
                 break;
@@ -114,70 +104,72 @@ const HabitProgress: React.FC<HabitProgressProps> = ({
                 icon = <FaBed />; textLine1 = 'Sleep';
                 textLine2 = sleepHabit ? formatTime(sleepHabit.sleep_time) : 'N/A';
                 logId = sleepLog?.id; isCompleted = !!sleepLog?.completed;
-                if (isCompleted) { circleClasses += ` ${styles.sleep} ${styles.completed}`; }
-                else { circleClasses += ` ${styles.sleep}`; }
+                 baseCircleClasses += ` ${styles.sleep} ${isCompleted ? styles.completed : ''}`;
                 if (logId && !isCompleted) { clickHandler = () => onCompleteSleep(logId as string); isInteractive = true; }
                 ariaLabel = isCompleted ? `Sleep completed at ${textLine2}` : `Mark sleep at ${textLine2} as complete`;
                 break;
             case 'hydrate':
                 icon = <FaGlassWater />; textLine1 = 'Hydration';
-                textLine2 = `${formatAmount(todayHydrateLog?.consumed_water, 'ml', false)} / ${formatAmount(todayHydrateLog?.water_goal, 'ml')}`; // Unit only on goal
-                logId = todayHydrateLog?.id; isCompleted = !!todayHydrateLog?.completed; // Based on backend logic
+                textLine2 = `${formatAmount(todayHydrateLog?.consumed_water, 'ml', false)} / ${formatAmount(todayHydrateLog?.water_goal, 'ml')}`;
+                logId = todayHydrateLog?.id; isCompleted = !!todayHydrateLog?.completed;
                 circleStyle = getIconBackgroundStyle(todayHydrateLog, 'hydrate');
-                wrapperClasses += ` ${completedClass(todayHydrateLog)}`; // Apply completed style to wrapper if needed
+                 baseCircleClasses += ` ${completedClass(todayHydrateLog)}`; // Add completed class if needed
                 if (logId) { clickHandler = () => onUpdateHydrate(logId as string); isInteractive = true; }
                 ariaLabel = `Add ${formatAmount(todayHydrateLog?.cup_size, 'ml')} water. Current: ${textLine2}`;
                 break;
             case 'diet':
                 icon = <FaUtensils />; textLine1 = 'Diet';
-                textLine2 = `${formatAmount(todayDietLog?.consumed_calories, 'kcal', false)} / ${formatAmount(todayDietLog?.calories_goal, 'kcal')}`; // Unit only on goal
-                logId = todayDietLog?.id; isCompleted = !!todayDietLog?.completed; // Based on backend logic
+                textLine2 = `${formatAmount(todayDietLog?.consumed_calories, 'kcal', false)} / ${formatAmount(todayDietLog?.calories_goal, 'kcal')}`;
+                logId = todayDietLog?.id; isCompleted = !!todayDietLog?.completed;
                 circleStyle = getIconBackgroundStyle(todayDietLog, 'diet');
-                wrapperClasses += ` ${completedClass(todayDietLog)}`; // Apply completed style to wrapper if needed
+                 baseCircleClasses += ` ${completedClass(todayDietLog)}`; // Add completed class if needed
                 if (logId) { clickHandler = () => onUpdateDiet(logId as string); isInteractive = true; }
                 ariaLabel = `Log food. Current: ${textLine2}`;
                 break;
-            case 'focus': // Mock Data for Focus
+            case 'focus':
                 icon = <FaBrain />; textLine1 = 'Focus';
-                textLine2 = `${formatAmount(30, 'min', false)} / ${formatAmount(100, 'min')}`; // Unit only on goal
-                isCompleted = false; clickHandler = undefined; isInteractive = false;
-                ariaLabel = 'Focus session progress';
-                // Add specific class if needed: circleClasses += ` ${styles.focus}`;
+                textLine2 = `${todayFocusLog?.focus_done || 0} / ${focusHabit?.focus_goal || '...'} min`;
+                isCompleted = !!todayFocusLog?.completed;
+                circleStyle = getIconBackgroundStyle(todayFocusLog ?? undefined, 'focus');
+                 baseCircleClasses += ` ${completedClass(todayFocusLog ?? undefined)}`; // Add completed class if needed
+                clickHandler = onToggleFocusView;
+                isInteractive = true; // Focus icon is always interactive to open timer
+                ariaLabel = 'Open focus timer';
                 break;
         }
 
-        // Determine loading and disabled states for the specific icon
         const isLoadingThis = logId ? isUpdating[logId] ?? false : false;
-        // Disable if loading OR if it's not interactive OR if it's completed (except hydrate/diet)
-        const isDisabled = isLoadingThis || !isInteractive || (isCompleted && type !== 'hydrate' && type !== 'diet');
+        // Disable completed sleep/wake. Allow re-clicking hydrate/diet/focus.
+        const isDisabled = isLoadingThis || (isCompleted && !['hydrate', 'diet', 'focus'].includes(type));
 
-        // Use button for interactive elements, div for non-interactive
-        const WrapperElement = isInteractive ? 'button' : 'div';
-
+        // The outer div is ONLY for layout positioning
         return (
-            // Outer wrapper for spacing and text alignment
-            <div className={`${wrapperClasses} ${isCompleted ? styles.completed : ''}`}>
-                 {/* Button or Div for the CIRCLE */}
-                <WrapperElement
-                    className={`${circleClasses} ${isLoadingThis ? styles.loadingHabit : ''}`}
-                    style={circleStyle}
-                    onClick={!isDisabled ? clickHandler : undefined} // Attach handler only if interactive and not disabled
-                    disabled={isDisabled} // Standard disabled attribute for buttons
-                    aria-label={ariaLabel}
-                    // For non-button elements that might become interactive later:
-                    // role={isInteractive ? "button" : undefined}
-                    // aria-disabled={isDisabled}
-                    // tabIndex={isInteractive && !isDisabled ? 0 : undefined}
-                >
-                    <span className={styles.iconSymbol}>{icon}</span>
-                    {/* Optional: Spinner overlay can be added here if desired for loading state */}
-                </WrapperElement>
+            <div className={`${styles.habitIconWrapper} ${isCompleted ? styles.completed : ''} ${isDisabled ? styles.disabledHabitVisual : ''} `}>
+                {/* The interactive element is the circle itself */}
+                {isInteractive ? (
+                    <button
+                        className={`${baseCircleClasses} ${isLoadingThis ? styles.loadingHabitVisual : ''}`} // Apply base + loading styles
+                        style={circleStyle}
+                        onClick={!isDisabled ? clickHandler : undefined}
+                        disabled={isDisabled}
+                        aria-label={ariaLabel}
+                    >
+                        <span className={styles.iconSymbol}>{icon}</span>
+                    </button>
+                ) : (
+                    <div className={baseCircleClasses} style={circleStyle} aria-label={ariaLabel}>
+                        <span className={styles.iconSymbol}>{icon}</span>
+                    </div>
+                )}
 
-                {/* Text below the circle */}
+                {/* Text is always outside the interactive element */}
                 {textLine1 && (
                     <span className={styles.habitText}>
                         {textLine1}<br />
-                        <span className={styles.habitProgressText}>{textLine2}</span>
+                        <span className={styles.habitProgressText}>
+                            {textLine2}
+                            {isCompleted && type !== 'focus'} {/* Add checkmark visually here */}
+                        </span>
                     </span>
                 )}
             </div>
@@ -185,7 +177,7 @@ const HabitProgress: React.FC<HabitProgressProps> = ({
     };
     // --- End Internal Render Logic ---
 
-    // Component's main return: Renders the grid of icons
+    // Grid structure for 5 icons
     return (
         <div className={styles.habitColumnGrid}>
             <div className={styles.habitRow}>
