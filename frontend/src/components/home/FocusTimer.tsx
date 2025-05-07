@@ -34,7 +34,7 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
 
     // Initialize duration from habit or default
     useEffect(() => {
-        const initial = focusHabit?.focus_goal || initialFocusDuration;
+        const initial = initialFocusDuration;
         setDuration(initial);
         setTimeLeft(initial * 60);
     }, [focusHabit, initialFocusDuration]);
@@ -121,7 +121,7 @@ const FocusTimer: React.FC<FocusTimerProps> = ({
     const formatDisplayTime = (seconds: number): string => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} min`;
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
 
     return (

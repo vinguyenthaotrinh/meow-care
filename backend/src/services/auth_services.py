@@ -54,7 +54,7 @@ class AuthService:
             }
             default_focus = {
                 "user_id": user_data.id,
-                "focus_goal": 120  # 2h
+                "focus_goal": 60  # 1h
             }
 
             self.client.table("sleep_habits").insert(default_sleep).execute()

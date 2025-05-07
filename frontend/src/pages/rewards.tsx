@@ -9,53 +9,49 @@ import MonthlyReward from '@/components/rewards/MonthlyReward';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { fetchApi } from '@/lib/api';
 import { XpRewardsData, Quest } from '@/types/rewards.types'; // Use correct Quest type
-import rewardStyles from '@/styles/Rewards.module.css';
+import rewardStyles from '@/styles/Rewards.module.css'; // Use specific styles
 import { toast } from 'react-toastify';
+
+// --- Mock Data (Can be removed if API is reliable) ---
+// const MOCK_DAILY_QUESTS: Quest[] = [ ... ];
+// const MOCK_MONTHLY_QUEST: Quest = { ... };
+// --- End Mock Data ---
 
 const RewardsPage = () => {
     const [rewardsData, setRewardsData] = useState<XpRewardsData | null>(null);
-    // State for ALL quests fetched from API
     const [allQuests, setAllQuests] = useState<Quest[]>([]);
-    // State for loading specific parts
-    const [isLoadingRewards, setIsLoadingRewards] = useState(true);
-    const [isLoadingQuests, setIsLoadingQuests] = useState(true);
-    // State to track which quest is currently being claimed
-    const [claimingQuestId, setClaimingQuestId] = useState<string | null>(null);
+    // --- Combined loading state ---
+    const [isLoading, setIsLoading] = useState(true);
+    // --- Removed claimingQuestId state ---
     const [error, setError] = useState<string | null>(null);
 
     // Combined fetch function
-    const fetchData = useCallback(async () => {
-        setIsLoadingRewards(true);
-        setIsLoadingQuests(true);
-        setError(null);
-        let fetchError = null; // Accumulate errors
+    const fetchData = useCallback(async (showLoadingSpinner = true) => {
+        // Use the main isLoading state if requested
+        if (showLoadingSpinner) {
+            setIsLoading(true);
+        }
+        setError(null); // Clear previous errors on fetch
+        let fetchError = null;
 
         try {
-            // Fetch rewards and quests in parallel
             const [rewardsRes, questsRes] = await Promise.all([
                 fetchApi<XpRewardsData>('/xp', { isProtected: true }),
-                fetchApi<Quest[]>('/quest', { isProtected: true }) // Fetch from /quest endpoint
+                fetchApi<Quest[]>('/quest', { isProtected: true }) // Updated API path
             ]);
 
-            // Process Rewards Data
-            if (rewardsRes.data) {
-                setRewardsData(rewardsRes.data);
-            } else {
-                fetchError = rewardsRes.error || "Failed to load rewards data.";
-                setRewardsData(null); // Clear old data on error
-            }
+            if (rewardsRes.data) { setRewardsData(rewardsRes.data); }
+            else { fetchError = rewardsRes.error || "Failed to load rewards data."; }
 
-            // Process Quests Data
-            if (questsRes.data) {
-                setAllQuests(questsRes.data);
-            } else {
-                fetchError = fetchError ? `${fetchError}; ${questsRes.error || "Failed to load quests."}` : (questsRes.error || "Failed to load quests.");
-                setAllQuests([]); // Clear old quests on error
-            }
+            if (questsRes.data) { setAllQuests(questsRes.data); }
+            else { fetchError = fetchError ? `${fetchError}; ${questsRes.error || "Failed to load quests."}` : (questsRes.error || "Failed to load quests."); }
 
-            if(fetchError) {
+            if (fetchError) {
                 setError(fetchError);
                 toast.error(`Error loading data: ${fetchError}`);
+                // Optionally clear data on error
+                // setRewardsData(null);
+                // setAllQuests([]);
             }
 
         } catch (err: any) {
@@ -63,41 +59,42 @@ const RewardsPage = () => {
             const errorMsg = "An unexpected error occurred loading data.";
             setError(errorMsg);
             toast.error(errorMsg);
-            setRewardsData(null);
+            setRewardsData(null); // Clear data on major error
             setAllQuests([]);
         } finally {
-             setIsLoadingRewards(false);
-             setIsLoadingQuests(false);
+            // Always turn off loading spinner after fetch attempt
+            setIsLoading(false);
         }
-    }, []);
+    }, []); // No dependencies needed if it doesn't rely on changing props/state
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchData(); // Initial fetch
+    }, [fetchData]); // Run effect when fetchData definition changes (usually only once)
 
-    // Handler for claiming a daily quest reward
+    // Handler for claiming a daily quest reward - Uses main isLoading state
     const handleClaimQuest = useCallback(async (questId: string) => {
-        if (claimingQuestId) return; // Prevent multiple claims at once
+        // Prevent claiming if already loading/processing another action
+        if (isLoading) return;
 
-        setClaimingQuestId(questId); // Set loading state for this specific quest
+        setIsLoading(true); // <<< Use main loading state to show overlay
         let claimError = null;
 
         try {
+            // Assuming API endpoint is /quests/{quest_id}/claim
             const response = await fetchApi<{ message: string, rewards: XpRewardsData }>(
-                `/quest/${questId}/claim`,
+                `/quest/${questId}/claim`, // Corrected endpoint path
                 { method: 'POST', isProtected: true }
             );
 
             if (response.data) {
                 toast.success(response.data.message || "Reward claimed!");
-                // OPTION 1: Refetch everything to ensure consistency
-                // fetchData();
-                // OPTION 2: Update state locally for faster feedback
-                setRewardsData(response.data.rewards); // Update currency display
-                setAllQuests(prevQuests => prevQuests.map(q =>
-                    q.id === questId ? { ...q, is_claimable: false, user_progress: { ...q.user_progress!, claimed_at: new Date().toISOString() } } : q
-                ));
-
+                // OPTION 1 (Simpler): Refetch all data after claim to ensure consistency
+                await fetchData(false); // Refetch without showing spinner again immediately
+                // OPTION 2 (Faster UI feedback): Update state locally (more complex)
+                // setRewardsData(response.data.rewards);
+                // setAllQuests(prevQuests => prevQuests.map(q =>
+                //     q.id === questId ? { ...q, is_claimable: false, user_progress: { ...q.user_progress!, claimed_at: new Date().toISOString() } } : q
+                // ));
             } else {
                 claimError = response.error || "Failed to claim reward.";
             }
@@ -105,56 +102,62 @@ const RewardsPage = () => {
             console.error(`Error claiming quest ${questId}:`, err);
             claimError = "An unexpected error occurred while claiming.";
         } finally {
-            setClaimingQuestId(null); // Clear loading state for this quest
+            setIsLoading(false); // <<< Turn off main loading state
             if (claimError) {
                 toast.error(claimError);
             }
         }
-    }, [claimingQuestId]); // Include claimingQuestId dependency
+    }, [isLoading, fetchData]); // Depend on isLoading and fetchData
 
     // Handler for check-in completion
     const handleCheckinComplete = () => {
-        // Refetch all data after check-in as it affects rewards and potentially quests
+        // Refetch all data after check-in
         fetchData();
     };
 
     // Filter quests for rendering
     const dailyQuests = allQuests.filter(q => q.type === 'daily');
-    const monthlyQuest = allQuests.find(q => q.type === 'monthly') || null; // Assume only one monthly quest
-
-    // Combined loading state
-    const isLoading = isLoadingRewards || isLoadingQuests;
+    const monthlyQuest = allQuests.find(q => q.type === 'monthly') || null;
 
     const renderQuestsTab = () => (
+        // Outer container for content + potential overlay
         <div className={rewardStyles.questsTabContent}>
-            {/* Render Currency Display first - it sticks */}
-            <UserCurrencyDisplay rewardsData={rewardsData} />
-
-            {isLoading ? (
-                <div className={rewardStyles.loadingContainer}><LoadingSpinner /></div>
-            ) : error ? (
-                <p className={rewardStyles.errorText}>{error}</p>
-            ) : (
-                <>
-                    {/* Wrap Checkin */}
-                    <div>
-                        <h3 className={rewardStyles.checkinTitle}>Daily Check-in</h3>
-                        <DailyCheckin rewardsData={rewardsData} onCheckinComplete={handleCheckinComplete} />
-                    </div>
-
-                    {/* Layout Grid */}
-                    <div className={rewardStyles.questsLayoutGrid}>
-                        <DailyQuestsSection
-                            quests={dailyQuests}
-                            onClaimQuest={handleClaimQuest} // Pass claim handler
-                            claimingQuestId={claimingQuestId} // Pass ID of quest being claimed
-                        />
-                        <div> {/* Wrapper for Monthly Reward */}
-                            <MonthlyReward quest={monthlyQuest} />
-                        </div>
-                    </div>
-                </>
+            {/* Loading Overlay */}
+            {isLoading && (
+                <div className={rewardStyles.loadingOverlay}>
+                    <LoadingSpinner />
+                </div>
             )}
+
+            {/* Actual Content Container (Hidden visually while loading) */}
+            {/* Added check for rewardsData being loaded before showing content */}
+            <div style={{ visibility: isLoading ? 'hidden' : 'visible' }}>
+                {error && !isLoading ? (
+                    <p className={rewardStyles.errorText}>{error}</p>
+                ) : rewardsData ? ( // Only render content if rewardsData is available
+                    <>
+                        <UserCurrencyDisplay rewardsData={rewardsData} />
+                        <div> {/* Wrapper for Checkin */}
+                            <h3 className={rewardStyles.checkinTitle}>Daily Check-in</h3>
+                            <DailyCheckin rewardsData={rewardsData} onCheckinComplete={handleCheckinComplete} />
+                        </div>
+                        <div className={rewardStyles.questsLayoutGrid}>
+                            <DailyQuestsSection
+                                quests={dailyQuests}
+                                onClaimQuest={handleClaimQuest}
+                                // Removed claimingQuestId prop
+                            />
+                            <div> {/* Wrapper for Monthly Reward */}
+                                <MonthlyReward quest={monthlyQuest} />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    // Optional: Placeholder or message if rewardsData is null but not loading/error
+                     <p>No reward data available.</p>
+                )
+              }
+            </div>
         </div>
     );
 
