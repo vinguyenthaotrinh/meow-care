@@ -7,10 +7,10 @@ import styles from '../../styles/Rewards.module.css';
 interface DailyQuestsSectionProps {
     quests: Quest[];
     onClaimQuest: (questId: string) => Promise<void>; // Function to claim
-    claimingQuestId: string | null; // ID of the quest currently being claimed
+    // Removed claimingQuestId prop
 }
 
-const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests, onClaimQuest, claimingQuestId }) => {
+const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests, onClaimQuest }) => {
     return (
         <div className={styles.questsSection}>
             <h3 className={styles.questsTitle}>Daily Quests</h3>
@@ -23,7 +23,7 @@ const DailyQuestsSection: React.FC<DailyQuestsSectionProps> = ({ quests, onClaim
                             key={quest.id}
                             quest={quest}
                             onClaim={onClaimQuest} // Pass the handler down
-                            isClaimingQuest={claimingQuestId === quest.id} // Pass true only if this quest is loading
+                            // isClaimingQuest prop removed
                         />
                     ))}
                 </div>

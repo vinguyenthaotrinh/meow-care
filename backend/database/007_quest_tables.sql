@@ -52,6 +52,7 @@ INSERT INTO quests (title, description, type, trigger_type, target_progress, rew
 ('Check-in Today', 'Claim your daily check-in reward', 'daily', 'checkin', 1, 'coins', 10),
 ('Log Meal', 'Record what you had', 'daily', 'log_meal', 1, 'diamonds', 1);
 ('Earn 50 coins', 'Collect coins from various activities', 'daily', 'earn_coins', 50, 'coins', 20);
+('Focus 30 minutes', 'Spend 30 minutes on a focus task', 'daily', 'focus_time', 30, 'coins', 40);
 
 -- Example Monthly Quest
 INSERT INTO quests (title, description, type, trigger_type, target_progress, reward_type, reward_amount) VALUES

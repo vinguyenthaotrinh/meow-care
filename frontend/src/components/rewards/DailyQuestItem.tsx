@@ -1,25 +1,25 @@
 // src/components/rewards/DailyQuestItem.tsx
 import React from 'react';
-import { Quest } from '@/types/rewards.types'; // Use updated type
-import styles from '../../styles/Rewards.module.css';
+import { Quest } from '@/types/rewards.types'; // Use correct Quest type
+import styles from '../../styles/Rewards.module.css'; // Use specific styles
 import { FaCoins, FaGem } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import LoadingSpinner from '../common/LoadingSpinner'; // Keep LoadingSpinner
+// Removed toast import if not used directly here
+// Removed LoadingSpinner import
 
 interface DailyQuestItemProps {
     quest: Quest;
     onClaim: (questId: string) => Promise<void>; // Function to call when claim is clicked
-    isClaimingQuest: boolean; // Pass loading state specific to this quest
+    // Removed isClaimingQuest prop
 }
 
-const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim, isClaimingQuest }) => {
-    // Removed local claimed state - rely on quest.isClaimable from props
-    // const [isLocallyClaimed, setIsLocallyClaimed] = React.useState(false);
-    // Removed local claiming state - use isClaimingQuest prop
+const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim }) => {
 
-    // Determine button state directly from props
-    const canClaimNow = quest.is_claimable; // isClaimable is calculated by backend/parent
-    const isButtonDisabled = isClaimingQuest || !canClaimNow; // Disable if loading or already claimed/not claimable
+    // Determine button state directly from props provided by the parent
+    // 'is_claimable' should be false if already claimed or not completed according to backend logic
+    const canClaimNow = quest.is_claimable;
+    // Button is disabled if it cannot be claimed now
+    // The parent's loading overlay prevents clicks during the API call itself
+    const isButtonDisabled = !canClaimNow;
 
     // Calculate percentage based on user_progress if available
     const currentProgress = quest.user_progress?.current_progress ?? 0;
@@ -28,17 +28,22 @@ const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim, isClaim
         : 0;
 
     const handleClaim = () => {
-        if (!canClaimNow || isClaimingQuest) return;
-        onClaim(quest.id); // Call parent's claim function
+        // Parent's loading state prevents clicks during API call.
+        // Only call onClaim if it's currently claimable.
+        if (canClaimNow) {
+            onClaim(quest.id); // Call parent's claim function
+        }
     };
 
+    // Determine progress bar color based on quest type or reward type
     let progressClass = styles.coin; // Default
     if (quest.trigger_type === 'hydrate_goal') progressClass = styles.hydrate;
-    else if (quest.trigger_type === 'log_meal') progressClass = styles.diet; // Use trigger type if more specific
-    else if (quest.trigger_type === 'checkin') progressClass = styles.coin; // Checkin gives coins
-    else if (quest.trigger_type === 'tasks_completed') progressClass = styles.coin; // Example
-    else if (quest.reward_type === 'diamonds') progressClass = styles.diamond; // Fallback to reward type
+    else if (quest.trigger_type === 'log_meal') progressClass = styles.diet;
+    else if (quest.trigger_type === 'checkin') progressClass = styles.coin;
+    else if (quest.trigger_type === 'tasks_completed') progressClass = styles.coin;
+    else if (quest.reward_type === 'diamonds') progressClass = styles.diamond;
 
+    // Reward text element
     const rewardElement = (
         <span className={styles.questRewardText}>
             {quest.reward_type === 'coins' && <FaCoins className={`${styles.currencyIcon} ${styles.coinIcon}`} />}
@@ -48,6 +53,7 @@ const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim, isClaim
     );
 
     return (
+        // Parent overlay handles visual loading state for the whole item
         <div className={styles.questItem}>
             {/* Content (Title, Progress) */}
             <div className={styles.questContent}>
@@ -58,7 +64,6 @@ const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim, isClaim
                         style={{ width: `${percentage}%` }}
                     ></div>
                     <span className={styles.questProgressText}>
-                        {/* Use currentProgress from user_progress */}
                         {currentProgress} / {quest.target_progress}
                     </span>
                 </div>
@@ -66,25 +71,22 @@ const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim, isClaim
 
             {/* Action Area */}
             <div className={styles.questRewardActionArea}>
-                {rewardElement} {/* Always show reward text */}
+                {rewardElement}
 
-                {/* Render button based on completion status from backend */}
+                {/* Button area - No internal spinner */}
                 {quest.is_completed ? (
-                    // Completed: Show 'Claim' or 'Claimed'
-                    <button
+                     <button
                         onClick={handleClaim}
-                        disabled={isButtonDisabled}
-                        // Apply claimed visual style if it's not claimable now
+                        disabled={isButtonDisabled} // Disable based on claimable status
                         className={`${styles.questClaimButton} ${!canClaimNow ? styles.questClaimedButtonVisual : ''}`}
                     >
-                        {/* Show spinner if this specific quest is loading */}
-                        {isClaimingQuest ? <LoadingSpinner inline /> : (canClaimNow ? 'Claim' : 'Claimed')}
+                        {/* Text changes based on claimable status */}
+                        {canClaimNow ? 'Claim' : 'Claimed'}
                     </button>
                 ) : (
-                    // Not completed: Show disabled button visually similar to 'Claimed'
-                    // Or potentially hide button entirely if not completed? Your choice.
-                    <button disabled className={`${styles.questClaimButton} ${styles.questClaimedButtonVisual}`}>
-                        Claim {/* Text might be optional here */}
+                    // Optional: Render a disabled button even if not completed
+                     <button disabled className={`${styles.questClaimButton} ${styles.questClaimedButtonVisual}`}>
+                        Claim
                     </button>
                 )}
             </div>

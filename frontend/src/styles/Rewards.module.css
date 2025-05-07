@@ -1,38 +1,37 @@
 /* src/styles/Rewards.module.css */
-
-/* --- Base Rewards Layout --- */
+/* --- Base Rewards Layout (Different from Settings) --- */
 .rewardsContainer {
   display: flex;
   gap: 2rem;
   padding: 1rem 0;
   align-items: flex-start;
-  /* Center the layout if needed */
-  /* max-width: 1400px; */
-  /* margin: 0 auto; */
+  max-width: 1400px; /* Allow wider layout */
+  margin: 0 auto; /* Center */
 }
 
-/* White background container for the main content area */
+/* Main content area - White Background */
 .rewardsContent {
   flex-grow: 1;
-  padding: 1.5rem 2rem; /* Inner padding */
+  padding: 1.5rem 2rem;
   min-height: 600px;
   position: relative; /* For sticky currency */
   width: 100%; /* Allow it to take space */
   background-color: var(--color-white); /* White Background */
-  border: 1px solid var(--color-border); /* Border */
-  border-radius: var(--border-radius); /* Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Shadow */
-  max-width: 1100px; /* Max width */
-  margin: 0 auto; /* Center */
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1100px; /* Limit content width if container is wider */
+  /* Removed margin: 0 auto; - Let rewardsContainer center it */
 }
 
 /* --- User Currency Display (STICKY) --- */
 .userCurrency {
   position: sticky;
-  top: calc(1.5rem); /* Adjust gap from top of .rewardsContent */
-  align-self: flex-end; /* Align to the right of the flex container */
-  margin-left: auto; /* Push to the right */
-  float: right; /* Ensure right alignment */
+  top: 1.5rem; /* Distance from top of .rewardsContent */
+  /* Stick to the right */
+  float: right; /* Use float to keep it right within flow */
+  margin-left: 1rem; /* Ensure space if content gets close */
+  /* Remaining styles */
   margin-bottom: 1rem;
   display: flex;
   gap: 1rem;
@@ -66,7 +65,7 @@
 .checkinSection {
   margin-bottom: 2.5rem;
   margin-top: 1rem;
-  clear: both;
+  clear: both; /* Clear the float from sticky currency */
 }
 .checkinTitle {
   font-size: 1.4rem;
@@ -87,14 +86,14 @@
   color: var(--text-secondary);
   border-radius: var(--border-radius);
   padding: 0.6rem 0.2rem;
-  width: calc((100% / 7) - 0.6rem); /* Adjusted width */
+  width: calc((100% / 7) - 0.6rem); /* Adjusted width calc */
   min-width: 55px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-height: 80px; /* Adjusted height */
+  min-height: 80px;
   transition: all 0.3s ease;
   position: relative;
 }
@@ -162,9 +161,8 @@
   font-size: 1.2rem;
 }
 
-/* --- Checkin Claim Button (Standalone Style without compose) --- */
+/* --- Checkin Claim Button (Standalone Style) --- */
 .checkinClaimButton {
-  /* Base styles */
   border-radius: var(--border-radius);
   border: 1px solid transparent;
   cursor: pointer;
@@ -174,27 +172,25 @@
   vertical-align: middle;
   transition: background-color 0.2s ease, border-color 0.2s ease,
     opacity 0.2s ease;
-  /* Specific styles */
-  padding: 0.5rem 1.2rem; /* Adjusted padding back slightly */
-  font-size: 0.9rem; /* Adjusted font size back slightly */
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
   margin-top: 0.5rem;
   min-width: 80px;
-  /* Primary colors */
   background-color: var(--color-pastel-purple);
   color: var(--text-on-primary-button);
 }
 .checkinClaimButton:hover:not(:disabled) {
-  background-color: #ae9acb; /* Darker purple */
+  background-color: #ae9acb;
   opacity: 1;
 }
-/* Claimed visual style */
+/* Shared style for visually 'Claimed' state */
 .claimedButtonVisual {
   background-color: #e9ecef !important;
   color: #6c757d !important;
   border: 1px solid #ced4da !important;
   cursor: not-allowed;
   opacity: 1 !important;
-  /* Ensure consistent padding/font */
+  /* Ensure consistent sizing/font */
   padding: 0.5rem 1.2rem;
   font-size: 0.9rem;
   border-radius: var(--border-radius);
@@ -205,12 +201,12 @@
   transition: background-color 0.2s ease, border-color 0.2s ease,
     opacity 0.2s ease;
 }
-/* Disabled state WHEN claiming */
+/* Disabled state WHEN claiming checkin */
 .checkinClaimButton:disabled:not(.claimedButtonVisual) {
   cursor: not-allowed;
   opacity: 0.6;
-  background-color: var(--color-pastel-purple); /* Keep purple */
-  border-color: transparent; /* Keep border */
+  background-color: var(--color-pastel-purple);
+  border-color: transparent;
 }
 
 /* --- Layout Grid for Daily/Monthly Quests --- */
@@ -246,7 +242,7 @@
   align-items: center;
   gap: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease, opacity 0.3s ease;
 }
 .questItem:hover {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
@@ -308,6 +304,8 @@
   z-index: 1;
   text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
 }
+
+/* Reward/Action Area in Quest Item */
 .questRewardActionArea {
   flex-shrink: 0;
   display: flex;
@@ -326,12 +324,12 @@
   margin-top: 0;
 }
 
-/* --- Quest Claim Button (Standalone Style without compose) --- */
+/* --- Quest Claim Button (Standalone Style) --- */
 .questClaimButton {
-  /* Base styles needed */
+  /* Base styles */
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-weight: 600; /* Keep font weight */
+  font-weight: 600;
   line-height: 1.2;
   text-align: center;
   vertical-align: middle;
@@ -340,6 +338,8 @@
   /* Specific styles */
   padding: 0.4rem 1rem;
   font-size: 0.85rem;
+  width: 100%;
+  height: 100%; /* Fill container */
   background-color: var(--color-pastel-yellow);
   color: var(--text-primary);
   border: 1px solid var(--color-border);
@@ -347,25 +347,16 @@
 .questClaimButton:hover:not(:disabled) {
   background-color: #fafa85;
 }
-/* Use the SAME claimed visual style */
+/* Use shared claimed visual style */
 .questClaimedButtonVisual {
-  /* This class is used by both checkin and daily quest */
-  background-color: #e9ecef !important;
-  color: #6c757d !important;
-  border: 1px solid #ced4da !important;
-  cursor: not-allowed;
-  opacity: 1 !important;
-  padding: 0.4rem 1rem; /* Match claim button padding */
-  font-size: 0.85rem; /* Match claim button font size */
-  border-radius: var(--border-radius); /* Match radius */
-  font-weight: 500; /* Match claimed font weight */
-  line-height: 1.2;
-  text-align: center;
-  vertical-align: middle;
-  transition: background-color 0.2s ease, border-color 0.2s ease,
-    opacity 0.2s ease;
+  /* Styles defined above near checkin */
+  /* Ensure sizing matches if needed */
+  width: 100%;
+  height: 100%;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
 }
-/* Disabled state WHEN claiming */
+/* Disabled state WHEN claiming quest */
 .questClaimButton:disabled:not(.questClaimedButtonVisual) {
   cursor: not-allowed;
   opacity: 0.6;
@@ -389,14 +380,11 @@
   height: fit-content;
 }
 .monthlyRewardTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.8rem;
-  color: #713f12;
+  /* ... */
 }
 .monthlyRewardProgressBarContainer {
-  width: 80%;
-  max-width: 400px;
+  width: 100%; /* Take full width of inner box */
+  max-width: none;
   height: 20px;
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
@@ -427,9 +415,8 @@
 }
 .monthlyRewardInfoArea {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.8rem;
   margin-top: 1rem;
 }
 .monthlyRewardInfoText {
@@ -440,6 +427,15 @@
   gap: 0.4rem;
   font-weight: 500;
 }
+/* Apply quest button styles to monthly claim button */
+.monthlyRewardBox .questClaimButton {
+  width: auto;
+  height: auto;
+} /* Reset width/height */
+.monthlyRewardBox .questClaimedButtonVisual {
+  width: auto;
+  height: auto;
+} /* Reset width/height */
 
 /* --- General Loading/Error --- */
 .loadingContainer {
@@ -452,6 +448,28 @@
   color: var(--color-error);
   text-align: center;
   margin: 1rem;
+}
+
+/* --- NEW: Loading Overlay Style --- */
+.loadingOverlay {
+  position: absolute; /* Cover the parent (.questsTabContent) */
+  inset: 0; /* Shortcut for top, right, bottom, left = 0 */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.75
+  ); /* Semi-transparent white overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 150; /* Ensure it's above content and sticky currency */
+  border-radius: var(--border-radius); /* Match parent container's radius */
+}
+/* Style for the spinner inside the overlay */
+.loadingOverlay .spinner {
+  width: 50px; /* Make overlay spinner larger */
+  height: 50px;
 }
 
 /* --- Responsive Overrides --- */
@@ -488,9 +506,9 @@
     min-width: 45px;
     min-height: 75px;
     padding: 0.5rem 0.2rem;
-  }
+  } /* Adjusted calc */
   .checkinReward {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   .checkinReward .currencyIcon {
     font-size: 1rem;
@@ -514,6 +532,22 @@
     width: 100%;
     margin-top: 0.5rem;
   }
+  .questButtonContainer {
+    width: auto;
+    height: auto;
+  }
+  .questClaimButton,
+  .questClaimedButtonVisual {
+    min-width: 80px;
+    width: auto;
+    padding: 0.4rem 1rem;
+  }
+  .monthlyRewardBox {
+    padding: 1rem;
+  } /* Less padding */
+  .monthlyRewardInfoArea {
+    margin-top: 0.8rem;
+  }
 }
 
 @media (max-width: 600px) {
@@ -536,7 +570,7 @@
     width: calc((100% / 4) - 0.4rem);
     min-height: 70px;
     padding: 0.4rem 0.2rem;
-  }
+  } /* 4 boxes per row */
   .daySevenBox {
     min-width: auto;
     min-height: 70px;
@@ -559,14 +593,31 @@
     align-items: flex-end;
     gap: 0.5rem;
   }
+  .questButtonContainer {
+    width: 100%;
+  }
   .questClaimButton,
   .questClaimedButtonVisual {
     width: 100%;
     text-align: center;
+  }
+  .monthlyRewardBox {
+    padding: 1rem;
   }
   .monthlyRewardInfoArea {
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
   }
+  .monthlyRewardBox .questClaimButton,
+  .monthlyRewardBox .questClaimedButtonVisual {
+    width: 100%;
+    margin-top: 0.5rem;
+  } /* Full width monthly button */
+}
+
+/* Ensure compose targets exist if Settings.module.css isn't loaded globally */
+.formButton {
+}
+.formButtonPrimary {
 }

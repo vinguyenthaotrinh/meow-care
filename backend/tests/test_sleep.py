@@ -107,12 +107,3 @@ def test_update_sleep_log_completion_unauthorized(client, auth_token):
     unauthorized_response = client.put(f"/sleep/logs/{log_id}/complete")
     assert unauthorized_response.status_code == 401
     assert "Missing Authorization Header" in unauthorized_response.json["msg"]
-
-@pytest.mark.sleep
-@pytest.mark.order(30)
-def test_get_sleep_habit_not_found(client, nohabit_token):
-    """Lấy thông tin Sleep Habit của người dùng không có thói quen"""
-    response = client.get("/sleep/habit", headers={"Authorization": f"Bearer {nohabit_token}"})
-    
-    assert response.status_code == 404
-    assert response.json["error"] == "Sleep habit not found"

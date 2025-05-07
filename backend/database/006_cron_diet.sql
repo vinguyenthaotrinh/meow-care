@@ -1,22 +1,26 @@
--- Tạo hoặc thay thế function để generate diet logs hàng ngày
 CREATE OR REPLACE FUNCTION generate_daily_diet_logs()
 RETURNS VOID AS $$
 DECLARE
-    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'WAST')::DATE;
+    today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE;
 BEGIN
-    -- Xóa diet logs cũ của hôm nay để tránh trùng lặp
-    DELETE FROM diet_logs WHERE date = today;
+    -- Xóa diet logs của các ngày trước hôm nay
+    DELETE FROM diet_logs WHERE date < today;
 
-    -- Chèn diet logs mới từ diet_habits
+    -- Chèn diet log mới nếu hôm nay chưa có
     INSERT INTO diet_logs (user_id, calories_goal, dishes, consumed_calories, date, completed)
     SELECT
-        user_id,
-        calories_goal,
-        '[]'::JSONB,  -- Dishes chưa được ăn, khởi tạo mảng rỗng
-        0,  -- Chưa ăn nên consumed_calories = 0
+        dh.user_id,
+        dh.calories_goal,
+        '[]'::JSONB,
+        0,
         today,
-        FALSE  -- Chưa hoàn thành
-    FROM diet_habits;
+        FALSE
+    FROM diet_habits dh
+    WHERE NOT EXISTS (
+        SELECT 1 FROM diet_logs dl
+        WHERE dl.user_id = dh.user_id
+          AND dl.date = today
+    );
 END;
 $$ LANGUAGE plpgsql;
 
