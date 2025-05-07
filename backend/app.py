@@ -1,5 +1,5 @@
 from flask import Flask
-from src.routes import auth_bp, profile_bp, sleep_bp, hydrate_bp, health_bp, diet_bp, xp_bp
+from src.routes import auth_bp, profile_bp, sleep_bp, hydrate_bp, health_bp, diet_bp, xp_bp, quest_bp, focus_bp
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
@@ -16,6 +16,8 @@ app.register_blueprint(sleep_bp, url_prefix="/sleep")
 app.register_blueprint(hydrate_bp, url_prefix="/hydrate")
 app.register_blueprint(diet_bp, url_prefix="/diet")
 app.register_blueprint(xp_bp, url_prefix="/xp")
+app.register_blueprint(quest_bp, url_prefix="/quest")
+app.register_blueprint(focus_bp, url_prefix="/focus")
 
 if __name__ == "__main__":
     app.run(debug=os.environ.get("DEBUG", False), host="0.0.0.0", port=os.environ.get("PORT", 5000))

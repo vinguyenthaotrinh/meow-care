@@ -46,16 +46,14 @@ CREATE TABLE diet_logs (
 );
 
 CREATE TABLE focus_habits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    focus_goal INT NOT NULL
 );
 
 CREATE TABLE focus_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    habit_id UUID REFERENCES focus_habits(id) ON DELETE CASCADE,
+    focus_done INT NOT NULL, -- in minutes
     date DATE NOT NULL,
-    focus_duration INT NOT NULL, -- in minutes
     completed BOOLEAN DEFAULT FALSE
 );

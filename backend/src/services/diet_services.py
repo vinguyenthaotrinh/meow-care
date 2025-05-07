@@ -1,7 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from ..utils import supabase, ServiceError, DEBUG
 from .xp_reward_services import xp_reward_service
-from .quest_services import quest_service
 
 class DietService:
     def __init__(self):
