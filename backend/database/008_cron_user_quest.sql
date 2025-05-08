@@ -4,9 +4,9 @@ DECLARE
     today DATE := (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE;
     month_start DATE := date_trunc('month', today)::DATE;
 BEGIN
-    -- Xóa progress daily cũ (chỉ giữ lại hôm nay)
+    -- Xóa progress DAILY của các tháng trước (không xóa trong tháng hiện tại)
     DELETE FROM user_quest_progress
-    WHERE period_start_date < today
+    WHERE period_start_date < date_trunc('month', today)
       AND quest_id IN (
           SELECT id FROM quests WHERE type = 'daily'
       );
@@ -19,13 +19,12 @@ BEGIN
       );
 
     -- Tạo progress DAILY nếu chưa có cho hôm nay
-    INSERT INTO user_quest_progress (user_id, quest_id, period_start_date, progress, completed)
+    INSERT INTO user_quest_progress (user_id, quest_id, period_start_date, current_progress)
     SELECT
         u.id AS user_id,
         q.id AS quest_id,
         today AS period_start_date,
-        0,
-        FALSE
+        0
     FROM users u
     CROSS JOIN quests q
     WHERE q.type = 'daily'
@@ -37,13 +36,12 @@ BEGIN
       );
 
     -- Tạo progress MONTHLY nếu chưa có cho tháng này
-    INSERT INTO user_quest_progress (user_id, quest_id, period_start_date, progress, completed)
+    INSERT INTO user_quest_progress (user_id, quest_id, period_start_date, current_progress)
     SELECT
         u.id AS user_id,
         q.id AS quest_id,
         month_start AS period_start_date,
-        0,
-        FALSE
+        0
     FROM users u
     CROSS JOIN quests q
     WHERE q.type = 'monthly'
@@ -56,7 +54,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Chạy mỗi ngày lúc 0h UTC+7 (tức 17h UTC hôm trước)
-select cron.schedule('reset_user_quest_progress_daily', '0 17 * * *', $$ 
-    select reset_user_quest_progress(); 
-$$);
+SELECT cron.schedule(
+    'reset_user_quest_progress_daily',
+    '0 17 * * *',  -- 17:00 UTC tương đương 00:00 UTC+7
+    $$ SELECT reset_user_quest_progress(); $$
+);

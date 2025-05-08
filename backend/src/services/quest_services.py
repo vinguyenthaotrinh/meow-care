@@ -76,6 +76,7 @@ class QuestService:
             "daily_hydrate_ml": 0,
             "daily_tasks_completed": 0, # Count completed SleepLog tasks today
             "daily_meals_logged": 0, # Count non-empty DietLog dishes today
+            "daily_focus_minutes": 0,
             "daily_checkin_done": False,
             "monthly_daily_quests_claimed": 0,
         }
@@ -96,6 +97,17 @@ class QuestService:
             diet_res = self.client.table("diet_logs").select("id", count='exact').eq("user_id", user_id).eq("date", today_start.isoformat()).not_.in_("dishes", ['[]', '{}']).not_.is_("dishes", None).execute()
             if diet_res.count is not None:
                  dependent_data["daily_meals_logged"] = diet_res.count
+                 
+            # Focus Logs - Sum of durations today
+            focus_res = self.client.table("focus_logs")\
+                .select("focus_done")\
+                .eq("user_id", user_id)\
+                .eq("date", today_start.isoformat())\
+                .execute()
+            if focus_res.data:
+                total_focus_min = sum(log.get("focus_done", 0) for log in focus_res.data)
+                dependent_data["daily_focus_minutes"] = total_focus_min
+
 
              # Check-in Status (from xp_rewards)
             xp_res = self.client.table("xp_rewards").select("last_checkin_date").eq("user_id", user_id).maybe_single().execute()
@@ -164,6 +176,8 @@ class QuestService:
                          target_value = live_data["daily_tasks_completed"]
                     elif quest.trigger_type == 'log_meal':
                          target_value = live_data["daily_meals_logged"]
+                    elif quest.trigger_type == 'focus_time':
+                         target_value = live_data.get("daily_focus_minutes", 0)
                     elif quest.trigger_type == 'checkin':
                          target_value = 1 if live_data["daily_checkin_done"] else 0
                     elif quest.trigger_type == 'monthly_daily_quests':
