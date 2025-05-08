@@ -1,19 +1,5 @@
 /* src/styles/Home.module.css */
 
-/* --- Progress Colors --- */
-:root {
-  --hydrate-progress-color: #89cff0;
-  --diet-progress-color: #fdba74;
-  --sleep-completed-color: #c3b1e1;
-  --wakeup-completed-color: #fafa8a;
-  --icon-background-default: #ffffff;
-  --icon-border-color: var(--color-border);
-  /* --- New Icon Colors --- */
-  --coin-color: #facc15; /* Tailwind yellow-400 */
-  --diamond-color: #60a5fa; /* Tailwind blue-400 */
-  --streak-color: #f97316; /* Tailwind orange-500 */
-}
-
 /* --- Base styles --- */
 .dashboardContainer {
   display: flex;

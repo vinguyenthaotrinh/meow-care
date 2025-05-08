@@ -36,6 +36,9 @@
   --wakeup-completed-color: #fafa8a;
   --icon-background-default: #ffffff; /* Màu nền mặc định icon (User specified) */
   --icon-border-color: var(--color-border);
+  --coin-color: #facc15;
+  --diamond-color: #60a5fa;
+  --streak-color: #f97316;
 }
 
 * {
