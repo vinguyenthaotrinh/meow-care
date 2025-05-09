@@ -39,6 +39,7 @@ const DailyQuestItem: React.FC<DailyQuestItemProps> = ({ quest, onClaim }) => {
     let progressClass = styles.coin; // Default
     if (quest.trigger_type === 'hydrate_goal') progressClass = styles.hydrate;
     else if (quest.trigger_type === 'log_meal') progressClass = styles.diet;
+    else if (quest.trigger_type === 'focus_time') progressClass = styles.focus;
     else if (quest.trigger_type === 'checkin') progressClass = styles.coin;
     else if (quest.trigger_type === 'tasks_completed') progressClass = styles.coin;
     else if (quest.reward_type === 'diamonds') progressClass = styles.diamond;

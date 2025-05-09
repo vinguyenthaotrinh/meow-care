@@ -32,6 +32,7 @@
   /* --- Progress Colors (Bring from Home.module.css - for reference) --- */
   --hydrate-progress-color: #89cff0;
   --diet-progress-color: #fdba74;
+  --focus-progress-color: #f9a8d4;
   --sleep-completed-color: var(--color-pastel-purple);
   --wakeup-completed-color: #fafa8a;
   --icon-background-default: #ffffff; /* Màu nền mặc định icon (User specified) */

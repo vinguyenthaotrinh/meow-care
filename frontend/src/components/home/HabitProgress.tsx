@@ -74,7 +74,7 @@ const HabitProgress: React.FC<HabitProgressProps> = ({
             let progressColor = 'var(--icon-background-default)';
             if (habitType === 'hydrate') progressColor = 'var(--hydrate-progress-color)';
             else if (habitType === 'diet') progressColor = 'var(--diet-progress-color)';
-            else if (habitType === 'focus') progressColor = 'var(--color-pastel-purple)';
+            else if (habitType === 'focus') progressColor = 'var(--focus-progress-color)';
             return { background: `linear-gradient(to top, ${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)` };
         };
 
