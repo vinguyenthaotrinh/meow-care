@@ -3,9 +3,31 @@ services:
     # build: ./backend
     image: vinguyenthaotrinh/meow-care:latest
     container_name: backend
-    ports:
-      - "${PUBLIC_PORT}:${PORT}"
-    volumes:
-      - ./backend:/app
+    restart: unless-stopped
+    expose:
+      - "5000"
+    # volumes:
+    #   - ./backend:/app
     env_file:
       - .env
+  
+  frontend:
+    # build: ./frontend
+    image: vinguyenthaotrinh/meow-care-fe:latest
+    container_name: frontend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend

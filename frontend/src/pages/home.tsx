@@ -106,7 +106,10 @@ const DashboardHomePage = () => {
             else if (todayFocusLogRes.error && todayFocusLogRes.status !== 404) { /* No log today is fine */ }
 
             // Sort combinedTodos if needed (optional based on HabitProgress need)
-            combinedTodos.sort((a, b) => { /* ... sort logic ... */});
+            combinedTodos.sort((a, b) => { 
+                /* ... sort logic ... */
+                return 0; // Default to equal if no specific logic implemented
+            });
             setTodos(combinedTodos);
 
             // Process XP Rewards Data

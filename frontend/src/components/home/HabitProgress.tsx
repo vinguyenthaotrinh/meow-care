@@ -66,15 +66,15 @@ const HabitProgress: React.FC<HabitProgressProps> = ({
         const getIconBackgroundStyle = (item: HydrateLog | DietLog | FocusLog | undefined, habitType: 'hydrate' | 'diet' | 'focus'): React.CSSProperties => {
             if (!item && habitType !== 'focus') return {};
             let consumed, goal;
-            if (habitType === 'hydrate' && item?.type === 'hydrate') { consumed = (item as HydrateLog).consumed_water; goal = (item as HydrateLog).water_goal; }
-            else if (habitType === 'diet' && item?.type === 'diet') { consumed = (item as DietLog).consumed_calories; goal = (item as DietLog).calories_goal; }
+            if (habitType === 'hydrate') { consumed = (item as HydrateLog)?.consumed_water; goal = (item as HydrateLog)?.water_goal; }
+            else if (habitType === 'diet') { consumed = (item as DietLog)?.consumed_calories; goal = (item as DietLog)?.calories_goal; }
             else if (habitType === 'focus' && todayFocusLog) { consumed = todayFocusLog.focus_done; goal = focusHabit?.focus_goal; }
             else { return {}; }
             const percentage = calculatePercentage(consumed, goal);
             let progressColor = 'var(--icon-background-default)';
             if (habitType === 'hydrate') progressColor = 'var(--hydrate-progress-color)';
             else if (habitType === 'diet') progressColor = 'var(--diet-progress-color)';
-            else if (habitType === 'focus') progressColor = 'var(--color-pastel-purple)';
+            else if (habitType === 'focus') progressColor = 'var(--focus-progress-color)';
             return { background: `linear-gradient(to top, ${progressColor} ${percentage}%, var(--icon-background-default) ${percentage}%)` };
         };
 

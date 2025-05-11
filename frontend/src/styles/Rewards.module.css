@@ -283,6 +283,9 @@
 .questProgressBarFill.sleep {
   background-color: var(--sleep-completed-color);
 }
+.questProgressBarFill.focus {
+  background-color: var(--focus-progress-color);
+}
 .questProgressBarFill.coin {
   background-color: var(--coin-color);
 }

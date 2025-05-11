@@ -98,7 +98,7 @@ const HabitSettings = () => {
         const setterMap = { sleep: setSleepData, hydrate: setHydrateData, diet: setDietData, focus: setFocusData };
         const setter = setterMap[habitType];
 
-        setter(prev => ({
+        setter((prev: any) => ({
             ...prev,
             [name]: type === 'number' ? (value === '' ? undefined : parseFloat(value)) : value
         }));
@@ -123,16 +123,16 @@ const HabitSettings = () => {
 
         // Include reminders if needed
         let dataToSend = { ...dataMap[habitType] };
-         if (habitType === 'hydrate') dataToSend.reminder_time = hydrateReminders;
-         else if (habitType === 'diet') dataToSend.reminder_time = dietReminders;
+         if (habitType === 'hydrate') (dataToSend as HydrateHabit).reminder_time = hydrateReminders;
+         else if (habitType === 'diet') (dataToSend as DietHabit).reminder_time = dietReminders;
 
         // --- Validation ---
         let validationError: string | null = null;
-        if (habitType === 'sleep' && (!dataToSend.sleep_time || !dataToSend.wakeup_time)) { validationError = 'Wake up and sleep times are required.'; }
-        if (habitType === 'hydrate') { if (!dataToSend.water_goal || dataToSend.water_goal <= 0) validationError = 'Valid Water Goal (> 0) is required.'; else if (!dataToSend.cup_size || dataToSend.cup_size <= 0) validationError = 'Valid Cup Size (> 0) is required.'; }
-        if (habitType === 'diet' && (!dataToSend.calories_goal || dataToSend.calories_goal <= 0)) { validationError = 'Valid Calorie Goal (> 0) is required.'; }
+        if (habitType === 'sleep' && (!(dataToSend as SleepHabit).sleep_time || !(dataToSend as SleepHabit).wakeup_time)) { validationError = 'Wake up and sleep times are required.'; }
+        if (habitType === 'hydrate') { if (!(dataToSend as HydrateHabit).water_goal || (dataToSend as HydrateHabit).water_goal <= 0) validationError = 'Valid Water Goal (> 0) is required.'; else if (!(dataToSend as HydrateHabit).cup_size || (dataToSend as HydrateHabit).cup_size <= 0) validationError = 'Valid Cup Size (> 0) is required.'; }
+        if (habitType === 'diet' && (!(dataToSend as DietHabit).calories_goal || (dataToSend as DietHabit).calories_goal <= 0)) { validationError = 'Valid Calorie Goal (> 0) is required.'; }
         // **** ADD focus validation ****
-        if (habitType === 'focus' && (!dataToSend.focus_goal || dataToSend.focus_goal <= 0 || !Number.isInteger(dataToSend.focus_goal))) { validationError = 'Valid positive integer Focus Goal (minutes) is required.'; }
+        if (habitType === 'focus' && (!(dataToSend as FocusHabit).focus_goal || (dataToSend as FocusHabit).focus_goal <= 0 || !Number.isInteger((dataToSend as FocusHabit).focus_goal))) { validationError = 'Valid positive integer Focus Goal (minutes) is required.'; }
         // **** End focus validation ****
 
         if (validationError) {
