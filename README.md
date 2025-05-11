@@ -1,6 +1,6 @@
-# 🐾 Meow-Care
+# 🐾 Meow-care
 
-MeowCare is a self-care gamification platform that helps users build healthy habits through engaging quests, progress tracking, and XP-based rewards. Users log their daily activities like hydration, meals, sleep, focus time, and check-ins, and get rewarded for consistency and discipline.
+Meow-care is a self-care gamification platform that helps users build healthy habits through engaging quests, progress tracking, and XP-based rewards. Users log their daily activities like hydration, meals, sleep, focus time, and check-ins, and get rewarded for consistency and discipline.
 
 ## 🚀 Features
 
